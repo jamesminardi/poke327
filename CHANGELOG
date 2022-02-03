@@ -1,0 +1,65 @@
+commit b8f3f428a292a78217c2d23910e437e22ba881bc
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 23:57:02 2022 -0600
+
+    Add trees, pokecenter, and pokemart
+
+commit e99da08e26067147aa016331a1286428a5ec2400
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 22:27:45 2022 -0600
+
+    Add grass and border to map
+
+commit 08f24719e2c8e0c2067e4144ec367eb4b3bb1ef5
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 22:26:58 2022 -0600
+
+    create enum for tiles
+
+commit 6cdcacbc6845d5c4f20207a947a0ef08275ee44f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 17:13:05 2022 -0600
+
+    move world functions into separate files
+
+commit 2d584394e5742aa1c5eab350bbbed46214f65816
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 16:58:13 2022 -0600
+
+    create header file for global vars
+
+commit 7560844b0952650701fec9a05a8511c548d43043
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 16:11:29 2022 -0600
+
+    Add initialization and print methods
+
+commit 3da5dc0eaee9553faabca3ef428ecd5d980b0a16
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 13:22:22 2022 -0600
+
+    Hello World!
+
+commit fd72850a819239b8c56af19a44b10e6e5808aaa3
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 13:20:03 2022 -0600
+
+    add Makefile functionality for main.c
+
+commit 8d2fcb99187d382fb563565ebd545a84a74b850c
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 12:54:48 2022 -0600
+
+    Add main function
+
+commit 932ab427ea5e1bfa130f1d8dae20ce7366b15b04
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 1 13:39:43 2022 -0600
+
+    Created repository and files
+
+commit ec5e008da495e303454bb9d10b6083c239cf1c92
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Tue Feb 1 13:03:47 2022 -0600
+
+    Initial commit
