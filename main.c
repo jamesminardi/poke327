@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "globals.h"
 #include "world.h"
 
@@ -7,10 +9,12 @@
 
 
 
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[])
+{
+  srand(time(NULL));
+  
   char world[ROWS][COLS];
-  printf("Hello, World!\n\n");
+  //printf("\u2588\n");
   world_init(world);
   world_print(world);
 
