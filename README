@@ -3,4 +3,10 @@ ASCII Pokémon roguelike in C
 
 When the application is ran, an map of size 80x21 is printed to the terminal with randomly placed terrain and buildings. Current terrain contains clearings, trees, tall grass, boulders, and paths. There is one pokecenter and pokemart per map as well.
 
+# setup
+use make or make all to compile
+
+make clean will clean the directory of compiled files
+
+# bugs
 No known bugs.
