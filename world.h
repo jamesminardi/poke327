@@ -3,8 +3,27 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "globals.h"
 #include "tiles.h"
+
+
+typedef struct pos {
+  int x;
+  int y;
+} pos_t;
+
+typedef struct map {
+  tiles_t map[MAP_Y][MAP_X];
+  pos_t pos;
+  int north, south, east, west;
+} map_t;
+
+typedef struct world {
+  map_t *world[399][399];
+  pos_t pos;
+  int seed;
+} world_t;
 
 
 void world_init(char world[ROWS][COLS]);
