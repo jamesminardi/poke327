@@ -8,13 +8,13 @@
 void map_init(map_t *m)
 {
 
-  unsigned int row;
-  unsigned int col;
-  for (row = 0; row < ROWS; row++)
+  int y;
+  int x;
+  for (y = 0; y < MAP_Y; y++)
   {
-    for (col = 0; col < COLS; col++)
+    for (x = 0; x < MAP_X; x++)
     {
-      map[row][col] = s_clearing_1;   
+      m->map[row][col] = ter_clearing;   
     }
   }
   map_populate(map);
@@ -361,33 +361,32 @@ void map_print(map_t *m)
     for (x = 0; x < MAP_X; x++) {
       switch (m->map[y][x]) {
       case ter_boulder:
-	printf("%");
+	printf(WHT "%" CRESET);
       case ter_mountain:
-        printf("\u0394");
+        printf(WHT "\u0394" CRESET);
         break;
       case ter_tree:
       case ter_forest:
-        putchar('^');
+        printf(GRN "^" CRESET);
         break;
       case ter_path:
-        putchar('#');
+        printf(YEL "#" CRESET);
         break;
       case ter_mart:
-        putchar('M');
+        putchar(CYN 'M' CRESET);
         break;
       case ter_center:
-        putchar('C');
+        putchar(HRED 'C' CRESET);
         break;
       case ter_grass:
-        putchar(':');
+        putchar(GRN ':' CRESET);
         break;
       case ter_clearing:
-        putchar('.');
+        putchar(HGRN '.' CRESET);
         break;
       case ter_block:
 	printf("\u2588\n");
       default:
-        default_reached = 1;
         break;
       }
     }
