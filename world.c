@@ -355,8 +355,45 @@ int is_valid_tree(char world[ROWS][COLS], int row, int col) {
  */
 void world_print(char world[ROWS][COLS])
 {
-  unsigned int row;
-  unsigned int col;
+  int y;
+  int x;
+  for (y = 0; y < MAP_Y; y++) {
+    for (x = 0; x < MAP_X; x++) {
+      switch (m->map[y][x]) {
+      case ter_boulder:
+	printf("%");
+      case ter_mountain:
+        printf("\u0394");
+        break;
+      case ter_tree:
+      case ter_forest:
+        putchar('^');
+        break;
+      case ter_path:
+        putchar('#');
+        break;
+      case ter_mart:
+        putchar('M');
+        break;
+      case ter_center:
+        putchar('C');
+        break;
+      case ter_grass:
+        putchar(':');
+        break;
+      case ter_clearing:
+        putchar('.');
+        break;
+      case ter_block:
+	printf("\u2588\n");
+      default:
+        default_reached = 1;
+        break;
+      }
+    }
+    putchar('\n');
+  }
+
   
     for (row = 0; row < ROWS; row++)
     {
