@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "globals.h"
-#include "tiles.h"
+#include "terrain.h"
 
 
 typedef struct pos {
@@ -25,11 +25,13 @@ typedef struct world {
   int seed;
 } world_t;
 
+#define mapxy(x, y) (m->map[y][x])
 
 void map_init(map_t *m);
 void map_populate(map_t *m);
 void map_grow(map_t *m);
 void map_placeCM(map_t *m);
+static void find_validBuildingLocation(map_t *m, int *x, int *y);
 int is_validCM(TILE_SYMBOLS_t tile);
 void map_placePath(map_t *m]);
 void map_placeBorder(map_t *m);

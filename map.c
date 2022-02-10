@@ -14,10 +14,10 @@ void map_init(map_t *m)
   {
     for (x = 0; x < MAP_X; x++)
     {
-      m->map[row][col] = ter_clearing;   
+      m->map[row][col] = empty;   
     }
   }
-  map_populate(map);
+  map_populate(m);
 }
 
 /*
@@ -30,15 +30,6 @@ void map_populate(map_t *m)
   map_placeBorder(map);
   map_placePath(map);
   map_placeCM(map);
-}
-
-void map_grow(map_t *m {
-  unsigned int row;
-  unsigned int col;
-  for (row = 0; row < ROWS; row++) {
-    for (col = 0; col < COLS; col++) {
-    }
-  }
 }
 
 void map_placeCM(map_t *m) {
@@ -178,7 +169,36 @@ void map_placeCM(map_t *m) {
 
 }
 
-int is_validCM(TILE_SYMBOLS_t tile) {
+/*
+ * Finds valid 2x2 building location coordinate.
+ * Coordinate is the topleft-most unit.
+ */
+static void find_validBuildingLocation(map_t *m, int *x, int *y) {
+
+  do {
+    *x = rand() % (MAP_X - 5) + 3;
+    *y = rand() % (MAP_Y - 5) + 5;
+
+    if ((((mapxy(*x  ,*y-1) == ter_path) && (mapxy(*x+1,*y-1) == ter_path))    ||
+	 ((mapxy(*x-1,*y  ) == ter_path) && (mapxy(*x-1,*y+1) == ter_path))    ||
+	 ((mapxy(*x+2,*y  ) == ter_path) && (mapxy(*x+2,*y+1) == ter_path))    ||
+	 ((mapxy(*x  ,*y+2) == ter_path) && (mapxy(*x+2,*y+2) == ter_path)))   &&
+
+	(((mapxy(*x  ,*y  ) != ter_mart) && (mapxy(*x  ,*y  ) != ter_center)   &&
+	  (mapxy(*x+1,*y  ) != ter_mart) && (mapxy(*x+1,*y  ) != ter_center)   &&
+	  (mapxy(*x  ,*y+1) != ter_mart) && (mapxy(*x  ,*y+1) != ter_center)   &&
+	  (mapxy(*x+1,*y+1) != ter_mart) && (mapxy(*x+1,*y+1) != ter_center))) &&
+
+	(((mapxy(*x  ,*y  ) != ter_path) &&
+	  (mapxy(*x+1,*y  ) != ter_path) &&
+	  (mapxy(*x  ,*y+1) != ter_path) &&
+	  (mapxy(*x+1,*y+1) != ter_path)))) {
+      break;
+    }
+  } while(1);
+}
+
+int is_valid(TILE_SYMBOLS_t tile) {
 
   if (tile == s_path_1) {
     return 0;
@@ -362,6 +382,7 @@ void map_print(map_t *m)
       switch (m->map[y][x]) {
       case ter_boulder:
 	printf(WHT "%" CRESET);
+	break;
       case ter_mountain:
         printf(WHT "\u0394" CRESET);
         break;
@@ -373,19 +394,25 @@ void map_print(map_t *m)
         printf(YEL "#" CRESET);
         break;
       case ter_mart:
-        putchar(CYN 'M' CRESET);
+        printf(CYN 'M' CRESET);
         break;
       case ter_center:
-        putchar(HRED 'C' CRESET);
+        printf(HRED 'C' CRESET);
         break;
       case ter_grass:
-        putchar(GRN ':' CRESET);
+        printf(GRN ':' CRESET);
         break;
       case ter_clearing:
-        putchar(HGRN '.' CRESET);
+        printf(HGRN "." CRESET);
         break;
       case ter_block:
-	printf("\u2588\n");
+	printf(WHT "\u2588" CRESET);
+	break;
+      case empty:
+	printf(WHT " " CRESET);
+      case debug:
+	printf(WHT "\u058D" CRESET);
+	break;
       default:
         break;
       }
