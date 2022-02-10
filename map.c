@@ -82,12 +82,17 @@ static void find_validBuildingLocation(map_t *m, int *x, int *y) {
 
 void map_placePath(map_t *m) {
 
+
+  do {
   int top_exit = rand() % (COLS - 4) + 2;
   int left_exit = rand() % (ROWS - 4) + 2;
   int right_exit = rand() % (ROWS - 4) + 2;
   int bottom_exit = rand() % (COLS - 4) + 2;
   int x_break = rand() % (COLS - 6) + 3;
   int y_break = rand() % (ROWS - 6) + 3;
+
+  } while (abs(top_exit - x_break) < 2 && abs(bottom_exit - x_break < 2) &&
+	   abs(left_exit- y_break) < 2 && abs(right_exit - y_break < 2))
 
   map[0][top_exit] = s_path_1;
   map[ROWS-1][bottom_exit] = s_path_1;
