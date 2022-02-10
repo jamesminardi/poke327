@@ -1,5 +1,5 @@
-#ifndef TILES_H
-#define TILES_H
+#ifndef TERRAIN_H
+#define TERRAIN_H
 
 //Regular text
 #define BLK "\e[0;30m" // Black
@@ -10,6 +10,7 @@
 #define MAG "\e[0;35m" // Magenta
 #define CYN "\e[0;36m" // Cyan
 #define WHT "\e[0;37m" // White
+#define BRN "\033[38;5;130m" // Brown
 
 //Regular bold text
 #define BBLK "\e[1;30m"
@@ -76,7 +77,7 @@
 #define COLOR_RESET "\e[0m"
 
 
-typedef enum tiles {
+typedef enum terrain {
 		    debug,
 		    empty,
 		    ter_clearing,
@@ -87,6 +88,6 @@ typedef enum tiles {
 		    ter_forest,
 		    ter_water,
 		    ter_block
-} tiles_t;
+} terrain_t;
 
-#endif // TILES_H
+#endif // TERRAIN_H
