@@ -6,13 +6,12 @@
 
 int main(int argc, char *argv[])
 {
-  srand(time(NULL));
   
-  map_t m;
-  
-  
-  map_init(&m);
-  map_print(&m);
+  world_t w;
+  world_init(&w);
+  world_print(&w);
+  //map_init(&m);
+  //map_print(&m);
 
   return 0;
   

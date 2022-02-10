@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
+#include <time.h>
 #include "globals.h"
 #include "terrain.h"
 
@@ -27,14 +28,18 @@ typedef struct world {
 } world_t;
 
 #define mapxy(x, y) (m->map[y][x])
+#define worldxy(x,y) (w->world[y][x])
+
+void world_init(world_t *w);
+void world_print(world_t *w);
+
+
 
 void map_init(map_t *m);
 void map_populate(map_t *m);
-
 void map_placeCenter(map_t *m);
 void map_placeMart(map_t *m);
 void find_validBuildingLocation(map_t *m, int *x, int *y);
-
 void map_placePath(map_t *m);
 void map_placeBorder(map_t *m);
 void map_placeGrass(map_t *m);

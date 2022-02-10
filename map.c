@@ -1,5 +1,26 @@
 #include "map.h"
 
+void world_init(world_t *w)
+{
+  w->seed = time(NULL);
+  srand(w->seed);
+  w->pos.x = 199;
+  w->pos.y = 199;
+
+  worldxy(199,199) = malloc(sizeof (*worldxy(w->pos.x,w->pos.y)));
+  map_init(worldxy(w->pos.x, w->pos.y));
+
+}
+
+void world_print(world_t *w) {
+    map_print(worldxy(w->pos.x, w->pos.y));
+}
+
+
+
+
+
+
 /*
  * Initialize map to all spaces (' ')
  * Places nodes and grows them
@@ -235,7 +256,7 @@ void map_print(map_t *m)
 	printf(BOULDER "%%" CRESET);
 	break;
       case ter_mountain:
-        //printf("\u0394" CRESET);
+        printf("\u0394" CRESET);
         break;
       case ter_tree:
       case ter_forest:
@@ -257,12 +278,12 @@ void map_print(map_t *m)
         printf(BRIGHTGRN "." CRESET);
         break;
       case ter_block:
-	//printf("\u2588" CRESET);
+	printf("\u2588" CRESET);
 	break;
       case empty:
 	printf(" " CRESET);
       case debug:
-	//printf("\u058D" CRESET);
+	printf("\u058D" CRESET);
 	break;
       default:
         break;
