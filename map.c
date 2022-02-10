@@ -7,13 +7,15 @@
  */
 void map_init(map_t *m)
 {
+  m->pos.x = 0;
+  m->pos.y = 0;
   int y;
   int x;
   for (y = 0; y < MAP_Y; y++)
   {
     for (x = 0; x < MAP_X; x++)
     {
-      mapxy(x,y) = empty;   
+      m->map[y][x] = ter_clearing;   
     }
   }
   map_populate(m);
@@ -24,14 +26,15 @@ void map_init(map_t *m)
  */
 void map_populate(map_t *m)
 {
-  map_placeTree(map);
-  map_placeGrass(map);
-  map_placeBorder(map);
-  map_placePath(map);
-  map_placeCM(map);
+  map_placeTree(m);
+  map_placeGrass(m);
+  map_placeBorder(m);
+  map_placePath(m);
+  map_placeCenter(m);
+  map_placeMart(m);
 }
 
-static void map_placeCenter(map_t *m) {
+void map_placeCenter(map_t *m) {
   int x;
   int y;
   find_validBuildingLocation(m, &x, &y);
@@ -41,7 +44,7 @@ static void map_placeCenter(map_t *m) {
   mapxy(x  , y+1) = ter_center;
 }
   
-static void map_placeMart(map_t *m) {
+void map_placeMart(map_t *m) {
   int x;
   int y;
   find_validBuildingLocation(m, &x, &y);
@@ -55,11 +58,11 @@ static void map_placeMart(map_t *m) {
  * Finds valid 2x2 building location coordinate.
  * Coordinate is the topleft-most unit.
  */
-static void find_validBuildingLocation(map_t *m, int *x, int *y) {
+void find_validBuildingLocation(map_t *m, int *x, int *y) {
 
   do {
-    *x = rand() % (MAP_X - 5) + 3;
-    *y = rand() % (MAP_Y - 5) + 5;
+    *x = rand() % (MAP_X - 3) + 1;
+    *y = rand() % (MAP_Y - 3) + 1;
 
     if ((((mapxy(*x  ,*y-1) == ter_path) && (mapxy(*x+1,*y-1) == ter_path))    ||
 	 ((mapxy(*x-1,*y  ) == ter_path) && (mapxy(*x-1,*y+1) == ter_path))    ||
@@ -81,60 +84,66 @@ static void find_validBuildingLocation(map_t *m, int *x, int *y) {
 }
 
 void map_placePath(map_t *m) {
+  int n_exit, w_exit, e_exit, s_exit;
+  int x_break, y_break;
 
-
+  
+  /* Find road paths that wont create a double road */
   do {
-  int n_exit = rand() % (COLS - 4) + 2;
-  int w_exit = rand() % (ROWS - 4) + 2;
-  int e_exit = rand() % (ROWS - 4) + 2;
-  int s_exit = rand() % (COLS - 4) + 2;
-  int x_break = rand() % (COLS - 6) + 3;
-  int y_break = rand() % (ROWS - 6) + 3;
+  n_exit  = rand() % (MAP_X - 4) + 2;
+  w_exit  = rand() % (MAP_Y - 4) + 2;
+  e_exit  = rand() % (MAP_Y - 4) + 2;
+  s_exit  = rand() % (MAP_X - 4) + 2;
+  x_break = rand() % (MAP_X - 6) + 3;
+  y_break = rand() % (MAP_Y - 6) + 3;
 
-  } while (abs(n_exit - x_break) < 1 || abs(s_exit - x_break < 1) ||
-	   abs(w_exit- y_break) < 1 ||  abs(e_exit - y_break < 1))
+  } while (abs(n_exit - x_break) == 1 || abs(s_exit - x_break == 1) ||
+	   abs(w_exit - y_break) == 1 || abs(e_exit - y_break == 1));
 
-  map[0][n_exit] = s_path_1;
-  map[ROWS-1][s_exit] = s_path_1;
-  map[w_exit][0] = s_path_1;
-  map[e_exit][COLS-1] = s_path_1;
+  m->map[0]      [n_exit] = ter_path;
+  m->map[MAP_Y-1][s_exit] = ter_path;
+  m->map[w_exit] [0]      = ter_path;
+  m->map[e_exit] [MAP_X-1]= ter_path;
 
-  /* Place roads by connecting opposite exits together with the break */
+  /*
+   * Place roads by connecting opposite exits together with the break
+   */
 
   /* East to West */
   int i;
-  for (i = 0;        i < x_break; i++) { map[w_exit][i] = s_path_1; }
-  for (i = x_break;  i < COLS;    i++) { map[e_exit][i] = s_path_1; }
+  for (i = 0      ;  i < x_break; i++) { m->map[w_exit][i] = ter_path; }
+  for (i = x_break;  i < MAP_X  ; i++) { m->map[e_exit][i] = ter_path; }
+  
   if (w_exit < e_exit) {
-    for (i = w_exit; i < e_exit; i++) { map[i][x_break] = s_path_1; }
+    for (i = w_exit; i < e_exit ; i++) { m->map[i][x_break] = ter_path; }
   }
   if (w_exit >= e_exit) {
-    for (i = e_exit; i <=w_exit; i++) { map[i][x_break] = s_path_1; }
+    for (i = e_exit; i <=w_exit ; i++) { m->map[i][x_break] = ter_path; }
   }  
   
   /* North to South */
-  for (i = 0;        i < y_break; i++) { map[i][n_exit] = s_path_1; }
-  for (i = y_break;  i < ROWS;    i++) { map[i][s_exit] = s_path_1; }
+  for (i = 0       ; i < y_break; i++) { m->map[i][n_exit]  = ter_path; }
+  for (i = y_break ; i < MAP_Y  ; i++) { m->map[i][s_exit]  = ter_path; }
   if (n_exit < s_exit) {
-    for (i = n_exit; i < s_exit; i++) { map[y_break][i] = s_path_1; }
+    for (i = n_exit; i < s_exit ; i++) { m->map[y_break][i] = ter_path; }
   }
   if (n_exit >= s_exit) {
-    for (i = s_exit; i <=n_exit; i++) { map[y_break][i] = s_path_1; }
+    for (i = s_exit; i <=n_exit ; i++) { m->map[y_break][i] = ter_path; }
   }   
 }
 
 void map_placeBorder(map_t *m){
 
-  int row;
-  int col;
+  int y;
+  int x;
 
-  for (row = 0; row < ROWS; row++) {
-    map[row][0] = s_boulder_1;
-    map[row][COLS-1] = s_boulder_1;
+  for (y = 0; y < MAP_Y; y++) {
+    m->map[y][0]       = ter_boulder;
+    m->map[y][MAP_X-1] = ter_boulder;
   }
-  for (col = 0; col < COLS; col++) {
-    map[0][col] = s_boulder_1;
-    map[ROWS-1][col] = s_boulder_1;
+  for (x = 0; x < MAP_X; x++) {
+    m->map[0]      [x] = ter_boulder;
+    m->map[MAP_Y-1][x] = ter_boulder;
   }
 }
 
@@ -143,31 +152,32 @@ void map_placeBorder(map_t *m){
  */
 void map_placeGrass(map_t *m)
 {
-  const unsigned int num_Nodes = 15;
-  
   int x_pos;
   int y_pos;
-  int node_count;
   int x_size;
   int y_size;
-  int f;
-  int g;
+  int node_count;
+  int x;
+  int y;
 
-  for (node_count = 0; node_count < num_Nodes; node_count++)
+  for (node_count = 0; node_count < GRASS_NODES; node_count++)
   {
+    /* Places new grass node where there isn't already grass */
     do
     {
-      x_pos = rand() % COLS;
-      y_pos = rand() % ROWS;
-    } while (map[y_pos][x_pos] == s_grass_1);
+      x_pos = rand() % MAP_X;
+      y_pos = rand() % MAP_Y;
+    } while (m->map[y_pos][x_pos] == ter_grass);
 
     x_size = rand() % 5 + 4;
     y_size = rand() % 4 + 2;
-    for (f = y_pos - y_size; f < y_pos + y_size; f++) {
-      for (g = x_pos - x_size; g < x_pos + x_size; g++) {
-	if (f >= 0 && f < ROWS) {
-	  if (g >= 0 && g < COLS) {
-	    map[f][g] = s_grass_1;
+
+    /* Stamps grass of random size onto node */
+    for (y = y_pos - y_size; y < y_pos + y_size; y++) {
+      for (x = x_pos - x_size; x < x_pos + x_size; x++) {
+	if (y >= 0 && y < MAP_Y) {
+	  if (x >= 0 && x < MAP_X) {
+	    m->map[y][x] = ter_grass;
 	  }
 	}
       }
@@ -177,49 +187,38 @@ void map_placeGrass(map_t *m)
 
 void map_placeTree(map_t *m) {
 
-  int x_pos;
-  int y_pos;
-  int i;
-  for (i = 0; i < 60; i++){
+  int x;
+  int y;
+  int n;
+  for (n = 0; n < MAX_TREES; n++){
 
     do {
-      x_pos = rand() % (COLS-2) + 1;
-      y_pos = rand() % (ROWS-2) + 1;
-    } while (!is_valid_tree(map, y_pos, x_pos));
-    map[y_pos][x_pos] = s_tree_1;
+      x = rand() % (MAP_X-2) + 1;
+      y = rand() % (MAP_Y-2) + 1;
+    } while (!is_validTree(m, x, y));
+    
+    m->map[y][x] = ter_tree;
   }
-
 }
 
-int is_valid_tree(map_t *m, int row, int col) {
+/* 
+ * Returns 0 if invalid position for a tree.
+ * Single trees can not be adjacent to one another
+ */
+int is_validTree(map_t *m, int x, int y) {
   
   int valid = 1;
   
-  if (row <= 0 || row >= ROWS) {
+  if (x <= 0 || x >= MAP_X || y < 0 || y >= MAP_Y) {
     valid = 0;
-  }
-  else if (col <= 0 || col >= COLS) {
-    valid =  0;
   }
   
-  else if (map[row][col] == s_tree_1) {
+  if ((m->map[y]  [x]   == ter_tree) || (m->map[y+1][x]   == ter_tree) ||
+      (m->map[y-1][x]   == ter_tree) || (m->map[y]  [x+1] == ter_tree) ||
+      (m->map[y]  [x-1] == ter_tree)){
     valid =  0;
   }
-  else if (map[row+1][col] == s_tree_1) {
-    valid = 0;
-  }
-  else if (map[row-1][col] == s_tree_1) {
-    valid =  0;
-  }
-  else if (map[row][col+1] == s_tree_1) {
-    valid = 0;
-  }
-  else if (map[row][col-1] == s_tree_1) {
-    valid = 0;
-  }
-
   return valid;
-    
 }
 
 /*
@@ -233,10 +232,10 @@ void map_print(map_t *m)
     for (x = 0; x < MAP_X; x++) {
       switch (m->map[y][x]) {
       case ter_boulder:
-	printf(WHT "%" CRESET);
+	printf(BOULDER "%%" CRESET);
 	break;
       case ter_mountain:
-        printf(WHT "\u0394" CRESET);
+        //printf("\u0394" CRESET);
         break;
       case ter_tree:
       case ter_forest:
@@ -246,24 +245,24 @@ void map_print(map_t *m)
         printf(YEL "#" CRESET);
         break;
       case ter_mart:
-        printf(CYN 'M' CRESET);
+        printf(CYN "M" CRESET);
         break;
       case ter_center:
-        printf(HRED 'C' CRESET);
+        printf(HRED "C" CRESET);
         break;
       case ter_grass:
-        printf(GRN ':' CRESET);
+        printf(HGRN ":" CRESET);
         break;
       case ter_clearing:
-        printf(HGRN "." CRESET);
+        printf(BRIGHTGRN "." CRESET);
         break;
       case ter_block:
-	printf(WHT "\u2588" CRESET);
+	//printf("\u2588" CRESET);
 	break;
       case empty:
-	printf(WHT " " CRESET);
+	printf(" " CRESET);
       case debug:
-	printf(WHT "\u058D" CRESET);
+	//printf("\u058D" CRESET);
 	break;
       default:
         break;

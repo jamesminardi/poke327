@@ -2,21 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include "globals.h"
-#include "world.h"
-
-#define COLS 80
-#define ROWS 21
-
-
+#include "map.h"
 
 int main(int argc, char *argv[])
 {
   srand(time(NULL));
   
-  char world[ROWS][COLS];
-  //printf("\u2588\n");
-  world_init(world);
-  world_print(world);
+  map_t m;
+  
+  
+  map_init(&m);
+  map_print(&m);
 
   return 0;
   

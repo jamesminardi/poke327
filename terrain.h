@@ -9,8 +9,10 @@
 #define BLU "\e[0;34m" // Blue
 #define MAG "\e[0;35m" // Magenta
 #define CYN "\e[0;36m" // Cyan
-#define WHT "\e[0;37m" // White
+//#define WHT "\e[0;37m" // White
 #define BRN "\033[38;5;130m" // Brown
+#define BRIGHTGRN "\033[38;5;77m"
+#define BOULDER "\033[38;5;102m"
 
 //Regular bold text
 #define BBLK "\e[1;30m"
@@ -82,8 +84,11 @@ typedef enum terrain {
 		    empty,
 		    ter_clearing,
 		    ter_grass,
+		    ter_path,
 		    ter_boulder,
 		    ter_tree,
+		    ter_center,
+		    ter_mart,
 		    ter_mountain,
 		    ter_forest,
 		    ter_water,

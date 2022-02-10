@@ -6,8 +6,8 @@ poke327: main.o map.o
 main.o: main.c map.h globals.h
 	gcc -Wall -Werror -g -o main.o -c main.c
 
-map.o: map.c map.h globals.h tiles.h
-	gcc -Wall -Werror -g -o map.o -c world.c
+map.o: map.c map.h globals.h terrain.h
+	gcc -Wall -Werror -g -o map.o -c map.c
 
 
 clean:
