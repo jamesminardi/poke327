@@ -31,6 +31,7 @@ typedef struct world {
 #define worldxy(x,y) (w->world[y][x])
 
 void world_init(world_t *w);
+void world_free(world_t *w);
 void world_move(world_t *w, int x, int y);
 void world_print(world_t *w);
 

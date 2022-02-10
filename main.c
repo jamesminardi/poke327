@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
   world_init(&w);
   printf("Using seed: %d\n", w.seed);
   world_print(&w);
-  //map_init(&m);
-  //map_print(&m);
+  printf("Pos: %d, %d\n\n", w.pos.x, w.pos.y);
+
   
   int quit = 0;
   char input;
@@ -41,12 +41,13 @@ int main(int argc, char *argv[])
   		break;
   	case 'q':
   		quit = 1;
+  		world_free(&w);
   		break;
   	default:
   		break;
   	}
   	world_print(&w);
-  	printf("Pos: %d, %d\n\n", w.pos.x, w.pos.y);
+  	printf("Pos: %d, %d\n", w.pos.x, w.pos.y);
   }
   
   return 0;

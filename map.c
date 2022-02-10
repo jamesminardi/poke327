@@ -18,9 +18,27 @@ void world_init(world_t *w)
   }
 
   worldxy(199,199) = malloc(sizeof (*worldxy(w->pos.x,w->pos.y)));
-  map_init(w, 199, 199);
-  
+  map_init(w, 199, 199); 
 }
+
+void world_free(world_t *w) {
+
+  int x = 0;
+  int y = 0;
+  x += 0;
+  y += 0;
+  for (int x = 0; x < WORLD_X; x++) {
+    for (int y = 0; y < WORLD_Y; y++) {
+      if (w->world[y][x] != NULL) {
+	
+      free(w->world[y][x]);
+
+      }
+    }
+  }
+
+}
+
 void world_move(world_t *w, int x, int y) {
   if (x < 0 || x > WORLD_X - 1 || y < 0 || y > WORLD_Y - 1) {
     // ERROR: Out of bounds
@@ -34,8 +52,6 @@ void world_move(world_t *w, int x, int y) {
     return;
   }
 
-  // PRINT
-  printf("Generating new map.\n");
   worldxy(w->pos.x,w->pos.y) = malloc(sizeof (*worldxy(w->pos.x, w->pos.y)));
   map_init(w, x, y);
 }
@@ -56,42 +72,30 @@ void map_init(world_t *w, int x, int y)
   int j;
 
   /* Set exit positions */
-  //PRINT
-  printf("Setting north exit\n");
   if (y-1 > 0 && worldxy(x,y-1) != NULL) {
     worldxy(x,y)->north = worldxy(x,y-1)->south;
   } else {
     worldxy(x,y)->north = rand() % (MAP_X - 4) + 2;
   }
 
-  //PRINT
-  printf("Setting south exit\n");
   if (y+1 < WORLD_Y && worldxy(x,y+1) != NULL) {
-    printf("lol\n");
     worldxy(x,y)->south = worldxy(x,y+1)->north;
   } else {
-    printf("lol2\n");
     worldxy(x,y)->south = rand() % (MAP_X - 4) + 2;
   }
 
-  // PRINT
-  printf("Setting east exit\n");
   if (x+1 < WORLD_X && worldxy(x+1,y) != NULL) {
     worldxy(x,y)->east = worldxy(x+1,y)->west;
   } else {
     worldxy(x,y)->east = rand() % (MAP_Y - 4) + 2;
   }
 
-  // PRINT
-  printf("Setting west exit\n");
   if (x-1 > 0 && worldxy(x-1,y) != NULL) {
     worldxy(x,y)->west = worldxy(x-1,y)->east;
   } else {
     worldxy(x,y)->west = rand() % (MAP_Y - 4) + 2;
   }
 
-  //PRINT
-  printf("Init to clearings\n");
   for (i = 0; i < MAP_Y; i++)
   {
     for (j = 0; j < MAP_X; j++)
@@ -99,12 +103,8 @@ void map_init(world_t *w, int x, int y)
       worldxy(x,y)->map[i][j] = ter_clearing;   
     }
   }
-  //PRINT
-  printf("Entering population function\n");
   map_populate(worldxy(x,y));
 
-  //PRINT
-  printf("FIXING World edges\n");
   if (x == 0) {
     worldxy(x,y)->map[worldxy(x,y)->west][0] = ter_boulder;
   }
