@@ -29,10 +29,11 @@ typedef struct world {
 
 void map_init(map_t *m);
 void map_populate(map_t *m);
-void map_grow(map_t *m);
-void map_placeCM(map_t *m);
+
+static void map_placeCenter(map_t *m);
+static void map_placeMart(map_t *m);
 static void find_validBuildingLocation(map_t *m, int *x, int *y);
-int is_validCM(TILE_SYMBOLS_t tile);
+
 void map_placePath(map_t *m]);
 void map_placeBorder(map_t *m);
 void map_placeGrass(map_t *m);

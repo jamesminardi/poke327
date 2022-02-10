@@ -7,14 +7,13 @@
  */
 void map_init(map_t *m)
 {
-
   int y;
   int x;
   for (y = 0; y < MAP_Y; y++)
   {
     for (x = 0; x < MAP_X; x++)
     {
-      m->map[row][col] = empty;   
+      mapxy(x,y) = empty;   
     }
   }
   map_populate(m);
@@ -32,141 +31,24 @@ void map_populate(map_t *m)
   map_placeCM(map);
 }
 
-void map_placeCM(map_t *m) {
-
-  int x_pos;
-  int y_pos;
-  int C_placed = 0;
-  while (C_placed == 0) {
-    do {
-      x_pos = rand() % (COLS-4) + 2;
-      y_pos = rand() % (ROWS-4) + 2;
-    } while (map[y_pos][x_pos] != s_path_1);
-
-    if (is_validCM(map[y_pos+1][x_pos])) {
-      if (is_validCM(map[y_pos+1][x_pos+1])) {
-	if (is_validCM(map[y_pos+2][x_pos+1])){
-	  if (is_validCM(map[y_pos+2][x_pos+2])){
-	      map[y_pos+1][x_pos] = s_pokecenter;
-	      map[y_pos+1][x_pos+1] = s_pokecenter;
-	      map[y_pos+2][x_pos+1] = s_pokecenter;
-	      map[y_pos+2][x_pos] = s_pokecenter;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-    if (is_validCM(map[y_pos-1][x_pos])) {
-      if (is_validCM(map[y_pos-1][x_pos+1])) {
-	if (is_validCM(map[y_pos-2][x_pos+1])){
-	  if (is_validCM(map[y_pos-2][x_pos+2])){
-	      map[y_pos-1][x_pos] = s_pokecenter;
-	      map[y_pos-1][x_pos+1] = s_pokecenter;
-	      map[y_pos-2][x_pos+1] = s_pokecenter;
-	      map[y_pos-2][x_pos] = s_pokecenter;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-    if (is_validCM(map[y_pos][x_pos+1])) {
-      if (is_validCM(map[y_pos+1][x_pos+1])) {
-	if (is_validCM(map[y_pos+1][x_pos+2])){
-	  if (is_validCM(map[y_pos][x_pos+2])){
-	      map[y_pos][x_pos+1] = s_pokecenter;
-	      map[y_pos+1][x_pos+1] = s_pokecenter;
-	      map[y_pos+1][x_pos+2] = s_pokecenter;
-	      map[y_pos][x_pos+2] = s_pokecenter;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-    if (is_validCM(map[y_pos][x_pos-1])) {
-      if (is_validCM(map[y_pos+1][x_pos-1])) {
-	if (is_validCM(map[y_pos+1][x_pos-2])){
-	  if (is_validCM(map[y_pos][x_pos-2])){
-	      map[y_pos][x_pos-1] = s_pokecenter;
-	      map[y_pos+1][x_pos-1] = s_pokecenter;
-	      map[y_pos+1][x_pos-2] = s_pokecenter;
-	      map[y_pos][x_pos-2] = s_pokecenter;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-  }
-
-  C_placed = 0;
-  while (C_placed == 0) {
-    do {
-      x_pos = rand() % (COLS-4) + 2;
-      y_pos = rand() % (ROWS-4) + 2;
-    } while (map[y_pos][x_pos] != s_path_1);
-
-    if (is_validCM(map[y_pos+1][x_pos])) {
-      if (is_validCM(map[y_pos+1][x_pos+1])) {
-	if (is_validCM(map[y_pos+2][x_pos+1])){
-	  if (is_validCM(map[y_pos+2][x_pos+2])){
-	      map[y_pos+1][x_pos] = s_pokemart;
-	      map[y_pos+1][x_pos+1] = s_pokemart;
-	      map[y_pos+2][x_pos+1] = s_pokemart;
-	      map[y_pos+2][x_pos] = s_pokemart;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-    if (is_validCM(map[y_pos-1][x_pos])) {
-      if (is_validCM(map[y_pos-1][x_pos+1])) {
-	if (is_validCM(map[y_pos-2][x_pos+1])){
-	  if (is_validCM(map[y_pos-2][x_pos+2])){
-	      map[y_pos-1][x_pos] = s_pokemart;
-	      map[y_pos-1][x_pos+1] = s_pokemart;
-	      map[y_pos-2][x_pos+1] = s_pokemart;
-	      map[y_pos-2][x_pos] = s_pokemart;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-    if (is_validCM(map[y_pos][x_pos+1])) {
-      if (is_validCM(map[y_pos+1][x_pos+1])) {
-	if (is_validCM(map[y_pos+1][x_pos+2])){
-	  if (is_validCM(map[y_pos][x_pos+2])){
-	      map[y_pos][x_pos+1] = s_pokemart;
-	      map[y_pos+1][x_pos+1] = s_pokemart;
-	      map[y_pos+1][x_pos+2] = s_pokemart;
-	      map[y_pos][x_pos+2] = s_pokemart;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-    if (is_validCM(map[y_pos][x_pos-1])) {
-      if (is_validCM(map[y_pos+1][x_pos-1])) {
-	if (is_validCM(map[y_pos+1][x_pos-2])){
-	  if (is_validCM(map[y_pos][x_pos-2])){
-	      map[y_pos][x_pos-1] = s_pokemart;
-	      map[y_pos+1][x_pos-1] = s_pokemart;
-	      map[y_pos+1][x_pos-2] = s_pokemart;
-	      map[y_pos][x_pos-2] = s_pokemart;
-	      C_placed = 1;
-	      break;
-	   }
-	 }
-       }
-     }
-  }
-	
-
+static void map_placeCenter(map_t *m) {
+  int x;
+  int y;
+  find_validBuildingLocation(m, &x, &y);
+  mapxy(x  , y  ) = ter_center;
+  mapxy(x+1, y  ) = ter_center;
+  mapxy(x+1, y+1) = ter_center;
+  mapxy(x  , y+1) = ter_center;
+}
+  
+static void map_placeMart(map_t *m) {
+  int x;
+  int y;
+  find_validBuildingLocation(m, &x, &y);
+  mapxy(x  , y  ) = ter_mart;
+  mapxy(x+1, y  ) = ter_mart;
+  mapxy(x+1, y+1) = ter_mart;
+  mapxy(x  , y+1) = ter_mart;
 }
 
 /*
@@ -196,25 +78,6 @@ static void find_validBuildingLocation(map_t *m, int *x, int *y) {
       break;
     }
   } while(1);
-}
-
-int is_valid(TILE_SYMBOLS_t tile) {
-
-  if (tile == s_path_1) {
-    return 0;
-  }
-  if (tile == s_boulder_1) {
-    return 0;
-  }
-  if (tile == s_pokecenter) {
-    return 0;
-  }
-  if (tile == s_pokemart) {
-    return 0;
-  }
-
-  return 1;
-
 }
 
 void map_placePath(map_t *m) {
