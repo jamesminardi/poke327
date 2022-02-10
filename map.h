@@ -31,11 +31,12 @@ typedef struct world {
 #define worldxy(x,y) (w->world[y][x])
 
 void world_init(world_t *w);
+void world_move(world_t *w, int x, int y);
 void world_print(world_t *w);
 
 
 
-void map_init(map_t *m);
+void map_init(world_t *w, int x, int y);
 void map_populate(map_t *m);
 void map_placeCenter(map_t *m);
 void map_placeMart(map_t *m);

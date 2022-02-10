@@ -7,39 +7,117 @@ void world_init(world_t *w)
   w->pos.x = 199;
   w->pos.y = 199;
 
-  worldxy(199,199) = malloc(sizeof (*worldxy(w->pos.x,w->pos.y)));
-  map_init(worldxy(w->pos.x, w->pos.y));
+  int x = 0;
+  int y = 0;
+  x += 0;
+  y += 0;
+  for (int x = 0; x < WORLD_X; x++) {
+    for (int y = 0; y < WORLD_Y; y++) {
+      worldxy(x,y) = NULL;
+    }
+  }
 
+  worldxy(199,199) = malloc(sizeof (*worldxy(w->pos.x,w->pos.y)));
+  map_init(w, 199, 199);
+  
+}
+void world_move(world_t *w, int x, int y) {
+  if (x < 0 || x > WORLD_X - 1 || y < 0 || y > WORLD_Y - 1) {
+    // ERROR: Out of bounds
+    printf("Out of bounds world_move. Position did not change\n");
+    return;
+  }
+  w->pos.x = x;
+  w->pos.y = y;
+  if (worldxy(w->pos.x, w->pos.y) != NULL) {
+    // Map already generated
+    return;
+  }
+
+  // PRINT
+  printf("Generating new map.\n");
+  worldxy(w->pos.x,w->pos.y) = malloc(sizeof (*worldxy(w->pos.x, w->pos.y)));
+  map_init(w, x, y);
 }
 
 void world_print(world_t *w) {
     map_print(worldxy(w->pos.x, w->pos.y));
 }
 
-
-
-
-
-
 /*
+ * x and y is always valid
  * Initialize map to all spaces (' ')
  * Places nodes and grows them
  * Finishes by placing the extras like centers and marts.
  */
-void map_init(map_t *m)
+void map_init(world_t *w, int x, int y)
 {
-  m->pos.x = 0;
-  m->pos.y = 0;
-  int y;
-  int x;
-  for (y = 0; y < MAP_Y; y++)
+  int i;
+  int j;
+
+  /* Set exit positions */
+  //PRINT
+  printf("Setting north exit\n");
+  if (y-1 > 0 && worldxy(x,y-1) != NULL) {
+    worldxy(x,y)->north = worldxy(x,y-1)->south;
+  } else {
+    worldxy(x,y)->north = rand() % (MAP_X - 4) + 2;
+  }
+
+  //PRINT
+  printf("Setting south exit\n");
+  if (y+1 < WORLD_Y && worldxy(x,y+1) != NULL) {
+    printf("lol\n");
+    worldxy(x,y)->south = worldxy(x,y+1)->north;
+  } else {
+    printf("lol2\n");
+    worldxy(x,y)->south = rand() % (MAP_X - 4) + 2;
+  }
+
+  // PRINT
+  printf("Setting east exit\n");
+  if (x+1 < WORLD_X && worldxy(x+1,y) != NULL) {
+    worldxy(x,y)->east = worldxy(x+1,y)->west;
+  } else {
+    worldxy(x,y)->east = rand() % (MAP_Y - 4) + 2;
+  }
+
+  // PRINT
+  printf("Setting west exit\n");
+  if (x-1 > 0 && worldxy(x-1,y) != NULL) {
+    worldxy(x,y)->west = worldxy(x-1,y)->east;
+  } else {
+    worldxy(x,y)->west = rand() % (MAP_Y - 4) + 2;
+  }
+
+  //PRINT
+  printf("Init to clearings\n");
+  for (i = 0; i < MAP_Y; i++)
   {
-    for (x = 0; x < MAP_X; x++)
+    for (j = 0; j < MAP_X; j++)
     {
-      m->map[y][x] = ter_clearing;   
+      worldxy(x,y)->map[i][j] = ter_clearing;   
     }
   }
-  map_populate(m);
+  //PRINT
+  printf("Entering population function\n");
+  map_populate(worldxy(x,y));
+
+  //PRINT
+  printf("FIXING World edges\n");
+  if (x == 0) {
+    worldxy(x,y)->map[worldxy(x,y)->west][0] = ter_boulder;
+  }
+  if (x == WORLD_X-1) {
+    worldxy(x,y)->map[worldxy(x,y)->east][MAP_X-1] = ter_boulder;
+  }
+  if (y == 0) {
+    worldxy(x,y)->map[0][worldxy(x,y)->north] = ter_boulder;
+  }
+  if (y == WORLD_Y-1) {
+    worldxy(x,y)->map[MAP_Y-1][worldxy(x,y)->south] = ter_boulder;
+  }
+  
 }
 
 /*
@@ -105,26 +183,28 @@ void find_validBuildingLocation(map_t *m, int *x, int *y) {
 }
 
 void map_placePath(map_t *m) {
-  int n_exit, w_exit, e_exit, s_exit;
   int x_break, y_break;
 
   
   /* Find road paths that wont create a double road */
   do {
-  n_exit  = rand() % (MAP_X - 4) + 2;
-  w_exit  = rand() % (MAP_Y - 4) + 2;
-  e_exit  = rand() % (MAP_Y - 4) + 2;
-  s_exit  = rand() % (MAP_X - 4) + 2;
   x_break = rand() % (MAP_X - 6) + 3;
   y_break = rand() % (MAP_Y - 6) + 3;
 
-  } while (abs(n_exit - x_break) == 1 || abs(s_exit - x_break == 1) ||
-	   abs(w_exit - y_break) == 1 || abs(e_exit - y_break == 1));
-
-  m->map[0]      [n_exit] = ter_path;
-  m->map[MAP_Y-1][s_exit] = ter_path;
-  m->map[w_exit] [0]      = ter_path;
-  m->map[e_exit] [MAP_X-1]= ter_path;
+  } while (abs(m->north - x_break) == 1 || abs(m->south - x_break == 1) ||
+	   abs(m->west - y_break) == 1 || abs(m->east - y_break == 1));
+  if (m->north != 0) {
+    m->map[0][m->north] = ter_path;
+  }
+  if (m->south != 0) {
+    m->map[MAP_Y-1][m->south] = ter_path;
+  }
+  if (m->west != 0) {
+    m->map[m->west][0]      = ter_path;
+  }
+  if (m->east != 0) {
+    m->map[m->east][MAP_X-1]= ter_path;
+  }
 
   /*
    * Place roads by connecting opposite exits together with the break
@@ -132,24 +212,24 @@ void map_placePath(map_t *m) {
 
   /* East to West */
   int i;
-  for (i = 0      ;  i < x_break; i++) { m->map[w_exit][i] = ter_path; }
-  for (i = x_break;  i < MAP_X  ; i++) { m->map[e_exit][i] = ter_path; }
+  for (i = 1      ;  i < x_break ; i++) { m->map[m->west][i] = ter_path; }
+  for (i = x_break;  i < MAP_X-1 ; i++) { m->map[m->east][i] = ter_path; }
   
-  if (w_exit < e_exit) {
-    for (i = w_exit; i < e_exit ; i++) { m->map[i][x_break] = ter_path; }
+  if (m->west < m->east) {
+    for (i = m->west; i < m->east ; i++) { m->map[i][x_break] = ter_path; }
   }
-  if (w_exit >= e_exit) {
-    for (i = e_exit; i <=w_exit ; i++) { m->map[i][x_break] = ter_path; }
+  if (m->west >= m->east) {
+    for (i = m->east; i <=m->west ; i++) { m->map[i][x_break] = ter_path; }
   }  
   
   /* North to South */
-  for (i = 0       ; i < y_break; i++) { m->map[i][n_exit]  = ter_path; }
-  for (i = y_break ; i < MAP_Y  ; i++) { m->map[i][s_exit]  = ter_path; }
-  if (n_exit < s_exit) {
-    for (i = n_exit; i < s_exit ; i++) { m->map[y_break][i] = ter_path; }
+  for (i = 1       ; i < y_break; i++) { m->map[i][m->north]  = ter_path; }
+  for (i = y_break ; i < MAP_Y-1  ; i++) { m->map[i][m->south]  = ter_path; }
+  if (m->north < m->south) {
+    for (i = m->north; i < m->south ; i++) { m->map[y_break][i] = ter_path; }
   }
-  if (n_exit >= s_exit) {
-    for (i = s_exit; i <=n_exit ; i++) { m->map[y_break][i] = ter_path; }
+  if (m->north >= m->south) {
+    for (i = m->south; i <=m->north ; i++) { m->map[y_break][i] = ter_path; }
   }   
 }
 

@@ -1,6 +1,9 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#define WORLD_Y 399
+#define WORLD_X 399
+
 #define MAP_Y 21
 #define MAP_X 80
 
