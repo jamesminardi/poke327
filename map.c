@@ -84,59 +84,43 @@ void map_placePath(map_t *m) {
 
 
   do {
-  int top_exit = rand() % (COLS - 4) + 2;
-  int left_exit = rand() % (ROWS - 4) + 2;
-  int right_exit = rand() % (ROWS - 4) + 2;
-  int bottom_exit = rand() % (COLS - 4) + 2;
+  int n_exit = rand() % (COLS - 4) + 2;
+  int w_exit = rand() % (ROWS - 4) + 2;
+  int e_exit = rand() % (ROWS - 4) + 2;
+  int s_exit = rand() % (COLS - 4) + 2;
   int x_break = rand() % (COLS - 6) + 3;
   int y_break = rand() % (ROWS - 6) + 3;
 
-  } while (abs(top_exit - x_break) < 2 && abs(bottom_exit - x_break < 2) &&
-	   abs(left_exit- y_break) < 2 && abs(right_exit - y_break < 2))
+  } while (abs(n_exit - x_break) < 1 || abs(s_exit - x_break < 1) ||
+	   abs(w_exit- y_break) < 1 ||  abs(e_exit - y_break < 1))
 
-  map[0][top_exit] = s_path_1;
-  map[ROWS-1][bottom_exit] = s_path_1;
-  map[left_exit][0] = s_path_1;
-  map[right_exit][COLS-1] = s_path_1;
+  map[0][n_exit] = s_path_1;
+  map[ROWS-1][s_exit] = s_path_1;
+  map[w_exit][0] = s_path_1;
+  map[e_exit][COLS-1] = s_path_1;
 
+  /* Place roads by connecting opposite exits together with the break */
+
+  /* East to West */
   int i;
-  for (i = 0; i < x_break; i++) {
-    map[left_exit][i] = s_path_1;
+  for (i = 0;        i < x_break; i++) { map[w_exit][i] = s_path_1; }
+  for (i = x_break;  i < COLS;    i++) { map[e_exit][i] = s_path_1; }
+  if (w_exit < e_exit) {
+    for (i = w_exit; i < e_exit; i++) { map[i][x_break] = s_path_1; }
   }
-  for (i = x_break; i < COLS; i++) {
-    map[right_exit][i] = s_path_1;
-  }
-  if (left_exit < right_exit) {
-    for (i = left_exit; i < right_exit; i++) {
-      map[i][x_break] = s_path_1;
-    }
-  }
-  if (left_exit >= right_exit) {
-    for (i = right_exit; i <= left_exit; i++) {
-      map[i][x_break] = s_path_1;
-    }
+  if (w_exit >= e_exit) {
+    for (i = e_exit; i <=w_exit; i++) { map[i][x_break] = s_path_1; }
   }  
   
-
-  for (i = 0; i < y_break; i++) {
-    map[i][top_exit] = s_path_1;
+  /* North to South */
+  for (i = 0;        i < y_break; i++) { map[i][n_exit] = s_path_1; }
+  for (i = y_break;  i < ROWS;    i++) { map[i][s_exit] = s_path_1; }
+  if (n_exit < s_exit) {
+    for (i = n_exit; i < s_exit; i++) { map[y_break][i] = s_path_1; }
   }
-  for (i = y_break; i < ROWS; i++) {
-    map[i][bottom_exit] = s_path_1;
-  }
-  if (top_exit < bottom_exit) {
-    for (i = top_exit; i < bottom_exit; i++) {
-      map[y_break][i] = s_path_1;
-    }
-  }
-  if (top_exit >= bottom_exit) {
-    for (i = bottom_exit; i <= top_exit; i++) {
-      map[y_break][i] = s_path_1;
-    }
-  } 
-
-
-  
+  if (n_exit >= s_exit) {
+    for (i = s_exit; i <=n_exit; i++) { map[y_break][i] = s_path_1; }
+  }   
 }
 
 void map_placeBorder(map_t *m){
