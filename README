@@ -3,10 +3,15 @@ ASCII Pokémon roguelike in C
 
 When the application is ran, an map of size 80x21 is printed to the terminal with randomly placed terrain and buildings. Current terrain contains clearings, trees, tall grass, boulders, and paths. There is one pokecenter and pokemart per map as well.
 
+When the user enters the commands n, s, e, or w, the screen will display the adjacent map. The entire world is 399x399 maps.
+
+To fly or skip around to different maps, use "f n1 n2" where n1 and n2 are integers between 0 and 398.
+
 # setup
 use make or make all to compile
 
 make clean will clean the directory of compiled files
 
 # bugs
-No known bugs.
+Pokecenter probability not implemented.
+
