@@ -11,16 +11,19 @@ int main(int argc, char *argv[]) {
 
 	world_init();
 	printf("Using seed: %d\n", world.seed);
-	world_print();
-	printf("Pos: %d, %d\n\n", world.pos.x, world.pos.y);
 
-
-	int quit = 0;
 	char input;
 	int x;
 	int y;
 
-	while (!quit) {
+	do{
+		printf("\n");
+		world_print();
+		printf("Current position is (%d,%d).  "
+			   "Enter command: ",
+			   world.pos.x,
+			   world.pos.y);
+
 		scanf(" %c", &input);
 		switch (input) {
 			case 'n':
@@ -40,17 +43,13 @@ int main(int argc, char *argv[]) {
 				scanf("%d", &y);
 				world_move(x, y);
 				break;
-			case 'q':
-				quit = 1;
-				world_delete();
-				break;
 			default:
 				break;
 		}
-		world_print();
-		printf("Pos: %d, %d\n", world.pos.x, world.pos.y);
-	}
-
+		//world_print();
+		//printf("Pos: %d, %d\n", world.pos.x, world.pos.y);
+	} while (input != 'q');
+	world_delete();
 	return 0;
 }
 

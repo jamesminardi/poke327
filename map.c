@@ -118,12 +118,12 @@ void map_placeBorder(map_t *map) {
 	int x;
 
 	for (y = 0; y < MAP_Y; y++) {
-		mapxy(0, y) = ter_boulder;
-		mapxy(MAP_X - 1, y) = ter_boulder;
+		mapxy(0, y) = ter_border;
+		mapxy(MAP_X - 1, y) = ter_border;
 	}
 	for (x = 0; x < MAP_X; x++) {
-		mapxy(x, 0) = ter_boulder;
-		mapxy(x, MAP_Y - 1) = ter_boulder;
+		mapxy(x, 0) = ter_border;
+		mapxy(x, MAP_Y - 1) = ter_border;
 	}
 }
 
