@@ -6,7 +6,10 @@ poke327: main.o map.o
 main.o: main.c map.h globals.h
 	gcc -Wall -Werror -g -o main.o -c main.c
 
-map.o: map.c map.h globals.h terrain.h
+world.o: world.c world.h globals.h terrain.h pos.h map.h
+	gcc -Wall -Werror -g -o world.o -c world.c
+
+map.o: map.c map.h globals.h terrain.h pos.h
 	gcc -Wall -Werror -g -o map.o -c map.c
 
 
