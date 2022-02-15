@@ -80,19 +80,19 @@
 
 
 typedef enum terrain {
-		    debug,
-		    empty,
-		    ter_clearing,
-		    ter_grass,
-		    ter_path,
-		    ter_boulder,
-		    ter_tree,
-		    ter_center,
-		    ter_mart,
-		    ter_mountain,
-		    ter_forest,
-		    ter_water,
-		    ter_block
+	debug,
+	empty,
+	ter_border,
+	ter_clearing,
+	ter_grass,
+	ter_path,
+	ter_boulder,
+	ter_tree,
+	ter_center,
+	ter_mart,
+	ter_mountain,
+	ter_forest,
+	ter_water
 } terrain_t;
 
 #endif // TERRAIN_H
