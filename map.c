@@ -207,6 +207,7 @@ void map_print(map_t *map) {
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
 			switch (mapxy(x, y)) {
+				case ter_border:
 				case ter_boulder:
 					printf(BOULDER "%%" CRESET);
 					break;
@@ -239,6 +240,97 @@ void map_print(map_t *map) {
 					break;
 				default:
 					break;
+			}
+		}
+		putchar('\n');
+	}
+}
+
+
+void map_generateCosts(map_t *map) {
+
+	int x;
+	int y;
+
+	for (x = 0; x < MAP_X; x++) {
+
+			mapxy(x, 0) = ter_border;
+			mapxy(x, MAP_Y - 1) = ter_border;
+
+		for (y = 0; y < MAP_Y; y++) {
+
+				mapxy(0, y) = ter_border;
+				mapxy(MAP_X - 1, y) = ter_border;
+
+			switch (mapxy(x, y)) {
+				case ter_boulder:
+				case ter_border:
+					map->dijk_hiker[y][x] = INT_MAX;
+					map->dijk_rival[y][x] = INT_MAX;
+					map->dijk_pc[y][x] = INT_MAX;
+					break;
+				case ter_mountain:
+					map->dijk_hiker[y][x] = 15;
+					map->dijk_rival[y][x] = INT_MAX;
+					map->dijk_pc[y][x] = INT_MAX;
+					break;
+				case ter_tree:
+					map->dijk_hiker[y][x] = INT_MAX;
+					map->dijk_rival[y][x] = INT_MAX;
+					map->dijk_pc[y][x] = INT_MAX;
+					break;
+				case ter_forest:
+					map->dijk_hiker[y][x] = 15;
+					map->dijk_rival[y][x] = INT_MAX;
+					map->dijk_pc[y][x] = INT_MAX;
+					break;
+				case ter_path:
+					map->dijk_hiker[y][x] = 10;
+					map->dijk_rival[y][x] = 10;
+					map->dijk_pc[y][x] = 10;
+					break;
+				case ter_mart:
+					map->dijk_hiker[y][x] = INT_MAX;
+					map->dijk_rival[y][x] = INT_MAX;
+					map->dijk_pc[y][x] = 10;
+					break;
+				case ter_center:
+					map->dijk_hiker[y][x] = INT_MAX;
+					map->dijk_rival[y][x] = INT_MAX;
+					map->dijk_pc[y][x] = 10;
+					break;
+				case ter_grass:
+					map->dijk_hiker[y][x] = 15;
+					map->dijk_rival[y][x] = 20;
+					map->dijk_pc[y][x] = 20;
+					break;
+				case ter_clearing:
+					map->dijk_hiker[y][x] = 10;
+					map->dijk_rival[y][x] = 10;
+					map->dijk_pc[y][x] = 10;
+					break;
+				case empty:
+				case debug:
+					map->dijk_hiker[y][x] = INT_MAX;
+					map->dijk_rival[y][x] = INT_MAX;
+					map->dijk_pc[y][x] = INT_MAX;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+}
+
+void map_printDijk(map_t *map) {
+	int y;
+	int x;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			if (map->dijk_hiker[y][x] == INT_MAX) {
+				printf("   ");
+			} else {
+				printf("%02d ", map->dijk_hiker[y][x]);
 			}
 		}
 		putchar('\n');

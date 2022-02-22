@@ -11,12 +11,16 @@
 #include <stdint.h>
 #include <math.h>
 #include <time.h>
+#include <limits.h>
 #include "pos.h"
 #include "globals.h"
 #include "terrain.h"
 
 typedef struct map {
 	terrain_t m[MAP_Y][MAP_X];
+	int dijk_hiker[MAP_Y][MAP_X];
+	int dijk_rival[MAP_Y][MAP_X];
+	int dijk_pc[MAP_Y][MAP_X];
 	int north, south, east, west;
 } map_t;
 
@@ -40,5 +44,8 @@ int is_validTree(map_t *map, int x, int y);
 
 void map_print(map_t *map);
 
+void map_generateCosts(map_t *map);
+
+void map_printDijk(map_t *map);
 
 #endif // MAP_H

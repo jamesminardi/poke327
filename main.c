@@ -3,6 +3,7 @@
 #include <time.h>
 #include "globals.h"
 #include "world.h"
+#include "map.h"
 
 world_t world;
 
@@ -16,7 +17,7 @@ int main(int argc, char *argv[]) {
 	int x;
 	int y;
 
-	do{
+	do {
 		printf("\n");
 		world_print();
 		printf("Current position is (%d,%d).  "
@@ -26,6 +27,10 @@ int main(int argc, char *argv[]) {
 
 		scanf(" %c", &input);
 		switch (input) {
+			case 'd':
+				map_generateCosts(worldxy(world.pos.x,world.pos.y));
+				map_printDijk(worldxy(world.pos.x,world.pos.y));
+				break;
 			case 'n':
 				world_move(world.pos.x, world.pos.y - 1);
 				break;
@@ -43,11 +48,14 @@ int main(int argc, char *argv[]) {
 				scanf("%d", &y);
 				world_move(x, y);
 				break;
+			case '?':
+			case 'h':
+				printf("Move with 'e'ast, 'w'est, 'n'orth, 's'outh or 'f'ly x y.\n"
+					   "Quit with 'q'.  '?' and 'h' print this help message.\n");
+				break;
 			default:
 				break;
 		}
-		//world_print();
-		//printf("Pos: %d, %d\n", world.pos.x, world.pos.y);
 	} while (input != 'q');
 	world_delete();
 	return 0;
