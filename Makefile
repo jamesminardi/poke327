@@ -12,8 +12,8 @@ world.o: world.c world.h globals.h terrain.h pos.h map.h
 map.o: map.c map.h globals.h terrain.h pos.h
 	gcc -Wall -Werror -g -o map.o -c map.c
 
-heap.o: heap.c heap.h
-	gcc -Wall -Werror -g -o heap.o -c heap.c
+heap: heap.c heap.h
+	gcc -Wall -Werror -g heap.c -o heap
 
 clean:
 	rm -f poke327 *~ *.o core
