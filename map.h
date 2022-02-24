@@ -18,9 +18,9 @@
 
 typedef struct map {
 	terrain_t m[MAP_Y][MAP_X];
-	int dijk_hiker[MAP_Y][MAP_X];
-	int dijk_rival[MAP_Y][MAP_X];
-	int dijk_pc[MAP_Y][MAP_X];
+	int hiker[MAP_Y][MAP_X];
+	int rival[MAP_Y][MAP_X];
+	int pc[MAP_Y][MAP_X];
 	int north, south, east, west;
 } map_t;
 
@@ -46,6 +46,6 @@ void map_print(map_t *map);
 
 void map_generateCosts(map_t *map);
 
-void map_printDijk(map_t *map);
+void map_printCostMap(int cost_map[MAP_Y][MAP_X]);
 
 #endif // MAP_H

@@ -6,6 +6,7 @@
 #define worldxy(x, y) (world.w[y][x])
 #endif // WORLD_XY
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -15,6 +16,14 @@
 #include "globals.h"
 #include "terrain.h"
 #include "map.h"
+#include "heap.h"
+
+typedef struct path {
+	heap_node_t *hn;
+	pos_t pos;
+	pos_t from;
+	int cost;
+} path_t;
 
 typedef struct world {
 	map_t *w[399][399];
@@ -33,5 +42,7 @@ void world_delete();
 void world_move(int x, int y);
 
 void world_print();
+
+void dijkstra_hiker(map_t *map, pos_t start);
 
 #endif // WORLD_H
