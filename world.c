@@ -4,8 +4,8 @@ void world_init() {
 	//world.seed = time(NULL);
 	world.seed = 1;
 	srand(world.seed);
-	world.pos.x = 199;
-	world.pos.y = 199;
+	world.cur_idx.x = 199;
+	world.cur_idx.y = 199;
 
 	int x;
 	int y;
@@ -14,7 +14,7 @@ void world_init() {
 			worldxy(x, y) = NULL;
 		}
 	}
-	world_move(world.pos.x, world.pos.y);
+	world_move(world.cur_idx.x, world.cur_idx.y);
 }
 
 void world_delete() {
@@ -38,37 +38,37 @@ void world_move(int x, int y) {
 		printf("Out of bounds world_move. Position did not change\n");
 		return;
 	}
-	world.pos.x = x;
-	world.pos.y = y;
-	if (worldxy(world.pos.x, world.pos.y) == NULL) {
-		world_newMap(world.pos.x, world.pos.y);
+	world.cur_idx.x = x;
+	world.cur_idx.y = y;
+	if (world.cur_map == NULL) {
+		world_newMap(world.cur_idx.x, world.cur_idx.y);
 	}
 }
 
 void world_newMap() {
 
-	worldxy(world.pos.x, world.pos.y) = malloc(sizeof(*worldxy(world.pos.x, world.pos.y)));
+	map_t *cur_map = malloc(sizeof(*worldxy(world.cur_idx.x, world.cur_idx.y)));
 
 	/* Set exit positions */
-	if (world.pos.y - 1 > 0 && worldxy(world.pos.x, world.pos.y - 1) != NULL) {
-		worldxy(world.pos.x, world.pos.y)->north = worldxy(world.pos.x, world.pos.y - 1)->south;
+	if (world.cur_idx.y - 1 > 0 && worldxy(world.cur_idx.x, world.cur_idx.y - 1) != NULL) {
+		worldxy(world.cur_idx.x, world.cur_idx.y)->north = worldxy(world.cur_idx.x, world.cur_idx.y - 1)->south;
 	} else {
-		worldxy(world.pos.x, world.pos.y)->north = rand() % (MAP_X - 4) + 2;
+		worldxy(world.cur_idx.x, world.cur_idx.y)->north = rand() % (MAP_X - 4) + 2;
 	}
-	if (world.pos.y + 1 < WORLD_Y && worldxy(world.pos.x, world.pos.y + 1) != NULL) {
-		worldxy(world.pos.x, world.pos.y)->south = worldxy(world.pos.x, world.pos.y + 1)->north;
+	if (world.cur_idx.y + 1 < WORLD_Y && worldxy(world.cur_idx.x, world.cur_idx.y + 1) != NULL) {
+		worldxy(world.cur_idx.x, world.cur_idx.y)->south = worldxy(world.cur_idx.x, world.cur_idx.y + 1)->north;
 	} else {
-		worldxy(world.pos.x, world.pos.y)->south = rand() % (MAP_X - 4) + 2;
+		worldxy(world.cur_idx.x, world.cur_idx.y)->south = rand() % (MAP_X - 4) + 2;
 	}
-	if (world.pos.x + 1 < WORLD_X && worldxy(world.pos.x + 1, world.pos.y) != NULL) {
-		worldxy(world.pos.x, world.pos.y)->east = worldxy(world.pos.x + 1, world.pos.y)->west;
+	if (world.cur_idx.x + 1 < WORLD_X && worldxy(world.cur_idx.x + 1, world.cur_idx.y) != NULL) {
+		worldxy(world.cur_idx.x, world.cur_idx.y)->east = worldxy(world.cur_idx.x + 1, world.cur_idx.y)->west;
 	} else {
-		worldxy(world.pos.x, world.pos.y)->east = rand() % (MAP_Y - 4) + 2;
+		worldxy(world.cur_idx.x, world.cur_idx.y)->east = rand() % (MAP_Y - 4) + 2;
 	}
-	if (world.pos.x - 1 > 0 && worldxy(world.pos.x - 1, world.pos.y) != NULL) {
-		worldxy(world.pos.x, world.pos.y)->west = worldxy(world.pos.x - 1, world.pos.y)->east;
+	if (world.cur_idx.x - 1 > 0 && worldxy(world.cur_idx.x - 1, world.cur_idx.y) != NULL) {
+		worldxy(world.cur_idx.x, world.cur_idx.y)->west = worldxy(world.cur_idx.x - 1, world.cur_idx.y)->east;
 	} else {
-		worldxy(world.pos.x, world.pos.y)->west = rand() % (MAP_Y - 4) + 2;
+		worldxy(world.cur_idx.x, world.cur_idx.y)->west = rand() % (MAP_Y - 4) + 2;
 	}
 
 	int i;
@@ -77,28 +77,28 @@ void world_newMap() {
 	// Init map to clearing
 	for (i = 0; i < MAP_Y; i++) {
 		for (j = 0; j < MAP_X; j++) {
-			worldxy(world.pos.x, world.pos.y)->m[i][j] = ter_clearing;
+			world.cur_map->m[i][j] = ter_clearing;
 		}
 	}
-	map_populate(worldxy(world.pos.x, world.pos.y));
+	map_populate(world.cur_map);
 
 	/* Remove road exits on edge of world */
-	if (world.pos.x == 0) {
-		worldxy(world.pos.x, world.pos.y)->m[worldxy(world.pos.x, world.pos.y)->west][0] = ter_border;
+	if (world.cur_idx.x == 0) {
+		world.cur_map->m[world.cur_map->west][0] = ter_border;
 	}
-	if (world.pos.x == WORLD_X - 1) {
-		worldxy(world.pos.x, world.pos.y)->m[worldxy(world.pos.x, world.pos.y)->east][MAP_X - 1] = ter_border;
+	if (world.cur_idx.x == WORLD_X - 1) {
+		world.cur_map->m[world.cur_map->east][MAP_X - 1] = ter_border;
 	}
-	if (world.pos.y == 0) {
-		worldxy(world.pos.x, world.pos.y)->m[0][worldxy(world.pos.x, world.pos.y)->north] = ter_border;
+	if (world.cur_idx.y == 0) {
+		world.cur_map->m[0][world.cur_map->north] = ter_border;
 	}
-	if (world.pos.y == WORLD_Y - 1) {
-		worldxy(world.pos.x, world.pos.y)->m[MAP_Y - 1][worldxy(world.pos.x, world.pos.y)->south] = ter_border;
+	if (world.cur_idx.y == WORLD_Y - 1) {
+		world.cur_map->m[MAP_Y - 1][world.cur_map->south] = ter_border;
 	}
 }
 
 void world_print() {
-	map_print(worldxy(world.pos.x, world.pos.y));
+	map_print(world.cur_map);
 }
 
 static int dijkstra_cmp(const void *key, const void *with) {
@@ -177,7 +177,7 @@ void dijkstra_hiker(map_t *map, pos_t start) {
 				distance[neighbors[i].y][neighbors[i].x].cost = p->cost + map->hiker[neighbors[i].y][neighbors[i].x];
 				distance[neighbors[i].y][neighbors[i].x].from.y = p->pos.y;
 				distance[neighbors[i].y][neighbors[i].x].from.x = p->pos.x;
-				heap_decrease_key_no_replace(&heap, distance[neighbors[i].y][neighbors[i].x].hn);
+				heap_decrease_key_no_replace(&heap, distance[neighbors[i].y][neighbors[i].x].hn); // seg faulting in here. Can't find what I'm doing wrong
 			}
 		}
 	}

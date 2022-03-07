@@ -18,6 +18,18 @@
 #include "map.h"
 #include "heap.h"
 
+typedef enum character {
+	char_pc,
+	char_hiker,
+	char_rival,
+	char_other,
+	num_character_types // Always right
+} character_t;
+
+typedef struct pc {
+	pos_t pos;
+} pc_t;
+
 typedef struct path {
 	heap_node_t *hn;
 	pos_t pos;
@@ -26,8 +38,11 @@ typedef struct path {
 } path_t;
 
 typedef struct world {
-	map_t *w[399][399];
-	pos_t pos;
+	map_t *w[WORLD_X][WORLD_Y];
+	pos_t cur_idx;
+	map_t *cur_map;
+
+	pc_t pc;
 	int seed;
 } world_t;
 
