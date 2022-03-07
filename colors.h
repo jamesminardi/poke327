@@ -1,5 +1,5 @@
-#ifndef TERRAIN_H
-#define TERRAIN_H
+#ifndef COLORS_H
+#define COLORS_H
 
 //Regular text
 #define BLK "\e[0;30m" // Black
@@ -78,21 +78,4 @@
 #define CRESET "\e[0m"
 #define COLOR_RESET "\e[0m"
 
-
-typedef enum terrain {
-	debug,
-	empty,
-	ter_border,
-	ter_clearing,
-	ter_grass,
-	ter_path,
-	ter_boulder,
-	ter_tree,
-	ter_center,
-	ter_mart,
-	ter_mountain,
-	ter_forest,
-	ter_water
-} terrain_t;
-
-#endif // TERRAIN_H
+#endif // COLORS_H

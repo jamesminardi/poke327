@@ -206,7 +206,6 @@ void map_print(map_t *map) {
 	int x;
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
-			if (!(x == 30 && y == 15)) { // TODO REMOVE
 				switch (mapxy(x, y)) {
 					case ter_border:
 					case ter_boulder:
@@ -242,100 +241,6 @@ void map_print(map_t *map) {
 					default:
 						break;
 				}
-			} else {
-				printf("@");
-			}
-		}
-		putchar('\n');
-	}
-}
-
-
-void map_generateCosts(map_t *map) {
-
-	int x;
-	int y;
-
-	for (x = 0; x < MAP_X; x++) {
-
-			mapxy(x, 0) = ter_border;
-			mapxy(x, MAP_Y - 1) = ter_border;
-
-		for (y = 0; y < MAP_Y; y++) {
-
-				mapxy(0, y) = ter_border;
-				mapxy(MAP_X - 1, y) = ter_border;
-
-			switch (mapxy(x, y)) {
-				case ter_boulder:
-				case ter_border:
-					map->hiker[y][x] = INT_MAX;
-					map->rival[y][x] = INT_MAX;
-					map->pc[y][x] = INT_MAX;
-					break;
-				case ter_mountain:
-					map->hiker[y][x] = 15;
-					map->rival[y][x] = INT_MAX;
-					map->pc[y][x] = INT_MAX;
-					break;
-				case ter_tree:
-					map->hiker[y][x] = INT_MAX;
-					map->rival[y][x] = INT_MAX;
-					map->pc[y][x] = INT_MAX;
-					break;
-				case ter_forest:
-					map->hiker[y][x] = 15;
-					map->rival[y][x] = INT_MAX;
-					map->pc[y][x] = INT_MAX;
-					break;
-				case ter_path:
-					map->hiker[y][x] = 10;
-					map->rival[y][x] = 10;
-					map->pc[y][x] = 10;
-					break;
-				case ter_mart:
-					map->hiker[y][x] = INT_MAX;
-					map->rival[y][x] = INT_MAX;
-					map->pc[y][x] = 10;
-					break;
-				case ter_center:
-					map->hiker[y][x] = INT_MAX;
-					map->rival[y][x] = INT_MAX;
-					map->pc[y][x] = 10;
-					break;
-				case ter_grass:
-					map->hiker[y][x] = 15;
-					map->rival[y][x] = 20;
-					map->pc[y][x] = 20;
-					break;
-				case ter_clearing:
-					map->hiker[y][x] = 10;
-					map->rival[y][x] = 10;
-					map->pc[y][x] = 10;
-					break;
-				case empty:
-				case debug:
-					map->hiker[y][x] = INT_MAX;
-					map->rival[y][x] = INT_MAX;
-					map->pc[y][x] = INT_MAX;
-					break;
-				default:
-					break;
-			}
-		}
-	}
-}
-
-void map_printCostMap(int cost_map[MAP_Y][MAP_X]) {
-	int y;
-	int x;
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			if (cost_map[y][x] == INT_MAX) {
-				printf("  ");
-			} else {
-				printf("%02d ", cost_map[y][x]);
-			}
 		}
 		putchar('\n');
 	}

@@ -1,17 +1,16 @@
 # poke327
 ASCII Pokémon roguelike in C
 
-When the application is ran, an map of size 80x21 is printed to the terminal with randomly placed terrain and buildings. Current terrain contains clearings, trees, tall grass, boulders, and paths. There is one pokecenter and pokemart per map as well.
+Program currently has a fixed seed and PC location and is only calculating hiker distances for debugging purposes.
 
-When the user enters the commands n, s, e, or w, the screen will display the adjacent map. The entire world is 399x399 maps.
+I could not get dijkstra's algorithm debugged. It currently seg faults in compare and previously did in heap_decrease_key_no_replace when assigning the parent node.
 
-To fly or skip around to different maps, use "f n1 n2" where n1 and n2 are integers between 0 and 398.
+I have tried not admitting infinity nodes in the heap, allowing them, adding the costs differently, etc. Even when following the path example in the instructors code for 1.02 hasn't helped me. I couldn't find what I was missing or needed to adjust for these distance maps.
+
 
 # setup
 use make or make all to compile
 
 make clean will clean the directory of compiled files
 
-# bugs
-Pokecenter probability not implemented.
 

@@ -13,12 +13,30 @@ int main(int argc, char *argv[]) {
 	world_init();
 	world_print();
 	printf("Using seed: %d\n", world.seed);
-	pos_t pc;
-	pc.y = 15;
-	pc.x = 30;
-	map_generateCosts(worldxy(world.pos.x,world.pos.y));
-	map_printCostMap(worldxy(world.pos.x,world.pos.y)->hiker);
-	dijkstra_hiker(worldxy(world.pos.x,world.pos.y), pc);
+
+	// Init pc
+	int x, y;
+	do {
+		x = rand() % (MAP_X - 2) + 1;
+		y = rand() % (MAP_Y - 2) + 1;
+	} while (world.cur_map->m[y][x] != ter_path);
+	world.pc.pos.x = x;
+	world.pc.pos.y = y;
+
+	pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
+
+	// Print hiker map
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			if (world.rival_dist[y][x] == INT_MAX) {
+				printf("   ");
+			} else {
+				printf("%02d ", world.rival_dist[y][x] % 100);
+			}
+		}
+	}
+
+
 //	char input;
 //	int x;
 //	int y;

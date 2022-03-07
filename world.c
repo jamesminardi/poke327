@@ -108,6 +108,24 @@ static int dijkstra_cmp(const void *key, const void *with) {
 	return tmp.cost - tmp2.cost;
 }
 
+static int32_t hiker_cmp(const void *key, const void *with) {
+	int key_dist = world.hiker_dist[((path_t *) key)->pos.y][((path_t *) key)->pos.x];
+	int with_dist = world.hiker_dist[((path_t *) with)->pos.y][((path_t *) with)->pos.x];
+	return key_dist - with_dist;
+}
+
+static int32_t rival_cmp(const void *key, const void *with) {
+	int key_dist = world.hiker_dist[((path_t *) key)->pos.y][((path_t *) key)->pos.x];
+	int with_dist = world.hiker_dist[((path_t *) with)->pos.y][((path_t *) with)->pos.x];
+	return key_dist - with_dist;
+}
+
+static int32_t pc_cmp(const void *key, const void *with) {
+	int key_dist = world.hiker_dist[((path_t *) key)->pos.y][((path_t *) key)->pos.x];
+	int with_dist = world.hiker_dist[((path_t *) with)->pos.y][((path_t *) with)->pos.x];
+	return key_dist - with_dist;
+}
+
 static void dijkstra_neighbor_init(pos_t *neighbors, path_t *center) {
 	neighbors[0].y = center->pos.y - 1;
 	neighbors[0].x = center->pos.x - 1;
@@ -134,63 +152,72 @@ static void dijkstra_neighbor_init(pos_t *neighbors, path_t *center) {
 	neighbors[7].x = center->pos.x + 1;
 }
 
-
-
-void dijkstra_hiker(map_t *map, pos_t start) {
+void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t character, const pos_t start) {
+	heap_t heap;
+	path_t *c;
 	path_t distance[MAP_Y][MAP_X];
-	path_t *p;
 	int x, y;
 	int i;
-	heap_t heap;
-	heap_init(&heap, dijkstra_cmp, NULL);
+	switch(character) {
+		case char_pc:
+			heap_init(&heap, pc_cmp, NULL);
+			break;
+		case char_hiker:
+			heap_init(&heap, hiker_cmp, NULL);
+			break;
+		case char_rival:
+			heap_init(&heap, rival_cmp, NULL);
+			break;
+		default:
+			break;
+	}
+
 	//dijkstra_infinity_init(distance); // Fill distance map with infinity
 	//dijkstra_infinity_init(visited);
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
-			distance[y][x].cost = INT_MAX;
+			//distance[y][x].cost = INT_MAX;
+			char_dist[y][x] = INT_MAX;
 			distance[y][x].pos.y = y;
 			distance[y][x].pos.x = x;
 		}
 	}
 	// Set PC cost to 0
-	distance[start.y][start.x].cost = 0;
+	//distance[start.y][start.x].cost = 0;
+	char_dist[start.y][start.x] = 0;
 
 	// Insert all infinity cost tiles into priority queue (entire map minus boundaries)
 	for (y = 1; y < MAP_Y - 1; y++) {
 		for (x = 1; x < MAP_X - 1; x++) {
-			if (map->hiker[y][x] != INT_MAX) {
+
+			if (ter_cost(x,y,character) != INT_MAX) {
 				distance[y][x].hn = heap_insert(&heap, &distance[y][x]);
+			} else {
+				distance[y][x].hn = NULL;
 			}
 		}
 	}
 
-	while ((p = heap_remove_min(&heap))) {
-		p->hn = NULL; // mark as visited
+	while ((c = heap_remove_min(&heap))) {
+		c->hn = NULL; // mark as visited
 		pos_t neighbors[8];
-		dijkstra_neighbor_init(neighbors, p);
+		dijkstra_neighbor_init(neighbors, c);
 		// For every neighbor of p, if not yet visited and cost is greater than current tile(p), then change it
 		for (i = 0; i < 7; i++) {
 			if (distance[neighbors[i].y][neighbors[i].x].hn &&
-			   (distance[neighbors[i].y][neighbors[i].x].cost >
-			   (p->cost + map->hiker[neighbors[i].y][neighbors[i].x])))
+			   (char_dist[neighbors[i].y][neighbors[i].x] >
+			   (char_dist[c->pos.y][c->pos.x] +
+			   move_cost[character][map->m[c->pos.y][c->pos.x]])))
 			{
-				distance[neighbors[i].y][neighbors[i].x].cost = p->cost + map->hiker[neighbors[i].y][neighbors[i].x];
-				distance[neighbors[i].y][neighbors[i].x].from.y = p->pos.y;
-				distance[neighbors[i].y][neighbors[i].x].from.x = p->pos.x;
+//				distance[neighbors[i].y][neighbors[i].x].cost = c->cost + map->hiker[neighbors[i].y][neighbors[i].x];
+//				distance[neighbors[i].y][neighbors[i].x].from.y = c->pos.y;
+//				distance[neighbors[i].y][neighbors[i].x].from.x = c->pos.x;
+				char_dist[neighbors[i].y][neighbors[i].x] =
+						char_dist[c->pos.y][c->pos.x] +
+						ter_cost(c->pos.x, c->pos.y, character);
 				heap_decrease_key_no_replace(&heap, distance[neighbors[i].y][neighbors[i].x].hn); // seg faulting in here. Can't find what I'm doing wrong
 			}
 		}
 	}
-	// Print shortest path map
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			if (distance[y][x].cost == INT_MAX) {
-				printf("   ");
-			} else {
-				printf("%02d ", distance[y][x].cost % 100);
-			}
-		}
-	}
-	printf("\n");
 	heap_delete(&heap);
 }

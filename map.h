@@ -14,13 +14,26 @@
 #include <limits.h>
 #include "pos.h"
 #include "globals.h"
-#include "terrain.h"
+#include "colors.h"
+typedef enum terrain {
+	debug,
+	empty,
+	ter_border,
+	ter_clearing,
+	ter_grass,
+	ter_path,
+	ter_boulder,
+	ter_tree,
+	ter_center,
+	ter_mart,
+	ter_mountain,
+	ter_forest,
+	ter_water,
+	num_terrain_types
+} terrain_t;
 
 typedef struct map {
-	terrain_t m[MAP_Y][MAP_X];
-	int hiker[MAP_Y][MAP_X];
-	int rival[MAP_Y][MAP_X];
-	int pc[MAP_Y][MAP_X];
+	enum terrain m[MAP_Y][MAP_X];
 	int north, south, east, west;
 } map_t;
 
