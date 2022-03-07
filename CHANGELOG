@@ -1,3 +1,195 @@
+commit f8c22ddb20e99012d82897a813db8c7c4461bd0b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 24 00:48:40 2022 -0600
+
+    Can't get dijkstra's algorithm to work. Segfaulting
+
+commit 8a7a833b2569b4347f052602a18e6dc2920549ac
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:04:32 2022 -0600
+
+    Add gitignore for intellij project files
+
+commit aa5459668066bffa0f4870ca1c1375e36487392a
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:03:03 2022 -0600
+
+    Remove test heap target
+
+commit d4726c1f6ae8a3b10055b0861e476f8ae48b4f59
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:01:40 2022 -0600
+
+    Implemented integer fibonacci heap
+
+commit d0c87821c53f587fde8baf207b4294273150f8f6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 21 19:33:26 2022 -0600
+
+    Create heap files
+
+commit 70cf4305fc27b61917221ef3dfb9152a83f310ed
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 21 19:30:43 2022 -0600
+
+    print hiker and rival weight maps
+
+commit d65034a9bde864c789be4a615cac62b3b1919d7d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 22:18:14 2022 -0600
+
+    Adjust input loop
+
+commit 9b75b5cb0dbd27d61c2f3955b1295fcafe3c1193
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:46 2022 -0600
+
+    Update pos.h
+
+commit 8487ee29c8972f2dba3ac95362e93b14561aaeca
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:23 2022 -0600
+
+    Remove unnecessary ter types
+
+commit 17e4d4ac4d28c9e38ffaf727e545464d4b98502b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:01 2022 -0600
+
+    Finish refactor of map vs world
+
+commit 19739ae1b79ba2bbd203b529c6a6e6ae49a35ec6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:16:37 2022 -0600
+
+    Fixed world.o not included in poke327 executable
+
+commit cc7f02e2b258ac03772e99a06d03314150917687
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:14:45 2022 -0600
+
+    Refactor world and map code
+
+commit 0f935228018b9ecb30712a70bf2920edee0708cd
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:12:19 2022 -0600
+
+    Add world.c world.h files
+
+commit d0f513c3aed56d0bce44ac75f50dc27eb519bd9b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 04:07:21 2022 -0600
+
+    Update readme
+
+commit 0189d88011e3315e080ba802d8e46678e919ddcc
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 04:07:07 2022 -0600
+
+    Fix out of bounds access in south east region
+
+commit 248c9a37d44288b741c1663e1cc48755f4530dd1
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 03:47:55 2022 -0600
+
+    create world state and world boundaries
+
+commit 293d838c7f8f7126728b17f0bebbb3b43abc470f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 01:00:17 2022 -0600
+
+    Init as world instead of map
+
+commit f41b8d1a85b0848f96cad8ef7bd340cfc93f4a53
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 00:38:41 2022 -0600
+
+    Finish refactoring to 1.01 specs
+
+commit 0ec531c5ea25103573f438d11cca4b65c5b0bfd8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 20:23:03 2022 -0600
+
+    Refactor placing paths code
+
+commit 207359f32e0a747364af7a84a16795aeb968aa92
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 20:12:33 2022 -0600
+
+    Remove double roads bug
+
+commit a207628823e71750525353311b0d967f18626925
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 20:02:09 2022 -0600
+
+    Finish refactor of placing buildings
+
+commit 499c62349749c63bd27f23ee1edacc5864364287
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 19:18:07 2022 -0600
+
+    Refactor name
+
+commit f1a2d80698418630e3c0f999570e4122317a2cc3
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 19:16:56 2022 -0600
+
+    Add find valid builing function
+
+commit 529012d3512618c1d73e36b7a92856d5d62967d4
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 12:34:42 2022 -0600
+
+    Add color support
+
+commit b3ca20ae045f1034a0de6b5c7b27cdb7d6b02e65
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 11:41:06 2022 -0600
+
+    Rename world.o to map.o
+
+commit 2b83b95c782eb48dd73feecfc56e6dacc21e7060
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 11:40:45 2022 -0600
+
+    Rename world to map
+
+commit fd61f922fe2185bfcf295043163ab5b84c244e72
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 8 22:29:44 2022 -0600
+
+    Create world struct and map struct
+
+commit bb3695f6d196fad19e30917d1be23120e38be3e7
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 8 22:24:58 2022 -0600
+
+    Adjust tiles enum to support unicode
+
+commit 7a136a958cc6f78ef5de7bc5f5b14319e5042c24
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 8 21:39:04 2022 -0600
+
+    Add tree and grass global defines
+
+commit e81496c29dcbcf84dac50a1282622f8b29cb02e5
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Thu Feb 3 00:19:25 2022 -0600
+
+    Update README
+
+commit 9ec8363477ddc6c12f058692b118474bf1bac047
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 3 00:10:41 2022 -0600
+
+    update for v1.01
+
+commit aae1f593ec3489823d58402b107f52f67ed6c53d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 3 00:01:46 2022 -0600
+
+    Update changelog for 1.01
+
 commit b8f3f428a292a78217c2d23910e437e22ba881bc
 Author: jamesminardi <jamesminardip@gmail.com>
 Date:   Wed Feb 2 23:57:02 2022 -0600
