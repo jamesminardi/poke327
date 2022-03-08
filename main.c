@@ -110,8 +110,8 @@ int main(int argc, char *argv[]) {
 	pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
 	pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);
 
-	print_hiker_dist();
-	print_rival_dist();
+	//print_hiker_dist();
+	//print_rival_dist();
 
 //	char input;
 //	int x;

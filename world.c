@@ -91,15 +91,6 @@ void world_newMap() {
 		world.cur_map->west = rand() % (MAP_Y - 4) + 2;
 	}
 
-	int i;
-	int j;
-
-	// Init map to clearing
-	for (i = 0; i < MAP_Y; i++) {
-		for (j = 0; j < MAP_X; j++) {
-			world.cur_map->m[i][j] = ter_clearing;
-		}
-	}
 	map_populate(world.cur_map);
 
 	/* Remove road exits on edge of world */

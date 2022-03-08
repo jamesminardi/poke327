@@ -4,10 +4,21 @@
  * Places all nodes on the map
  */
 void map_populate(map_t *map) {
+
+	int i;
+	int j;
+
+	// Init map to clearing
+	for (i = 0; i < MAP_Y; i++) {
+		for (j = 0; j < MAP_X; j++) {
+			map->m[i][j] = ter_clearing;
+		}
+	}
+
 	map_placeTree(map);
 	map_placeGrass(map);
-	map_placeBorder(map);
 	map_placePath(map);
+	map_placeBorder(map);
 	map_placeCenter(map);
 	map_placeMart(map);
 }
@@ -61,6 +72,10 @@ void find_validBuildingLocation(map_t *map, int *x, int *y) {
 	} while (1);
 }
 
+
+/*
+ * Does not place path on border
+ */
 void map_placePath(map_t *map) {
 	int x_break, y_break;
 
@@ -72,18 +87,18 @@ void map_placePath(map_t *map) {
 
 	} while (abs(map->north - x_break) == 1 || abs(map->south - x_break == 1) ||
 			 abs(map->west - y_break) == 1 || abs(map->east - y_break == 1));
-	if (map->north != 0) {
-		mapxy(map->north, 0) = ter_path;
-	}
-	if (map->south != 0) {
-		mapxy(map->south, MAP_Y - 1) = ter_path;
-	}
-	if (map->west != 0) {
-		mapxy(0, map->west) = ter_path;
-	}
-	if (map->east != 0) {
-		mapxy(MAP_X - 1, map->east) = ter_path;
-	}
+//	if (map->north != 0) {
+//		mapxy(map->north, 0) = ter_path;
+//	}
+//	if (map->south != 0) {
+//		mapxy(map->south, MAP_Y - 1) = ter_path;
+//	}
+//	if (map->west != 0) {
+//		mapxy(0, map->west) = ter_path;
+//	}
+//	if (map->east != 0) {
+//		mapxy(MAP_X - 1, map->east) = ter_path;
+//	}
 
 	/*
 	 * Place roads by connecting opposite exits together with the break
@@ -112,19 +127,30 @@ void map_placePath(map_t *map) {
 	}
 }
 
+/*
+ * Places border walls with path exits
+ */
 void map_placeBorder(map_t *map) {
 
 	int y;
 	int x;
 
+	// left & right
 	for (y = 0; y < MAP_Y; y++) {
 		mapxy(0, y) = ter_border;
 		mapxy(MAP_X - 1, y) = ter_border;
+
 	}
+	// top & bottom
 	for (x = 0; x < MAP_X; x++) {
 		mapxy(x, 0) = ter_border;
 		mapxy(x, MAP_Y - 1) = ter_border;
 	}
+
+	mapxy(map->north, 	0) 		 	= ter_exit;
+	mapxy(map->south, 	MAP_Y - 1)	= ter_exit;
+	mapxy(0, 			map->west) 	= ter_exit;
+	mapxy(MAP_X - 1, 	map->east)	= ter_exit;
 }
 
 /*
@@ -217,6 +243,9 @@ void map_print(map_t *map) {
 					case ter_tree:
 					case ter_forest:
 						printf(GRN "^" CRESET);
+						break;
+					case ter_exit:
+						printf(CYN "#" CRESET);
 						break;
 					case ter_path:
 						printf(YEL "#" CRESET);

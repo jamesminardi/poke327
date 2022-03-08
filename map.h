@@ -19,17 +19,18 @@ typedef enum terrain {
 	debug, 			// 0
 	empty, 			// 1
 	ter_border, 	// 2
-	ter_clearing, 	// 3
-	ter_grass, 		// 4
-	ter_path, 		// 5
-	ter_boulder, 	// 6
-	ter_tree, 		// 7
-	ter_center, 	// 8
-	ter_mart, 		// 9
-	ter_mountain, 	// 10
-	ter_forest, 	// 11
-	ter_water, 		// 12
-	num_terrain_types // 13
+	ter_exit,		// 3
+	ter_clearing, 	// 4
+	ter_grass, 		// 5
+	ter_path, 		// 6
+	ter_boulder, 	// 7
+	ter_tree, 		// 8
+	ter_center, 	// 9
+	ter_mart, 		// 10
+	ter_mountain, 	// 11
+	ter_forest, 	// 12
+	ter_water, 		// 13
+	num_terrain_types // 14
 } terrain_t;
 
 typedef struct map {
