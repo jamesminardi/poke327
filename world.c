@@ -1,12 +1,24 @@
 #include "world.h"
 
-void world_init() {
-	//world.seed = time(NULL);
-	world.seed = 1;
-	srand(world.seed);
-	world.cur_idx.x = 199;
-	world.cur_idx.y = 199;
+static void pc_init() {
+	// Set initial pc location to random place on path
+	int x, y;
+	do {
+		x = rand() % (MAP_X - 2) + 1;
+		y = rand() % (MAP_Y - 2) + 1;
+	} while (world.cur_map->m[y][x] != ter_path);
+	world.pc.pos.x = x;
+	world.pc.pos.y = y;
+}
 
+void world_init() {
+	srand(world.seed);
+
+	// Set spawn map location
+	world.cur_idx.x = (WORLD_X -1) / 2;
+	world.cur_idx.y = (WORLD_Y-1) / 2;
+
+	// Initialize world to maps of null
 	int x;
 	int y;
 	for (x = 0; x < WORLD_X; x++) {
@@ -14,7 +26,12 @@ void world_init() {
 			worldxy(x, y) = NULL;
 		}
 	}
+
+	// Initialize spawn map
 	world_move(world.cur_idx.x, world.cur_idx.y);
+
+	// Initialize pc
+	pc_init();
 }
 
 void world_delete() {
@@ -42,33 +59,36 @@ void world_move(int x, int y) {
 	world.cur_idx.y = y;
 	if (world.cur_map == NULL) {
 		world_newMap(world.cur_idx.x, world.cur_idx.y);
+	} else {
+		world.cur_map = worldxy(x, y);
 	}
 }
 
 void world_newMap() {
 
-	map_t *cur_map = malloc(sizeof(*worldxy(world.cur_idx.x, world.cur_idx.y)));
-
+	world.cur_map = malloc(sizeof(*world.cur_map));
+	int random;
 	/* Set exit positions */
 	if (world.cur_idx.y - 1 > 0 && worldxy(world.cur_idx.x, world.cur_idx.y - 1) != NULL) {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->north = worldxy(world.cur_idx.x, world.cur_idx.y - 1)->south;
+		world.cur_map->north = worldxy(world.cur_idx.x, world.cur_idx.y - 1)->south;
 	} else {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->north = rand() % (MAP_X - 4) + 2;
+		random = rand() % (MAP_X - 4 ) + 2;
+		world.cur_map->north = random;
 	}
 	if (world.cur_idx.y + 1 < WORLD_Y && worldxy(world.cur_idx.x, world.cur_idx.y + 1) != NULL) {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->south = worldxy(world.cur_idx.x, world.cur_idx.y + 1)->north;
+		world.cur_map->south = worldxy(world.cur_idx.x, world.cur_idx.y + 1)->north;
 	} else {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->south = rand() % (MAP_X - 4) + 2;
+		world.cur_map->south = rand() % (MAP_X - 4) + 2;
 	}
 	if (world.cur_idx.x + 1 < WORLD_X && worldxy(world.cur_idx.x + 1, world.cur_idx.y) != NULL) {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->east = worldxy(world.cur_idx.x + 1, world.cur_idx.y)->west;
+		world.cur_map->east = worldxy(world.cur_idx.x + 1, world.cur_idx.y)->west;
 	} else {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->east = rand() % (MAP_Y - 4) + 2;
+		world.cur_map->east = rand() % (MAP_Y - 4) + 2;
 	}
 	if (world.cur_idx.x - 1 > 0 && worldxy(world.cur_idx.x - 1, world.cur_idx.y) != NULL) {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->west = worldxy(world.cur_idx.x - 1, world.cur_idx.y)->east;
+		world.cur_map->west = worldxy(world.cur_idx.x - 1, world.cur_idx.y)->east;
 	} else {
-		worldxy(world.cur_idx.x, world.cur_idx.y)->west = rand() % (MAP_Y - 4) + 2;
+		world.cur_map->west = rand() % (MAP_Y - 4) + 2;
 	}
 
 	int i;
@@ -101,11 +121,33 @@ void world_print() {
 	map_print(world.cur_map);
 }
 
-static int dijkstra_cmp(const void *key, const void *with) {
-	path_t tmp = *(path_t *) key;
-	path_t tmp2 = *(path_t *) with;
-	//return ((path_t *) key)->cost - ((path_t *) with)->cost;
-	return tmp.cost - tmp2.cost;
+void print_hiker_dist() {
+	// Print hiker map
+	int x,y;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			if (world.hiker_dist[y][x] == INT_MAX) {
+				printf("   ");
+			} else {
+				printf("%02d ", world.hiker_dist[y][x] % 100);
+			}
+		}
+		printf("\n");
+	}
+}
+
+void print_rival_dist() {
+	int x,y;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			if (world.rival_dist[y][x] == INT_MAX) {
+				printf("   ");
+			} else {
+				printf("%02d ", world.rival_dist[y][x] % 100);
+			}
+		}
+		printf("\n");
+	}
 }
 
 static int32_t hiker_cmp(const void *key, const void *with) {
@@ -131,7 +173,7 @@ static void dijkstra_neighbor_init(pos_t *neighbors, path_t *center) {
 	neighbors[0].x = center->pos.x - 1;
 
 	neighbors[1].y = center->pos.y - 1;
-	neighbors[1].x = center->pos.x - 0;
+	neighbors[1].x = center->pos.x;
 
 	neighbors[2].y = center->pos.y - 1;
 	neighbors[2].x = center->pos.x + 1;
@@ -152,36 +194,48 @@ static void dijkstra_neighbor_init(pos_t *neighbors, path_t *center) {
 	neighbors[7].x = center->pos.x + 1;
 }
 
-void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t character, const pos_t start) {
-	heap_t heap;
-	path_t *c;
-	path_t distance[MAP_Y][MAP_X];
-	int x, y;
-	int i;
+static void pathfind_init_heap(heap_t *heap, character_t character) {
 	switch(character) {
 		case char_pc:
-			heap_init(&heap, pc_cmp, NULL);
+			heap_init(heap, pc_cmp, NULL);
 			break;
 		case char_hiker:
-			heap_init(&heap, hiker_cmp, NULL);
+			heap_init(heap, hiker_cmp, NULL);
 			break;
 		case char_rival:
-			heap_init(&heap, rival_cmp, NULL);
+			heap_init(heap, rival_cmp, NULL);
 			break;
 		default:
 			break;
 	}
+}
 
-	//dijkstra_infinity_init(distance); // Fill distance map with infinity
-	//dijkstra_infinity_init(visited);
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			//distance[y][x].cost = INT_MAX;
-			char_dist[y][x] = INT_MAX;
-			distance[y][x].pos.y = y;
-			distance[y][x].pos.x = x;
+void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t character, const pos_t start) {
+    heap_t heap;
+	static path_t *c;
+	static path_t distance[MAP_Y][MAP_X];
+	static int initialized = 0;
+	int x, y;
+	int i;
+
+	pathfind_init_heap(&heap, character);
+
+	if (!initialized) {
+		initialized = 1;
+		for (y = 0; y < MAP_Y; y++) {
+			for (x = 0; x < MAP_X; x++) {
+				distance[y][x].pos.y = y;
+				distance[y][x].pos.x = x;
+			}
 		}
 	}
+
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			char_dist[y][x] = INT_MAX;
+		}
+	}
+
 	// Set PC cost to 0
 	//distance[start.y][start.x].cost = 0;
 	char_dist[start.y][start.x] = 0;
@@ -204,18 +258,15 @@ void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t charact
 		dijkstra_neighbor_init(neighbors, c);
 		// For every neighbor of p, if not yet visited and cost is greater than current tile(p), then change it
 		for (i = 0; i < 7; i++) {
-			if (distance[neighbors[i].y][neighbors[i].x].hn &&
+			if ((distance[neighbors[i].y][neighbors[i].x].hn) &&
 			   (char_dist[neighbors[i].y][neighbors[i].x] >
 			   (char_dist[c->pos.y][c->pos.x] +
 			   move_cost[character][map->m[c->pos.y][c->pos.x]])))
 			{
-//				distance[neighbors[i].y][neighbors[i].x].cost = c->cost + map->hiker[neighbors[i].y][neighbors[i].x];
-//				distance[neighbors[i].y][neighbors[i].x].from.y = c->pos.y;
-//				distance[neighbors[i].y][neighbors[i].x].from.x = c->pos.x;
 				char_dist[neighbors[i].y][neighbors[i].x] =
 						char_dist[c->pos.y][c->pos.x] +
 						ter_cost(c->pos.x, c->pos.y, character);
-				heap_decrease_key_no_replace(&heap, distance[neighbors[i].y][neighbors[i].x].hn); // seg faulting in here. Can't find what I'm doing wrong
+				heap_decrease_key_no_replace(&heap, distance[neighbors[i].y][neighbors[i].x].hn);
 			}
 		}
 	}

@@ -16,24 +16,25 @@
 #include "globals.h"
 #include "colors.h"
 typedef enum terrain {
-	debug,
-	empty,
-	ter_border,
-	ter_clearing,
-	ter_grass,
-	ter_path,
-	ter_boulder,
-	ter_tree,
-	ter_center,
-	ter_mart,
-	ter_mountain,
-	ter_forest,
-	ter_water,
-	num_terrain_types
+	debug, 			// 0
+	empty, 			// 1
+	ter_border, 	// 2
+	ter_clearing, 	// 3
+	ter_grass, 		// 4
+	ter_path, 		// 5
+	ter_boulder, 	// 6
+	ter_tree, 		// 7
+	ter_center, 	// 8
+	ter_mart, 		// 9
+	ter_mountain, 	// 10
+	ter_forest, 	// 11
+	ter_water, 		// 12
+	num_terrain_types // 13
 } terrain_t;
 
 typedef struct map {
 	enum terrain m[MAP_Y][MAP_X];
+	int character_map[MAP_Y][MAP_X];
 	int north, south, east, west;
 } map_t;
 

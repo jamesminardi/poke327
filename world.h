@@ -29,10 +29,10 @@ typedef enum character {
 } character_t;
 
 static int move_cost[num_character_types][num_terrain_types] = {
-		{ INT_MAX, INT_MAX, 10, 10,      10,      20, 10, INT_MAX, INT_MAX },
-		{ INT_MAX, INT_MAX, 10, INT_MAX, INT_MAX, 15, 10, 15,      15      },
-		{ INT_MAX, INT_MAX, 10, INT_MAX, INT_MAX, 20, 10, INT_MAX, INT_MAX },
-		{ INT_MAX, INT_MAX, 10, INT_MAX, INT_MAX, 20, 10, INT_MAX, INT_MAX },
+		{ INT_MAX, INT_MAX, INT_MAX, 10, 20, 10, INT_MAX, INT_MAX, 10, 10, INT_MAX, INT_MAX, INT_MAX },
+		{ INT_MAX, INT_MAX, INT_MAX, 10, 15, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 15, 15, INT_MAX},
+		{ INT_MAX, INT_MAX, INT_MAX, 10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
+		{ INT_MAX, INT_MAX, INT_MAX, 10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
 };
 
 typedef struct pc {
@@ -57,6 +57,7 @@ typedef struct world {
 
 	pc_t pc;
 	int seed;
+	int num_trainers;
 } world_t;
 
 extern world_t world;
@@ -70,6 +71,10 @@ void world_delete();
 void world_move(int x, int y);
 
 void world_print();
+
+void print_hiker_dist();
+
+void print_rival_dist();
 
 void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t character, const pos_t start);
 

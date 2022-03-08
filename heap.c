@@ -109,7 +109,7 @@ void heap_node_delete(heap_t *h, heap_node_t *hn)
   while (hn) {
     if (hn->child) {
       heap_node_delete(h, hn->child);
-    } 
+    }
     next = hn->next;
     if (h->datum_delete) {
       h->datum_delete(hn->datum);
