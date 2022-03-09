@@ -9,10 +9,11 @@
 #define BLU "\e[0;34m" // Blue
 #define MAG "\e[0;35m" // Magenta
 #define CYN "\e[0;36m" // Cyan
-//#define WHT "\e[0;37m" // White
+#define WHT "\e[0;37m" // White
 #define BRN "\033[38;5;130m" // Brown
 #define BRIGHTGRN "\033[38;5;77m"
-#define BOULDER "\033[38;5;102m"
+#define BOULDER "\033[38;5;102m" // Greyish
+#define CHARACTER "\033[38;5;226m" // Bright yellow
 
 //Regular bold text
 #define BBLK "\e[1;30m"
