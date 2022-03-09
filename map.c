@@ -1,8 +1,5 @@
 #include "map.h"
 
-
-
-
 /*
  * Finds valid 2x2 building location coordinate.
  * Coordinate is the top left-most unit.
@@ -211,14 +208,6 @@ void npc_init(map_t *map, int num_npc){
 	character_t new_char;
 	int count, valid;
 
-	// Init character map to all unoccupied
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			mapxy(x,y) = ter_clearing;
-			charxy(x,y) = char_unoccupied;
-		}
-	}
-
 	// decrement count till zero, adding a random character each time
 	valid = 0;
 	for (count = num_trainers; count > 0; count--){
@@ -232,7 +221,7 @@ void npc_init(map_t *map, int num_npc){
 			x = rand() % (MAP_X - 2) + 1;
 			y = rand() % (MAP_Y - 2) + 1;
 			if (move_cost[new_char][mapxy(x,y)] != INT_MAX &&
-				charxy(x,y) == char_unoccupied) {
+				charxy(x,y) == char_unoccupied && mapxy(x,y) != ter_path) {
 				valid = 1;
 			}
 		} while (!valid);
@@ -247,15 +236,6 @@ void npc_init(map_t *map, int num_npc){
  * Places all nodes on the map
  */
 void terrain_init(map_t *map) {
-	int x, y;
-	// Init map to clearing and char map to null
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			mapxy(x,y) = ter_clearing;
-			// This means no character is occupying the space
-			charxy(x,y) = num_character_types;
-		}
-	}
 	// Terrain and buildings
 	map_placeTree(map);
 	map_placeGrass(map);
@@ -266,51 +246,141 @@ void terrain_init(map_t *map) {
 }
 
 /*
- * Prints map to terminal
+ * Prints entire map including characters & terrain
  */
 void map_print(map_t *map) {
 	int y;
 	int x;
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
+			if (charxy(x,y) != char_unoccupied) {
+				switch (charxy(x,y)) {
+					case char_pc:
+						PRINT_PC
+						break;
+					case char_rival:
+						PRINT_RIVAL
+						break;
+					case char_hiker:
+						PRINT_HIKER
+						break;
+					case char_statue:
+						PRINT_STATUE
+						break;
+					case char_pacer:
+						PRINT_PACER
+						break;
+					case char_wanderer:
+						PRINT_WANDERER
+						break;
+					case char_random:
+						PRINT_RANDOM
+						break;
+					default:
+						PRINT_DEFAULT
+						break;
+				}
+			} else {
+				switch (mapxy(x, y)) {
+					case ter_border:
+						PRINT_BORDER
+						break;
+					case ter_boulder:
+						PRINT_BOULDER
+						break;
+					case ter_mountain:
+						PRINT_MOUNTAIN
+						break;
+					case ter_tree:
+						PRINT_TREE
+						break;
+					case ter_forest:
+						PRINT_FOREST
+						break;
+					case ter_exit:
+						PRINT_EXIT
+						break;
+					case ter_path:
+						PRINT_PATH
+						break;
+					case ter_mart:
+						PRINT_MART
+						break;
+					case ter_center:
+						PRINT_CENTER
+						break;
+					case ter_grass:
+						PRINT_GRASS
+						break;
+					case ter_clearing:
+						PRINT_CLEARING
+						break;
+					case empty:
+						PRINT_EMPTY
+						break;
+					case debug:
+						PRINT_DEBUG
+						break;
+					default:
+						PRINT_DEFAULT
+						break;
+				}
+			}
+		}
+		putchar('\n');
+	}
+}
+
+/*
+ * Prints only terrain
+ */
+void ter_print(map_t *map) {
+	int y;
+	int x;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
 			switch (mapxy(x, y)) {
 				case ter_border:
+					PRINT_BORDER
+					break;
 				case ter_boulder:
-					printf(BOULDER "%%" CRESET);
+					PRINT_BOULDER
 					break;
 				case ter_mountain:
-					printf("\u0394" CRESET);
+					PRINT_MOUNTAIN
 					break;
 				case ter_tree:
+					PRINT_TREE
+					break;
 				case ter_forest:
-					printf(GRN "^" CRESET);
+					PRINT_FOREST
 					break;
 				case ter_exit:
-					printf(CYN "#" CRESET);
+					PRINT_EXIT
 					break;
 				case ter_path:
-					printf(YEL "#" CRESET);
+					PRINT_PATH
 					break;
 				case ter_mart:
-					printf(CYN "M" CRESET);
+					PRINT_MART
 					break;
 				case ter_center:
-					printf(HRED "C" CRESET);
+					PRINT_CENTER
 					break;
 				case ter_grass:
-					printf(HGRN ":" CRESET);
+					PRINT_GRASS
 					break;
 				case ter_clearing:
-					printf(BRIGHTGRN "." CRESET);
+					PRINT_CLEARING
 					break;
 				case empty:
-					printf(" " CRESET);
+					PRINT_EMPTY
 					break;
 				case debug:
-					printf("\u058D" CRESET);
+					PRINT_DEBUG
 					break;
 				default:
-					printf(WHT "\u00BF" CRESET);
+					PRINT_DEFAULT
 					break;
 			}
 		}
@@ -318,6 +388,9 @@ void map_print(map_t *map) {
 	}
 }
 
+/*
+ * Prints only characters with dashes as separators
+ */
 void char_print(map_t *map) {
 	int y;
 	int x;
@@ -325,35 +398,31 @@ void char_print(map_t *map) {
 		for (x = 0; x < MAP_X; x++) {
 			switch (charxy(x, y)) {
 				case char_pc:
-					printf(WHT "@" CRESET);
+					PRINT_PC
 					break;
 				case char_rival:
-					printf(CHARACTER"r" CRESET);
+					PRINT_RIVAL
 					break;
 				case char_hiker:
-					printf(CHARACTER "h" CRESET);
+					PRINT_HIKER
 					break;
 				case char_statue:
-					printf(CHARACTER "s" CRESET);
+					PRINT_STATUE
 					break;
 				case char_pacer:
-					printf(CHARACTER "p" CRESET);
+					PRINT_PACER
 					break;
 				case char_wanderer:
-					printf(CHARACTER "w" CRESET);
+					PRINT_WANDERER
 					break;
 				case char_random:
-					printf(CHARACTER "n" CRESET);
+					PRINT_RANDOM
 					break;
-//				case char_other:
-//					printf( CHARACTER "o" CRESET);
-//					break;
-				case num_character_types:
 				case char_unoccupied:
-					printf( HBLK "-" CRESET);
+					PRINT_UNOCCUPIED
 					break;
 				default:
-					printf(WHT "\u00BF" CRESET);
+					PRINT_DEFAULT
 					break;
 			}
 		}

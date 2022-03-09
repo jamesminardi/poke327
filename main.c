@@ -106,7 +106,6 @@ int main(int argc, char *argv[]) {
 		return quit;
 	}
 	world_init();
-	world_print();
 
 	//pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
 	//pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);

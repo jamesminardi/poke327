@@ -46,8 +46,6 @@ void world_init();
 
 void world_move(move_request_t mv);
 
-void world_newMap(move_request_t mv);
-
 void world_delete();
 
 void char_print();

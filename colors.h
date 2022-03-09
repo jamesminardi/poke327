@@ -15,6 +15,30 @@
 #define BOULDER "\033[38;5;102m" // Greyish
 #define CHARACTER "\033[38;5;226m" // Bright yellow
 
+#define PRINT_BORDER 	printf("\033[38;5;102m" "%%" CRESET);
+#define PRINT_BOULDER 	printf("\033[38;5;102m" "%%" CRESET);
+#define PRINT_MOUNTAIN 	printf("\u0394" CRESET);
+#define PRINT_TREE 		printf(GRN "^" CRESET);
+#define PRINT_FOREST 	printf(GRN "^" CRESET);
+#define PRINT_EXIT 		printf(CYN "#" CRESET);
+#define PRINT_PATH 		printf(YEL "#" CRESET);
+#define PRINT_MART 		printf(CYN "M" CRESET);
+#define PRINT_CENTER 	printf(HRED "C" CRESET);
+#define PRINT_GRASS 	printf(HGRN ":" CRESET);
+#define PRINT_CLEARING 	printf(BRIGHTGRN "." CRESET);
+#define PRINT_EMPTY 	printf(" " CRESET);
+#define PRINT_DEBUG 	printf(WHT"\u058D" CRESET);
+#define PRINT_DEFAULT 	printf(WHT "\u00BF" CRESET);
+
+#define PRINT_PC		printf(HWHT "@" CRESET);
+#define PRINT_RIVAL		printf(CHARACTER "r" CRESET);
+#define PRINT_HIKER		printf(CHARACTER "h" CRESET);
+#define PRINT_STATUE	printf(CHARACTER "s" CRESET);
+#define PRINT_PACER 	printf(CHARACTER "p" CRESET);
+#define PRINT_WANDERER  printf(CHARACTER "w" CRESET);
+#define PRINT_RANDOM	printf(CHARACTER "n" CRESET);
+#define PRINT_UNOCCUPIED printf( HBLK "-" CRESET);
+
 //Regular bold text
 #define BBLK "\e[1;30m"
 #define BRED "\e[1;31m"

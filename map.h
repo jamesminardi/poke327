@@ -32,6 +32,8 @@ void terrain_init(map_t *map);
 
 void map_print(map_t *map);
 
+void ter_print(map_t *map);
+
 void char_print(map_t *map);
 
 #endif // MAP_H

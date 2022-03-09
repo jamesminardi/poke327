@@ -1,89 +1,18 @@
 #include "world.h"
 
-static void pc_init(move_request_t mv) {
-
-	if (mv.to_dir == dir_fly || mv.to_dir == dir_init) {
+static void pc_init() {
 		// Set initial pc location to random place on path
 		int x, y;
 		do {
 			x = rand() % (MAP_X - 2) + 1;
 			y = rand() % (MAP_Y - 2) + 1;
-		} while (world.cur_map->m[y][x] != ter_path);
+		} while (world.cur_map->m[y][x] != ter_path && world.cur_map->char_m[y][x] != char_unoccupied);
 		world.pc.pos.x = x;
 		world.pc.pos.y = y;
-	}
-
-
-
 }
 
-void world_init() {
-
-	move_request_t mv;
-	srand(world.seed);
-
-
-	// Set spawn map location
-	world.cur_idx.x = (WORLD_X -1) / 2;
-	world.cur_idx.y = (WORLD_Y- 1) / 2;
-
-	// Set move request fields
-	mv.to_dir = dir_init;
-	mv.to_pos.x = world.cur_idx.x;
-	mv.to_pos.y = world.cur_idx.y;
-
-	// Initialize world to maps of null
-	int x;
-	int y;
-	for (x = 0; x < WORLD_X; x++) {
-		for (y = 0; y < WORLD_Y; y++) {
-			worldxy(x, y) = NULL;
-		}
-	}
-
-	// Initialize spawn map
-	world_newMap(mv);
-}
-
-void world_delete() {
-
-	int x;
-	int y;
-	for (x = 0; x < WORLD_X; x++) {
-		for (y = 0; y < WORLD_Y; y++) {
-			if (worldxy(x, y) != NULL) {
-				free(worldxy(x, y));
-				worldxy(x, y) = NULL;
-			}
-		}
-	}
-
-}
-
-void world_move(move_request_t mv) {
-	int x, y;
-	x = mv.to_pos.x;
-	y = mv.to_pos.y;
-	if (x < 0 || x > WORLD_X - 1 || y < 0 || y > WORLD_Y - 1) {
-		// ERROR: Out of bounds
-		printf("Out of bounds world_move. Position did not change\n");
-		return;
-	}
-	world.cur_idx.x = x;
-	world.cur_idx.y = y;
-	if (worldxy(x, y) == NULL) {
-		world_newMap(mv);
-	} else {
-		world.cur_map = worldxy(x, y);
-	}
-}
-
-void world_newMap(move_request_t mv) {
-
-	if (mv.to_dir == dir_fly) {
-
-	}
-
+static void world_newMap() {
+	int x,y;
 	worldxy(world.cur_idx.x , world.cur_idx.y) = malloc(sizeof(*world.cur_map));
 	world.cur_map = worldxy(world.cur_idx.x, world.cur_idx.y);
 
@@ -109,14 +38,6 @@ void world_newMap(move_request_t mv) {
 		world.cur_map->west = rand() % (MAP_Y - 4) + 2;
 	}
 
-	// Place terrain
-	terrain_init(world.cur_map);
-
-	// Place PC when moving from another
-	pc_init(mv);
-	// Place NPCs
-	npc_init(world.cur_map, num_trainers);
-
 	/* Remove road exits on edge of world */
 	if (world.cur_idx.x == 0) {
 		world.cur_map->m[world.cur_map->west][0] = ter_border;
@@ -130,11 +51,128 @@ void world_newMap(move_request_t mv) {
 	if (world.cur_idx.y == WORLD_Y - 1) {
 		world.cur_map->m[MAP_Y - 1][world.cur_map->south] = ter_border;
 	}
+
+
+
+	// Init character map to all unoccupied
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			world.cur_map->m[y][x] = ter_clearing;
+			world.cur_map->char_m[y][x] = char_unoccupied;
+		}
+	}
+}
+
+static void pc_remove(map_t *map) {
+	int x, y;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			if (charxy(x,y) == char_pc) {
+				charxy(x,y) = char_unoccupied;
+				return;
+			}
+		}
+	}
+}
+
+void world_move(move_request_t mv) {
+	map_t *old_map;
+
+	if (mv.to_pos.x < 0 || mv.to_pos.x > WORLD_X - 1 || mv.to_pos.y < 0 || mv.to_pos.y > WORLD_Y - 1) {
+		// ERROR: Out of bounds
+		printf("Out of bounds world_move. Position did not change\n");
+		return;
+	}
+	old_map = world.cur_map;
+	if (mv.to_dir != dir_init) {
+		pc_remove(old_map);
+	}
+
+	// Update current map index
+	world.cur_idx.x = mv.to_pos.x;
+	world.cur_idx.y = mv.to_pos.y;
+
+	// Set current map pointer, and gen new map if it doesn't exist yet
+	if (worldxy(mv.to_pos.x, mv.to_pos.y) == NULL) {
+		world_newMap();
+		terrain_init(world.cur_map);
+		npc_init(world.cur_map, num_trainers);
+	} else {
+		// If map does exist, set current map to that map
+		world.cur_map = worldxy(mv.to_pos.x, mv.to_pos.y);
+	}
+
+	// Depending on where the PC came from, put it in the right position
+	switch (mv.to_dir) {
+		case dir_init:
+		case dir_fly:
+			pc_init();
+		case dir_north:
+			world.pc.pos.x = world.cur_map->south;
+			world.pc.pos.y = MAP_Y - 2;
+			break;
+		case dir_south:
+			world.pc.pos.x = world.cur_map->north;
+			world.pc.pos.y = 1;
+			break;
+		case dir_east:
+			world.pc.pos.y = world.cur_map->west;
+			world.pc.pos.x = 1;
+			break;
+		case dir_west:
+			world.pc.pos.y = world.cur_map->east;
+			world.pc.pos.x = MAP_X - 2;
+			break;
+		default:
+			break;
+	}
+
+	// Put the PC into the new map
+	world.cur_map->char_m[world.pc.pos.y][world.pc.pos.x] = char_pc;
+
+
+}
+
+void world_init() {
+	srand(world.seed);
+
+	// Set spawn map location
+	world.cur_idx.x = (WORLD_X -1) / 2;
+	world.cur_idx.y = (WORLD_Y- 1) / 2;
+
+	// Initialize world to maps of null
+	int x;
+	int y;
+	for (x = 0; x < WORLD_X; x++) {
+		for (y = 0; y < WORLD_Y; y++) {
+			worldxy(x, y) = NULL;
+		}
+	}
+	// Initialize spawn map
+	move_request_t mv;
+	mv.to_pos.x = world.cur_idx.x;
+	mv.to_pos.y = world.cur_idx.y;
+	mv.to_dir = dir_init;
+	world_move(mv);
+}
+
+void world_delete() {
+
+	int x;
+	int y;
+	for (x = 0; x < WORLD_X; x++) {
+		for (y = 0; y < WORLD_Y; y++) {
+			if (worldxy(x, y) != NULL) {
+				free(worldxy(x, y));
+				worldxy(x, y) = NULL;
+			}
+		}
+	}
+
 }
 
 void world_print() {
 	map_print(world.cur_map);
-	char_print(world.cur_map);
 }
 
 void print_hiker_dist() {
