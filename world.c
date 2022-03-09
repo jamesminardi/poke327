@@ -13,14 +13,18 @@ static void pc_init() {
 
 void world_init() {
 
-	move_request_t request;
-	request.to_dir = dir_init;
-
+	move_request_t mv;
 	srand(world.seed);
+
 
 	// Set spawn map location
 	world.cur_idx.x = (WORLD_X -1) / 2;
-	world.cur_idx.y = (WORLD_Y-1) / 2;
+	world.cur_idx.y = (WORLD_Y- 1) / 2;
+
+	// Set move request fields
+	mv.to_dir = dir_init;
+	mv.to_pos.x = world.cur_idx.x;
+	mv.to_pos.y = world.cur_idx.y;
 
 	// Initialize world to maps of null
 	int x;
@@ -32,7 +36,7 @@ void world_init() {
 	}
 
 	// Initialize spawn map
-	world_newMap(world.cur_idx.x, world.cur_idx.y);
+	world_newMap(mv);
 	// Initialize pc
 	pc_init();
 }
@@ -102,12 +106,12 @@ void world_newMap(move_request_t mv) {
 	}
 
 	// Place terrain
-	map_populateTerrain(world.cur_map);
+	terrain_init(world.cur_map);
 
 	// Place PC when moving from another
-
+	pc_init();
 	// Place NPCs
-	map_populateNPC(world.cur_map, world.num_trainers);
+	npc_init(world.cur_map, num_trainers);
 
 	/* Remove road exits on edge of world */
 	if (world.cur_idx.x == 0) {

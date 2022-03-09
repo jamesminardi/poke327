@@ -26,9 +26,9 @@ typedef struct map {
 static int char_weight[num_character_types] =
 		{0, 10, 25, 50, 50, 50, 25};
 
-void map_populateNPC(map_t *map, int num_npc);
+void npc_init(map_t *map, int num_npc);
 
-void map_populateTerrain(map_t *map);
+void terrain_init(map_t *map);
 
 void map_print(map_t *map);
 

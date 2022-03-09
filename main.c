@@ -115,8 +115,8 @@ int main(int argc, char *argv[]) {
 	//print_rival_dist();
 
 	char input;
-	int x;
-	int y;
+	int x, y;
+	move_request_t mv;
 
 	do {
 		printf("\n");
@@ -133,21 +133,36 @@ int main(int argc, char *argv[]) {
 				print_hiker_dist();
 				break;
 			case 'n':
-				world_move(world.cur_idx.x, world.cur_idx.y - 1);
+				mv.to_pos.x = world.cur_idx.x;
+				mv.to_pos.y = world.cur_idx.y - 1;
+				mv.to_dir = dir_north;
+				world_move(mv);
 				break;
 			case 's':
-				world_move(world.cur_idx.x, world.cur_idx.y + 1);
+				mv.to_pos.x = world.cur_idx.x;
+				mv.to_pos.y = world.cur_idx.y + 1;
+				mv.to_dir = dir_south;
+				world_move(mv);
 				break;
 			case 'e':
-				world_move(world.cur_idx.x + 1, world.cur_idx.y);
+				mv.to_pos.x = world.cur_idx.x + 1;
+				mv.to_pos.y = world.cur_idx.y;
+				mv.to_dir = dir_east;
+				world_move(mv);
 				break;
 			case 'w':
-				world_move(world.cur_idx.x - 1, world.cur_idx.y);
+				mv.to_pos.x = world.cur_idx.x - 1;
+				mv.to_pos.y = world.cur_idx.y;
+				mv.to_dir = dir_west;
+				world_move(mv);
 				break;
 			case 'f':
 				scanf("%d", &x);
 				scanf("%d", &y);
-				world_move(x, y);
+				mv.to_pos.x = x;
+				mv.to_pos.y = y;
+				mv.to_dir = dir_fly;
+				world_move(mv);
 				break;
 			case '?':
 			case 'h':

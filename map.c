@@ -183,7 +183,7 @@ static void map_placeTree(map_t *map) {
 	}
 }
 
-static character_t select_char() {
+static character_t npc_get_random() {
 	int i, sum, rnd;
 	static int char_weight_sum = -1;
 
@@ -206,7 +206,7 @@ static character_t select_char() {
 /*
  * Places NPS characters in map according to global num_characters
  */
-void map_populateNPC(map_t *map, int num_npc){
+void npc_init(map_t *map, int num_npc){
 	int x, y;
 	character_t new_char;
 	int count, valid;
@@ -226,7 +226,7 @@ void map_populateNPC(map_t *map, int num_npc){
 		// Always place a rival and hiker when possible
 		if 		(count == num_trainers)	   { new_char = char_rival; }
 		else if (count == num_trainers - 1){ new_char = char_hiker; }
-		else 	{new_char = select_char(); }
+		else 	{new_char = npc_get_random(); }
 
 		do {
 			x = rand() % (MAP_X - 2) + 1;
@@ -247,7 +247,7 @@ void map_populateNPC(map_t *map, int num_npc){
 /*
  * Places all nodes on the map
  */
-void map_populateTerrain(map_t *map) {
+void terrain_init(map_t *map) {
 	int x, y;
 	// Init map to clearing and char map to null
 	for (y = 0; y < MAP_Y; y++) {
