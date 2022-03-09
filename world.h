@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <time.h>
-#include "pos.h"
+#include "components.h"
 #include "globals.h"
 #include "colors.h"
 #include "map.h"
@@ -19,25 +19,6 @@
 #endif // WORLD_XY
 
 #define ter_cost(x, y, c) move_cost[c][map->m[y][x]]
-
-typedef enum character {
-	char_pc,
-	char_hiker,
-	char_rival,
-	char_other,
-	num_character_types // Always right
-} character_t;
-
-static int move_cost[num_character_types][num_terrain_types] = {
-		{ INT_MAX, INT_MAX, INT_MAX, 10, 20, 10, INT_MAX, INT_MAX, 10, 10, INT_MAX, INT_MAX, INT_MAX },
-		{ INT_MAX, INT_MAX, INT_MAX, 10, 15, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 15, 15, INT_MAX},
-		{ INT_MAX, INT_MAX, INT_MAX, 10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
-		{ INT_MAX, INT_MAX, INT_MAX, 10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
-};
-
-typedef struct pc {
-	pos_t pos;
-} pc_t;
 
 typedef struct path {
 	heap_node_t *hn;
@@ -57,18 +38,19 @@ typedef struct world {
 
 	pc_t pc;
 	int seed;
-	int num_trainers;
 } world_t;
 
 extern world_t world;
 
 void world_init();
 
-void world_newMap();
+void world_move(move_request_t mv);
+
+void world_newMap(move_request_t mv);
 
 void world_delete();
 
-void world_move(int x, int y);
+void char_print();
 
 void world_print();
 

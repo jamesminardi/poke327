@@ -12,6 +12,10 @@ static void pc_init() {
 }
 
 void world_init() {
+
+	move_request_t request;
+	request.to_dir = dir_init;
+
 	srand(world.seed);
 
 	// Set spawn map location
@@ -28,8 +32,7 @@ void world_init() {
 	}
 
 	// Initialize spawn map
-	world_move(world.cur_idx.x, world.cur_idx.y);
-
+	world_newMap(world.cur_idx.x, world.cur_idx.y);
 	// Initialize pc
 	pc_init();
 }
@@ -49,7 +52,10 @@ void world_delete() {
 
 }
 
-void world_move(int x, int y) {
+void world_move(move_request_t mv) {
+	int x, y;
+	x = mv.to_pos.x;
+	y = mv.to_pos.y;
 	if (x < 0 || x > WORLD_X - 1 || y < 0 || y > WORLD_Y - 1) {
 		// ERROR: Out of bounds
 		printf("Out of bounds world_move. Position did not change\n");
@@ -57,23 +63,27 @@ void world_move(int x, int y) {
 	}
 	world.cur_idx.x = x;
 	world.cur_idx.y = y;
-	if (world.cur_map == NULL) {
-		world_newMap(world.cur_idx.x, world.cur_idx.y);
+	if (worldxy(x, y) == NULL) {
+		world_newMap(mv);
 	} else {
 		world.cur_map = worldxy(x, y);
 	}
 }
 
-void world_newMap() {
+void world_newMap(move_request_t mv) {
 
-	world.cur_map = malloc(sizeof(*world.cur_map));
-	int random;
+	if (mv.to_dir == dir_fly) {
+
+	}
+
+	worldxy(world.cur_idx.x , world.cur_idx.y) = malloc(sizeof(*world.cur_map));
+	world.cur_map = worldxy(world.cur_idx.x, world.cur_idx.y);
+
 	/* Set exit positions */
 	if (world.cur_idx.y - 1 > 0 && worldxy(world.cur_idx.x, world.cur_idx.y - 1) != NULL) {
 		world.cur_map->north = worldxy(world.cur_idx.x, world.cur_idx.y - 1)->south;
 	} else {
-		random = rand() % (MAP_X - 4 ) + 2;
-		world.cur_map->north = random;
+		world.cur_map->north = rand() % (MAP_X - 4 ) + 2;
 	}
 	if (world.cur_idx.y + 1 < WORLD_Y && worldxy(world.cur_idx.x, world.cur_idx.y + 1) != NULL) {
 		world.cur_map->south = worldxy(world.cur_idx.x, world.cur_idx.y + 1)->north;
@@ -91,7 +101,13 @@ void world_newMap() {
 		world.cur_map->west = rand() % (MAP_Y - 4) + 2;
 	}
 
-	map_populate(world.cur_map);
+	// Place terrain
+	map_populateTerrain(world.cur_map);
+
+	// Place PC when moving from another
+
+	// Place NPCs
+	map_populateNPC(world.cur_map, world.num_trainers);
 
 	/* Remove road exits on edge of world */
 	if (world.cur_idx.x == 0) {
@@ -110,6 +126,7 @@ void world_newMap() {
 
 void world_print() {
 	map_print(world.cur_map);
+	char_print(world.cur_map);
 }
 
 void print_hiker_dist() {
