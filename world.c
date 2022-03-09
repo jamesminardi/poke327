@@ -6,7 +6,7 @@ static void pc_init() {
 		do {
 			x = rand() % (MAP_X - 2) + 1;
 			y = rand() % (MAP_Y - 2) + 1;
-		} while (world.cur_map->m[y][x] != ter_path && world.cur_map->char_m[y][x] != char_unoccupied);
+		} while (world.cur_map->m[y][x] != ter_path || world.cur_map->char_m[y][x] != char_unoccupied);
 		world.pc.pos.x = x;
 		world.pc.pos.y = y;
 }
@@ -107,6 +107,7 @@ void world_move(move_request_t mv) {
 		case dir_init:
 		case dir_fly:
 			pc_init();
+			break;
 		case dir_north:
 			world.pc.pos.x = world.cur_map->south;
 			world.pc.pos.y = MAP_Y - 2;
