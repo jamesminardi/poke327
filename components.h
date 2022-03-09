@@ -55,7 +55,8 @@ typedef enum terrain {
 	num_terrain_types // 14
 } terrain_t;
 
-const int move_cost[num_character_types][num_terrain_types] = {
+
+static const int move_cost[num_character_types][num_terrain_types] = {
 		{ INT_MAX, INT_MAX, INT_MAX, 10, 10, 20, 10, INT_MAX, INT_MAX, 10, 10, INT_MAX, INT_MAX, INT_MAX },
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 15, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 15, 15, INT_MAX},
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},

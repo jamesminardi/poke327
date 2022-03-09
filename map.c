@@ -188,18 +188,18 @@ static character_t npc_get_random() {
 	static int char_weight_sum = -1;
 
 	if (char_weight_sum == -1) {
+		char_weight_sum = 0;
 		for (i = 1; i < num_character_types; i++) {
 			char_weight_sum += char_weight[i];
 		}
 	}
 	// algorithm to get a random character with set weights from char_weight
 	rnd = rand() % char_weight_sum;
-	sum = char_weight_sum;
 	for ( i = 1; i < num_character_types; i++) {
 		if (rnd < char_weight[i]) {
 			return i;
 		}
-		sum -= char_weight[i];
+		rnd -= char_weight[i];
 	}
 }
 
@@ -220,8 +220,8 @@ void npc_init(map_t *map, int num_npc){
 	}
 
 	// decrement count till zero, adding a random character each time
-	for (valid = 0, count = num_trainers; count > 0; count--, valid = 0){}
-	while (count > 0) {
+	valid = 0;
+	for (count = num_trainers; count > 0; count--){
 
 		// Always place a rival and hiker when possible
 		if 		(count == num_trainers)	   { new_char = char_rival; }
@@ -239,7 +239,6 @@ void npc_init(map_t *map, int num_npc){
 		charxy(x,y) = new_char;
 
 		valid = 0;
-		count--;
 	}
 }
 
@@ -306,6 +305,7 @@ void map_print(map_t *map) {
 					break;
 				case empty:
 					printf(" " CRESET);
+					break;
 				case debug:
 					printf("\u058D" CRESET);
 					break;
@@ -351,6 +351,7 @@ void char_print(map_t *map) {
 				case num_character_types:
 				case char_unoccupied:
 					printf( HBLK "-" CRESET);
+					break;
 				default:
 					printf(WHT "\u00BF" CRESET);
 					break;

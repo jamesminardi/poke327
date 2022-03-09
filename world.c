@@ -1,14 +1,20 @@
 #include "world.h"
 
-static void pc_init() {
-	// Set initial pc location to random place on path
-	int x, y;
-	do {
-		x = rand() % (MAP_X - 2) + 1;
-		y = rand() % (MAP_Y - 2) + 1;
-	} while (world.cur_map->m[y][x] != ter_path);
-	world.pc.pos.x = x;
-	world.pc.pos.y = y;
+static void pc_init(move_request_t mv) {
+
+	if (mv.to_dir == dir_fly || mv.to_dir == dir_init) {
+		// Set initial pc location to random place on path
+		int x, y;
+		do {
+			x = rand() % (MAP_X - 2) + 1;
+			y = rand() % (MAP_Y - 2) + 1;
+		} while (world.cur_map->m[y][x] != ter_path);
+		world.pc.pos.x = x;
+		world.pc.pos.y = y;
+	}
+
+
+
 }
 
 void world_init() {
@@ -37,8 +43,6 @@ void world_init() {
 
 	// Initialize spawn map
 	world_newMap(mv);
-	// Initialize pc
-	pc_init();
 }
 
 void world_delete() {
@@ -109,7 +113,7 @@ void world_newMap(move_request_t mv) {
 	terrain_init(world.cur_map);
 
 	// Place PC when moving from another
-	pc_init();
+	pc_init(mv);
 	// Place NPCs
 	npc_init(world.cur_map, num_trainers);
 
