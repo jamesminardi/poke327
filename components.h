@@ -6,11 +6,17 @@ typedef struct pos {
 	int y;
 } pos_t;
 
+// Do not change first 8. Locked by npc_init
 typedef enum direction {
 	dir_north,
 	dir_south,
 	dir_east,
 	dir_west,
+	dir_northeast,
+	dir_northwest,
+	dir_southeast,
+	dir_southwest,
+	dir_still,
 	dir_fly,
 	dir_init
 } direction_t;
@@ -20,8 +26,7 @@ typedef struct move_request {
 	pos_t to_pos;
 } move_request_t;
 
-
-typedef enum character {
+typedef enum character_type {
 	char_pc, // @
 	char_rival, // r
 	char_hiker, // h
@@ -31,11 +36,19 @@ typedef enum character {
 	char_random, // n - Wanderer but cross terrain
 	num_character_types, // Always right
 	char_unoccupied
-} character_t;
+} character_type_t;
 
-typedef struct pc {
+//typedef struct character {
+//	character_type_t type;
+//	pos_t pos;
+//
+//} character_t;
+
+typedef struct character {
+	character_type_t type;
 	pos_t pos;
-} pc_t;
+	direction_t dir;
+} character_t;
 
 typedef enum terrain {
 	debug, 			// 0

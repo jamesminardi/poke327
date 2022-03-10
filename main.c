@@ -106,6 +106,9 @@ int main(int argc, char *argv[]) {
 		return quit;
 	}
 	world_init();
+	world_print();
+
+	world_gameLoop();
 
 	//pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
 	//pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);
@@ -128,7 +131,7 @@ int main(int argc, char *argv[]) {
 		scanf(" %c", &input);
 		switch (input) {
 			case 'd':
-				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
+				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
 				print_hiker_dist();
 				break;
 			case 'n':

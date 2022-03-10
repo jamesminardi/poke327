@@ -6,9 +6,11 @@ static void pc_init() {
 		do {
 			x = rand() % (MAP_X - 2) + 1;
 			y = rand() % (MAP_Y - 2) + 1;
-		} while (world.cur_map->m[y][x] != ter_path || world.cur_map->char_m[y][x] != char_unoccupied);
-		world.pc.pos.x = x;
-		world.pc.pos.y = y;
+		} while (world.cur_map->m[y][x] != ter_path || world.cur_map->char_m[y][x] != NULL);
+		world.pc = malloc(sizeof(*(world.cur_map->char_m)));
+		world.pc->dir = dir_still;
+		world.pc->pos.x = x;
+		world.pc->pos.y = y;
 }
 
 static void world_newMap() {
@@ -58,7 +60,7 @@ static void world_newMap() {
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
 			world.cur_map->m[y][x] = ter_clearing;
-			world.cur_map->char_m[y][x] = char_unoccupied;
+			world.cur_map->char_m[y][x] = NULL;
 		}
 	}
 }
@@ -67,8 +69,8 @@ static void pc_remove(map_t *map) {
 	int x, y;
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
-			if (charxy(x,y) == char_pc) {
-				charxy(x,y) = char_unoccupied;
+			if (charxy(x,y) && charxy(x,y)->type == char_pc) {
+				charxy(x,y) = NULL;
 				return;
 			}
 		}
@@ -109,27 +111,27 @@ void world_move(move_request_t mv) {
 			pc_init();
 			break;
 		case dir_north:
-			world.pc.pos.x = world.cur_map->south;
-			world.pc.pos.y = MAP_Y - 2;
+			world.pc->pos.x = world.cur_map->south;
+			world.pc->pos.y = MAP_Y - 2;
 			break;
 		case dir_south:
-			world.pc.pos.x = world.cur_map->north;
-			world.pc.pos.y = 1;
+			world.pc->pos.x = world.cur_map->north;
+			world.pc->pos.y = 1;
 			break;
 		case dir_east:
-			world.pc.pos.y = world.cur_map->west;
-			world.pc.pos.x = 1;
+			world.pc->pos.y = world.cur_map->west;
+			world.pc->pos.x = 1;
 			break;
 		case dir_west:
-			world.pc.pos.y = world.cur_map->east;
-			world.pc.pos.x = MAP_X - 2;
+			world.pc->pos.y = world.cur_map->east;
+			world.pc->pos.x = MAP_X - 2;
 			break;
 		default:
 			break;
 	}
 
 	// Put the PC into the new map
-	world.cur_map->char_m[world.pc.pos.y][world.pc.pos.x] = char_pc;
+	world.cur_map->char_m[world.pc->pos.y][world.pc->pos.x] = world.pc;
 
 
 }
@@ -249,7 +251,7 @@ static void dijkstra_neighbor_init(pos_t *neighbors, path_t *center) {
 	neighbors[7].x = center->pos.x + 1;
 }
 
-static void pathfind_init_heap(heap_t *heap, character_t character) {
+static void pathfind_init_heap(heap_t *heap, character_type_t character) {
 	switch(character) {
 		case char_pc:
 			heap_init(heap, pc_cmp, NULL);
@@ -265,7 +267,7 @@ static void pathfind_init_heap(heap_t *heap, character_t character) {
 	}
 }
 
-void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t character, const pos_t start) {
+void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_type_t character, const pos_t start) {
     heap_t heap;
 	static path_t *c;
 	static path_t distance[MAP_Y][MAP_X];
@@ -326,4 +328,20 @@ void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t charact
 		}
 	}
 	heap_delete(&heap);
+}
+
+static int32_t turn_cmp(const void *key, const void *with) {
+
+}
+
+void world_gameLoop() {
+	heap_t h;
+	heap_init(&h, turn_cmp, NULL);
+	// Insert all characters into queue
+
+	heap_insert(&h, &(world.cur_map->char_m[world.pc->pos.y][world.pc->pos.x]));
+
+
+
+
 }

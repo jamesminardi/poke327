@@ -19,7 +19,7 @@
 
 typedef struct map {
 	terrain_t m[MAP_Y][MAP_X];
-	character_t char_m[MAP_Y][MAP_X];
+	character_t *char_m[MAP_Y][MAP_X];
 	int north, south, east, west;
 } map_t;
 

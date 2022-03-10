@@ -36,7 +36,7 @@ typedef struct world {
 	int rival_dist[MAP_Y][MAP_X];
 	int pc_dist[MAP_Y][MAP_X];
 
-	pc_t pc;
+	character_t *pc;
 	int seed;
 } world_t;
 
@@ -56,6 +56,8 @@ void print_hiker_dist();
 
 void print_rival_dist();
 
-void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_t character, const pos_t start);
+void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_type_t character, const pos_t start);
+
+void world_gameLoop();
 
 #endif // WORLD_H

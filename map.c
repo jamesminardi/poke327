@@ -180,7 +180,14 @@ static void map_placeTree(map_t *map) {
 	}
 }
 
-static character_t npc_get_random() {
+static void move_char(map_t *map, character_t *c, int x, int y) {
+	charxy(x, y) = charxy(c->pos.x, c->pos.y);
+	charxy(c->pos.x, c->pos.y) = NULL;
+	charxy(x, y)->pos.x = x;
+	charxy(x, y)->pos.y = y;
+}
+
+static character_type_t npc_get_random() {
 	int i, sum, rnd;
 	static int char_weight_sum = -1;
 
@@ -205,7 +212,7 @@ static character_t npc_get_random() {
  */
 void npc_init(map_t *map, int num_npc){
 	int x, y;
-	character_t new_char;
+	character_type_t new_char;
 	int count, valid;
 
 	// decrement count till zero, adding a random character each time
@@ -220,12 +227,21 @@ void npc_init(map_t *map, int num_npc){
 		do {
 			x = rand() % (MAP_X - 2) + 1;
 			y = rand() % (MAP_Y - 2) + 1;
-			if (move_cost[new_char][mapxy(x,y)] != INT_MAX &&
-				charxy(x,y) == char_unoccupied && mapxy(x,y) != ter_path) {
+			if (charxy(x, y) == NULL && move_cost[new_char][mapxy(x,y)] != INT_MAX
+				&& mapxy(x,y) != ter_path) {
 				valid = 1;
 			}
 		} while (!valid);
-		charxy(x,y) = new_char;
+		charxy(x,y) = malloc(sizeof(*(map->char_m)));
+		charxy(x,y)->type = new_char;
+		charxy(x,y)->pos.x = x;
+		charxy(x,y)->pos.y = y;
+		if (new_char == char_pc 	|| new_char == char_statue ||
+			new_char == char_hiker  || new_char == char_rival) {
+			charxy(x,y)->dir = dir_still;
+		} else {
+			charxy(x,y)->dir = rand() % 8;
+		}
 
 		valid = 0;
 	}
@@ -253,8 +269,8 @@ void map_print(map_t *map) {
 	int x;
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
-			if (charxy(x,y) != char_unoccupied) {
-				switch (charxy(x,y)) {
+			if (charxy(x,y)) {
+				switch (charxy(x,y)->type) {
 					case char_pc:
 						PRINT_PC
 						break;
@@ -396,34 +412,38 @@ void char_print(map_t *map) {
 	int x;
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
-			switch (charxy(x, y)) {
-				case char_pc:
-					PRINT_PC
-					break;
-				case char_rival:
-					PRINT_RIVAL
-					break;
-				case char_hiker:
-					PRINT_HIKER
-					break;
-				case char_statue:
-					PRINT_STATUE
-					break;
-				case char_pacer:
-					PRINT_PACER
-					break;
-				case char_wanderer:
-					PRINT_WANDERER
-					break;
-				case char_random:
-					PRINT_RANDOM
-					break;
-				case char_unoccupied:
-					PRINT_UNOCCUPIED
-					break;
-				default:
-					PRINT_DEFAULT
-					break;
+			if (charxy(x,y)) {
+				switch (charxy(x, y)->type) {
+					case char_pc:
+						PRINT_PC
+						break;
+					case char_rival:
+						PRINT_RIVAL
+						break;
+					case char_hiker:
+						PRINT_HIKER
+						break;
+					case char_statue:
+						PRINT_STATUE
+						break;
+					case char_pacer:
+						PRINT_PACER
+						break;
+					case char_wanderer:
+						PRINT_WANDERER
+						break;
+					case char_random:
+						PRINT_RANDOM
+						break;
+					case char_unoccupied:
+						PRINT_UNOCCUPIED
+						break;
+					default:
+						PRINT_DEFAULT
+						break;
+				}
+			} else {
+				PRINT_UNOCCUPIED
 			}
 		}
 		putchar('\n');
