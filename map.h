@@ -26,6 +26,8 @@ typedef struct map {
 static int char_weight[num_character_types] =
 		{0, 10, 25, 50, 50, 50, 25};
 
+void move_char(map_t *map, character_t *c, pos_t pos);
+
 void npc_init(map_t *map, int num_npc);
 
 void terrain_init(map_t *map);

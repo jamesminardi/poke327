@@ -9,6 +9,7 @@ static void pc_init() {
 		} while (world.cur_map->m[y][x] != ter_path || world.cur_map->char_m[y][x] != NULL);
 		world.pc = malloc(sizeof(*(world.cur_map->char_m)));
 		world.pc->dir = dir_still;
+		world.pc->next_move = 0;
 		world.pc->pos.x = x;
 		world.pc->pos.y = y;
 }
@@ -214,8 +215,8 @@ static int32_t hiker_cmp(const void *key, const void *with) {
 }
 
 static int32_t rival_cmp(const void *key, const void *with) {
-	int key_dist = world.hiker_dist[((path_t *) key)->pos.y][((path_t *) key)->pos.x];
-	int with_dist = world.hiker_dist[((path_t *) with)->pos.y][((path_t *) with)->pos.x];
+	int key_dist = world.rival_dist[((path_t *) key)->pos.y][((path_t *) key)->pos.x];
+	int with_dist = world.rival_dist[((path_t *) with)->pos.y][((path_t *) with)->pos.x];
 	return key_dist - with_dist;
 }
 
@@ -225,7 +226,7 @@ static int32_t pc_cmp(const void *key, const void *with) {
 	return key_dist - with_dist;
 }
 
-static void dijkstra_neighbor_init(pos_t *neighbors, path_t *center) {
+static void neighbor_init(pos_t *neighbors, path_t *center) {
 	neighbors[0].y = center->pos.y - 1;
 	neighbors[0].x = center->pos.x - 1;
 
@@ -312,7 +313,7 @@ void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_type_t ch
 	while ((c = heap_remove_min(&heap))) {
 		c->hn = NULL; // mark as visited
 		pos_t neighbors[8];
-		dijkstra_neighbor_init(neighbors, c);
+		neighbor_init(neighbors, c);
 		// For every neighbor of p, if not yet visited and cost is greater than current tile(p), then change it
 		for (i = 0; i < 7; i++) {
 			if ((distance[neighbors[i].y][neighbors[i].x].hn) &&
@@ -330,7 +331,101 @@ void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_type_t ch
 	heap_delete(&heap);
 }
 
+
+
+static void turn_neighbor_init(pos_t *neighbors, character_t *center) {
+	neighbors[dir_north].y = center->pos.y - 1;
+	neighbors[dir_north].x = center->pos.x;
+
+	neighbors[dir_south].y = center->pos.y + 1;
+	neighbors[dir_south].x = center->pos.x;
+
+	neighbors[dir_east].y = center->pos.y;
+	neighbors[dir_east].x = center->pos.x + 1;
+
+	neighbors[dir_west].y = center->pos.y;
+	neighbors[dir_west].x = center->pos.x - 1;
+
+	neighbors[dir_northeast].y = center->pos.y - 1;
+	neighbors[dir_northeast].x = center->pos.x + 1;
+
+	neighbors[dir_northwest].y = center->pos.y - 1;
+	neighbors[dir_northwest].x = center->pos.x - 1;
+
+	neighbors[dir_southeast].y = center->pos.y + 1;
+	neighbors[dir_southeast].x = center->pos.x + 1;
+
+	neighbors[dir_southwest].y = center->pos.y + 1;
+	neighbors[dir_southwest].x = center->pos.x - 1;
+
+}
+
+/*
+ * Compare movement cost of tile currently on
+ */
 static int32_t turn_cmp(const void *key, const void *with) {
+	int key_moveCost = ((character_t *) key)->next_move;
+	int with_moveCost = ((character_t *) with)->next_move;
+	return key_moveCost - with_moveCost;
+}
+
+
+
+static void turn_pc(character_t *c) {
+}
+static void turn_rival(character_t *c) {
+	direction_t min_dir;
+	int i;
+	pos_t neighbors[8];
+	turn_neighbor_init(neighbors, c);
+
+
+	min_dir = 0;
+	for (i = 1; i < 8; i++) {
+		if (world.rival_dist[neighbors[i].y][neighbors[i].x] < world.rival_dist[neighbors[min_dir].y][neighbors[min_dir].x]) {
+			min_dir = i;
+		}
+	}
+	c->dir = min_dir;
+	c->next_move = move_cost[c->type][world.cur_map->m[neighbors[min_dir].y][neighbors[min_dir].x]];
+
+	if (world.cur_map->char_m[neighbors[c->dir].y][neighbors[c->dir].x] != NULL) {
+		return;
+	}
+	move_char(world.cur_map, c, neighbors[c->dir]);
+
+
+	// Generate next turn
+	min_dir = 0;
+	for (i = 1; i < 8; i++) {
+		if (world.rival_dist[neighbors[i].y][neighbors[i].x] < world.rival_dist[neighbors[min_dir].y][neighbors[min_dir].x]) {
+			min_dir = i;
+		}
+	}
+	c->dir = min_dir;
+	c->next_move = move_cost[c->type][world.cur_map->m[neighbors[min_dir].y][neighbors[min_dir].x]];
+
+}
+static void turn_hiker(character_t *c) {
+	turn_rival(c);
+}
+static void turn_statue(character_t *c) {
+	// Don't move
+}
+static void turn_pacer(character_t *c) {
+//	direction_t min_dir;
+//	int i;
+//	pos_t neighbors[8];
+//	turn_neighbor_init(neighbors, c);
+//
+//	if (world.cur_map->char_m[neighbors[c->dir].y][neighbors[c->dir].x] != NULL) {
+//		return;
+//	}
+}
+static void turn_wanderer(character_t *c) {
+
+}
+static void turn_random(character_t *c) {
 
 }
 
@@ -339,9 +434,57 @@ void world_gameLoop() {
 	heap_init(&h, turn_cmp, NULL);
 	// Insert all characters into queue
 
-	heap_insert(&h, &(world.cur_map->char_m[world.pc->pos.y][world.pc->pos.x]));
+	int x,y;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			if (world.cur_map->char_m[y][x]) {
+				heap_insert(&h, world.cur_map->char_m[y][x]);
+			}
+		}
+	}
+
+	character_t *curr_char;
+	pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
+	pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
+	while (heap_peek_min(&h)) {
+		world_print();
+
+		curr_char = ((character_t *) heap_remove_min(&h));
+		switch (curr_char->type) {
+			case char_pc:
+				turn_pc(curr_char);
+				pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
+				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
+				break;
+			case char_rival:
+				turn_rival(curr_char);
+				curr_char->next_move += ((character_t *) heap_peek_min(&h))->next_move;
+				heap_insert(&h, curr_char);
+				break;
+			case char_hiker:
+				turn_hiker(curr_char);
+				curr_char->next_move += ((character_t *) heap_peek_min(&h))->next_move;
+				heap_insert(&h, curr_char);
+				break;
+			case char_statue:
+				turn_statue(curr_char);
+				break;
+			case char_pacer:
+				turn_pacer(curr_char);
+				break;
+			case char_wanderer:
+				turn_wanderer(curr_char);
+				break;
+			case char_random:
+				turn_random(curr_char);
+				break;
+			default:
+				break;
+		}
 
 
+		usleep(250000);
+	}
 
 
 }

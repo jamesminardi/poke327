@@ -48,6 +48,7 @@ typedef struct character {
 	character_type_t type;
 	pos_t pos;
 	direction_t dir;
+	int next_move;
 } character_t;
 
 typedef enum terrain {

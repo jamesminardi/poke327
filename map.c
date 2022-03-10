@@ -180,11 +180,11 @@ static void map_placeTree(map_t *map) {
 	}
 }
 
-static void move_char(map_t *map, character_t *c, int x, int y) {
-	charxy(x, y) = charxy(c->pos.x, c->pos.y);
+void move_char(map_t *map, character_t *c, pos_t pos) {
+	charxy(pos.x, pos.y) = charxy(c->pos.x, c->pos.y);
 	charxy(c->pos.x, c->pos.y) = NULL;
-	charxy(x, y)->pos.x = x;
-	charxy(x, y)->pos.y = y;
+	charxy(pos.x, pos.y)->pos.x = pos.x;
+	charxy(pos.x, pos.y)->pos.y = pos.y;
 }
 
 static character_type_t npc_get_random() {
@@ -234,6 +234,7 @@ void npc_init(map_t *map, int num_npc){
 		} while (!valid);
 		charxy(x,y) = malloc(sizeof(*(map->char_m)));
 		charxy(x,y)->type = new_char;
+		charxy(x,y)->next_move = 0;
 		charxy(x,y)->pos.x = x;
 		charxy(x,y)->pos.y = y;
 		if (new_char == char_pc 	|| new_char == char_statue ||
