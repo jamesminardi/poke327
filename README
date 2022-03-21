@@ -1,5 +1,5 @@
 # poke327
-ASCII Pokémon roguelike in C
+Text based Pokémon roguelike in C
 
 Usage: ./poke327 -h | --help for switches
 
