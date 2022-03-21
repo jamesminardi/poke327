@@ -1,3 +1,190 @@
+commit 7f2d980d09dc5d12ac816b6f3b5ee7cde76c334d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Mar 10 00:14:12 2022 -0600
+
+    working hiker and rival pathfinding
+
+commit 3741affa72c05cefb03595ebff4eb4ca7d63bb26
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 21:21:53 2022 -0600
+
+    Implement character 'class'
+
+commit e2392915d7dd3ef1dc787c0a73b05e10a6c269b8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 17:01:14 2022 -0600
+
+    Fix PC spawning on occupied character space
+
+commit c1ba87a9312f6be70d14a5a2e0e84bcaa6895241
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 16:38:02 2022 -0600
+
+    Working world movement with random npc generation
+
+commit 1d4f8a500baf4fc73542e96f41068dfa72ebc60c
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 12:41:27 2022 -0600
+
+    Working random npc generation
+
+commit 6ed69e94d7ccc299cbd1fa8de91e39efa3cd075e
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:18:22 2022 -0600
+
+    Adjust method signatures
+
+commit 16ade0001f1f819e9c377098f422b9a102dc24c7
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:18:06 2022 -0600
+
+    Add components file
+
+commit 37796e22525241ce85978f964f1f7e64cd92f6cf
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:06:39 2022 -0600
+
+    Small changes
+
+commit 3c0502ad0cacea697eec9f9d6f9744d0e55cfbf7
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:06:08 2022 -0600
+
+    Adjust colors
+
+commit 1c4fdad92527b9c8b9175a226e6560f640f6c605
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:05:58 2022 -0600
+
+    abstract structs from world and map files
+
+commit 3b6b1850d3ef0eb608c524cf1c0135b34daec90f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:04:36 2022 -0600
+
+    Implement random NPS spawns
+
+commit 7ab0779e642c5519cff4ddfa58624f20c746ec4d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Mar 8 13:34:48 2022 -0600
+
+    Differentiate exits from paths internally
+
+commit 6d5ae09c1779e0a071bc4ccb0b20b247277d4395
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Mar 7 23:37:17 2022 -0600
+
+    1.03 finish & add CL argument support
+
+commit 420b1cfc7e31bece35d0d1d04d04b6d00b0e70e8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 22:22:17 2022 -0600
+
+    1.03 additions
+
+commit 8bf09b80c0501773aa209f2291e8898ea07b49f4
+Merge: c9eca0d 01a6c13
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 19:55:16 2022 -0600
+
+    Merge 1.02 to main
+
+commit 01a6c130386388178a3f3ce05fef51fa432f00ab
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 19:52:39 2022 -0600
+
+    Update changelog for 1.03
+
+commit 853088fae10daff394dfd343352d1e954c0ecef6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 19:52:02 2022 -0600
+
+    Add members to world struct
+
+commit f8c22ddb20e99012d82897a813db8c7c4461bd0b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 24 00:48:40 2022 -0600
+
+    Can't get dijkstra's algorithm to work. Segfaulting
+
+commit 8a7a833b2569b4347f052602a18e6dc2920549ac
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:04:32 2022 -0600
+
+    Add gitignore for intellij project files
+
+commit aa5459668066bffa0f4870ca1c1375e36487392a
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:03:03 2022 -0600
+
+    Remove test heap target
+
+commit d4726c1f6ae8a3b10055b0861e476f8ae48b4f59
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:01:40 2022 -0600
+
+    Implemented integer fibonacci heap
+
+commit d0c87821c53f587fde8baf207b4294273150f8f6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 21 19:33:26 2022 -0600
+
+    Create heap files
+
+commit 70cf4305fc27b61917221ef3dfb9152a83f310ed
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 21 19:30:43 2022 -0600
+
+    print hiker and rival weight maps
+
+commit d65034a9bde864c789be4a615cac62b3b1919d7d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 22:18:14 2022 -0600
+
+    Adjust input loop
+
+commit 9b75b5cb0dbd27d61c2f3955b1295fcafe3c1193
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:46 2022 -0600
+
+    Update pos.h
+
+commit 8487ee29c8972f2dba3ac95362e93b14561aaeca
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:23 2022 -0600
+
+    Remove unnecessary ter types
+
+commit 17e4d4ac4d28c9e38ffaf727e545464d4b98502b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:01 2022 -0600
+
+    Finish refactor of map vs world
+
+commit 19739ae1b79ba2bbd203b529c6a6e6ae49a35ec6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:16:37 2022 -0600
+
+    Fixed world.o not included in poke327 executable
+
+commit cc7f02e2b258ac03772e99a06d03314150917687
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:14:45 2022 -0600
+
+    Refactor world and map code
+
+commit 0f935228018b9ecb30712a70bf2920edee0708cd
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:12:19 2022 -0600
+
+    Add world.c world.h files
+
+commit c9eca0d99f0c695d2aa163de3a9e5fc0930d543b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Feb 13 21:09:04 2022 -0600
+
+    Update for 1.02
+
 commit d0f513c3aed56d0bce44ac75f50dc27eb519bd9b
 Author: jamesminardi <jamesminardip@gmail.com>
 Date:   Thu Feb 10 04:07:21 2022 -0600

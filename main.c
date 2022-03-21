@@ -18,6 +18,7 @@
 //} option_t;
 
 world_t world;
+int num_trainers;
 
 static void print_help(char* title) {
 	printf("Poke327.\n\nUsage: %s [options]\n\n", title);
@@ -62,14 +63,14 @@ static int argument_handler(int argc, char *argv[]) {
 				break;
 
 			// NUM_TRAINERS
-			case 't': world.num_trainers = atoi(optarg);
-				if (world.num_trainers < MIN_TRAINERS || world.num_trainers > MAX_TRAINERS) {
+			case 't': num_trainers = atoi(optarg);
+				if (num_trainers < MIN_TRAINERS || num_trainers > MAX_TRAINERS) {
 					printf("Option --numtrainers requires argument {0..100}.\n");
 					print_help(argv[0]);
 					quit = 1;
 					break;
 				}
-				printf("Using set num_trainers: %d\n", world.num_trainers);
+				printf("Using set num_trainers: %d\n", num_trainers);
 				trainers_flag = 1;
 				break;
 
@@ -91,15 +92,15 @@ static int argument_handler(int argc, char *argv[]) {
 		printf("Using random seed: %d\n", world.seed);
 	}
 	if (trainers_flag == 0) {
-		world.num_trainers = DEFAULT_TRAINERS;
-		printf("Using default num_trainers: %d\n", world.num_trainers);
+		num_trainers = DEFAULT_TRAINERS;
+		printf("Using default num_trainers: %d\n", num_trainers);
 	}
 
 	return 0;
 }
 
 int main(int argc, char *argv[]) {
-	int seed, num_trainers;
+	int seed, trainers;
 	int quit;
 	if ((quit = argument_handler(argc, argv))){
 		return quit;
@@ -107,56 +108,73 @@ int main(int argc, char *argv[]) {
 	world_init();
 	world_print();
 
-	pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
-	pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);
+	world_gameLoop();
+
+	//pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
+	//pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);
 
 	//print_hiker_dist();
 	//print_rival_dist();
 
-//	char input;
-//	int x;
-//	int y;
-//
-//	do {
-//		printf("\n");
-//		world_print();
-//		printf("Current position is (%d,%d).  "
-//			   "Enter command: ",
-//			   world.pos.x,
-//			   world.pos.y);
-//
-//		scanf(" %c", &input);
-//		switch (input) {
-//			case 'd':
-//				map_generateCosts(worldxy(world.pos.x,world.pos.y));
-//				map_printDijk(worldxy(world.pos.x,world.pos.y));
-//				break;
-//			case 'n':
-//				world_move(world.pos.x, world.pos.y - 1);
-//				break;
-//			case 's':
-//				world_move(world.pos.x, world.pos.y + 1);
-//				break;
-//			case 'e':
-//				world_move(world.pos.x + 1, world.pos.y);
-//				break;
-//			case 'w':
-//				world_move(world.pos.x - 1, world.pos.y);
-//				break;
-//			case 'f':
-//				scanf("%d", &x);
-//				scanf("%d", &y);
-//				world_move(x, y);
-//				break;
-//			case '?':
-//			case 'h':
-//				printf("Move with 'e'ast, 'w'est, 'n'orth, 's'outh or 'f'ly x y.\n"
-//					   "Quit with 'q'.  '?' and 'h' print this help message.\n");
-//				break;
-//			default:
-//				break;
-//		}
-//	} while (input != 'q');
+	char input;
+	int x, y;
+	move_request_t mv;
+
+	do {
+		printf("\n");
+		world_print();
+		printf("Current position is (%d,%d).  "
+			   "Enter command: ",
+			   world.cur_idx.x,
+			   world.cur_idx.y);
+
+		scanf(" %c", &input);
+		switch (input) {
+			case 'd':
+				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
+				print_hiker_dist();
+				break;
+			case 'n':
+				mv.to_pos.x = world.cur_idx.x;
+				mv.to_pos.y = world.cur_idx.y - 1;
+				mv.to_dir = dir_north;
+				world_move(mv);
+				break;
+			case 's':
+				mv.to_pos.x = world.cur_idx.x;
+				mv.to_pos.y = world.cur_idx.y + 1;
+				mv.to_dir = dir_south;
+				world_move(mv);
+				break;
+			case 'e':
+				mv.to_pos.x = world.cur_idx.x + 1;
+				mv.to_pos.y = world.cur_idx.y;
+				mv.to_dir = dir_east;
+				world_move(mv);
+				break;
+			case 'w':
+				mv.to_pos.x = world.cur_idx.x - 1;
+				mv.to_pos.y = world.cur_idx.y;
+				mv.to_dir = dir_west;
+				world_move(mv);
+				break;
+			case 'f':
+				scanf("%d", &x);
+				scanf("%d", &y);
+				mv.to_pos.x = x;
+				mv.to_pos.y = y;
+				mv.to_dir = dir_fly;
+				world_move(mv);
+				break;
+			case '?':
+			case 'h':
+				printf("Move with 'e'ast, 'w'est, 'n'orth, 's'outh or 'f'ly x y.\n"
+					   "Quit with 'q'.  '?' and 'h' print this help message.\n");
+				break;
+			default:
+				break;
+		}
+	} while (input != 'q');
 	world_delete();
 	return 0;
 }

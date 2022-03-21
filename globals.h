@@ -14,6 +14,7 @@
 #define DEFAULT_TRAINERS 10
 #define MAX_TRAINERS 100
 #define MIN_TRAINERS 0
+extern int num_trainers;
 
 #define MIN_SEED 0
 

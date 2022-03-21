@@ -4,6 +4,7 @@
 #ifndef MAP_XY
 #define MAP_XY
 #define mapxy(x, y) (map->m[y][x])
+#define charxy(x, y) (map->char_m[y][x])
 #endif // MAP_XY
 
 #include <stdio.h>
@@ -12,55 +13,29 @@
 #include <math.h>
 #include <time.h>
 #include <limits.h>
-#include "pos.h"
+#include "components.h"
 #include "globals.h"
 #include "colors.h"
-typedef enum terrain {
-	debug, 			// 0
-	empty, 			// 1
-	ter_border, 	// 2
-	ter_exit,		// 3
-	ter_clearing, 	// 4
-	ter_grass, 		// 5
-	ter_path, 		// 6
-	ter_boulder, 	// 7
-	ter_tree, 		// 8
-	ter_center, 	// 9
-	ter_mart, 		// 10
-	ter_mountain, 	// 11
-	ter_forest, 	// 12
-	ter_water, 		// 13
-	num_terrain_types // 14
-} terrain_t;
 
 typedef struct map {
-	enum terrain m[MAP_Y][MAP_X];
-	int character_map[MAP_Y][MAP_X];
+	terrain_t m[MAP_Y][MAP_X];
+	character_t *char_m[MAP_Y][MAP_X];
 	int north, south, east, west;
 } map_t;
 
-void map_populate(map_t *map);
+static int char_weight[num_character_types] =
+		{0, 10, 25, 50, 50, 50, 25};
 
-void map_placeCenter(map_t *map);
+void move_char(map_t *map, character_t *c, pos_t pos);
 
-void map_placeMart(map_t *map);
+void npc_init(map_t *map, int num_npc);
 
-void find_validBuildingLocation(map_t *map, int *x, int *y);
-
-void map_placePath(map_t *map);
-
-void map_placeBorder(map_t *map);
-
-void map_placeGrass(map_t *map);
-
-void map_placeTree(map_t *map);
-
-int is_validTree(map_t *map, int x, int y);
+void terrain_init(map_t *map);
 
 void map_print(map_t *map);
 
-void map_generateCosts(map_t *map);
+void ter_print(map_t *map);
 
-void map_printCostMap(int cost_map[MAP_Y][MAP_X]);
+void char_print(map_t *map);
 
 #endif // MAP_H

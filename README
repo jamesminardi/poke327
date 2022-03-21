@@ -1,16 +1,29 @@
 # poke327
 ASCII Pokémon roguelike in C
 
-Program currently has a fixed seed and PC location and is only calculating hiker distances for debugging purposes.
+Usage: ./poke327 -h | --help for switches
 
-I could not get dijkstra's algorithm debugged. It currently seg faults in compare and previously did in heap_decrease_key_no_replace when assigning the parent node.
 
-I have tried not admitting infinity nodes in the heap, allowing them, adding the costs differently, etc. Even when following the path example in the instructors code for 1.02 hasn't helped me. I couldn't find what I was missing or needed to adjust for these distance maps.
+# Notes:
+## There is an arbitrary cap on the number of trainers you can add (100). This is not because I satically allocated space for the trainers. All characters are dynamically allocated using malloc.
 
+## Hiker, Rival, and Stationary are implemented. Hiker and Rival will stop moving when they reach the PC.
+
+
+# bugs
+##Other characters not implemented
+
+##Hiker and Rival don't currently avoid other characters but instead wait for them to move.
+
+
+# Stuff I did
+## I implemented a simple algorithm to allow me to weight how much each character is spawned. Right now the weights are: rival=10, hiker=25, random=25 and the rest 50
+## I used getopt_long to implement the commandline argument switches which made things a lot easier and allowed me to have more control over switches.
+## Saving of NPCs locations between moving maps & moving the PC to the correct exit when moving maps is implemented but not shown when world_gameLoop() is called.
 
 # setup
-use make or make all to compile
+## use make or make all to compile
 
-make clean will clean the directory of compiled files
+## make clean will clean the directory of compiled files
 
 
