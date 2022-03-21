@@ -28,24 +28,12 @@ typedef struct path {
 	int cost;
 } path_t;
 
-typedef struct world {
-	map_t *w[WORLD_X][WORLD_Y];
-	pos_t cur_idx;
-	map_t *cur_map;
-
-	int hiker_dist[MAP_Y][MAP_X];
-	int rival_dist[MAP_Y][MAP_X];
-	int pc_dist[MAP_Y][MAP_X];
-
-	character_t *pc;
-	int seed;
-} world_t;
 
 extern world_t world;
 
 void world_init();
 
-void world_move(move_request_t mv);
+void world_changeMap(move_request_t mv);
 
 void world_delete();
 

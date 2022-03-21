@@ -17,16 +17,12 @@
 #include "globals.h"
 #include "colors.h"
 
-typedef struct map {
-	terrain_t m[MAP_Y][MAP_X];
-	character_t *char_m[MAP_Y][MAP_X];
-	int north, south, east, west;
-} map_t;
-
-static int char_weight[num_character_types] =
+static int char_weight[num_character_types] __attribute__((unused))=
 		{0, 10, 25, 50, 50, 50, 25};
 
 void move_char(map_t *map, character_t *c, pos_t pos);
+
+void pc_init(map_t *map);
 
 void npc_init(map_t *map, int num_npc);
 

@@ -1,6 +1,9 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
+#include "heap.h"
+
+
 typedef struct pos {
 	int x;
 	int y;
@@ -38,17 +41,11 @@ typedef enum character_type {
 	char_unoccupied
 } character_type_t;
 
-//typedef struct character {
-//	character_type_t type;
-//	pos_t pos;
-//
-//} character_t;
-
 typedef struct character {
 	character_type_t type;
 	pos_t pos;
-	direction_t dir;
-	int next_move;
+	pos_t dir; // only for npc
+	int next_turn;
 } character_t;
 
 typedef enum terrain {
@@ -69,12 +66,42 @@ typedef enum terrain {
 	num_terrain_types // 14
 } terrain_t;
 
+typedef struct map {
+	terrain_t m[MAP_Y][MAP_X];
+	character_t *char_m[MAP_Y][MAP_X];
+	heap_t turn;
+	int north, south, east, west;
+} map_t;
+
+typedef struct world {
+	map_t *w[WORLD_X][WORLD_Y];
+	pos_t cur_idx;
+	map_t *cur_map;
+
+	int hiker_dist[MAP_Y][MAP_X];
+	int rival_dist[MAP_Y][MAP_X];
+	int pc_dist[MAP_Y][MAP_X];
+
+	character_t *pc;
+	int seed;
+} world_t;
 
 static const int move_cost[num_character_types][num_terrain_types] = {
 		{ INT_MAX, INT_MAX, INT_MAX, 10, 10, 20, 10, INT_MAX, INT_MAX, 10, 10, INT_MAX, INT_MAX, INT_MAX },
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 15, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 15, 15, INT_MAX},
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
+};
+
+static pos_t all_dirs[8] = {
+		{ -1, -1 },
+		{ 0,  -1 },
+		{ 1,  -1 },
+		{ -1, 0  },
+		{ 1,  0  },
+		{ -1, 1  },
+		{ 0,  1  },
+		{ 1,  1  },
 };
 
 #endif // COMPONENTS_H

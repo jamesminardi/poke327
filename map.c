@@ -188,7 +188,7 @@ void move_char(map_t *map, character_t *c, pos_t pos) {
 }
 
 static character_type_t npc_get_random() {
-	int i, sum, rnd;
+	int i, rnd;
 	static int char_weight_sum = -1;
 
 	if (char_weight_sum == -1) {
@@ -205,6 +205,7 @@ static character_type_t npc_get_random() {
 		}
 		rnd -= char_weight[i];
 	}
+	return char_unoccupied;
 }
 
 /*
@@ -234,7 +235,7 @@ void npc_init(map_t *map, int num_npc){
 		} while (!valid);
 		charxy(x,y) = malloc(sizeof(*(map->char_m)));
 		charxy(x,y)->type = new_char;
-		charxy(x,y)->next_move = 0;
+		charxy(x,y)->next_turn = 0;
 		charxy(x,y)->pos.x = x;
 		charxy(x,y)->pos.y = y;
 		if (new_char == char_pc 	|| new_char == char_statue ||
