@@ -2,6 +2,7 @@
 #define COMPONENTS_H
 
 #include "heap.h"
+#include "globals.h"
 
 
 typedef struct pos {
@@ -9,25 +10,21 @@ typedef struct pos {
 	int y;
 } pos_t;
 
-// Do not change first 8. Locked by npc_init
-typedef enum direction {
-	dir_north,
-	dir_south,
-	dir_east,
-	dir_west,
-	dir_northeast,
-	dir_northwest,
-	dir_southeast,
-	dir_southwest,
-	dir_still,
-	dir_fly,
-	dir_init
-} direction_t;
+//// Do not change first 8. Locked by npc_init
+//typedef enum direction { // TODO deprecated
+//	dir_north,
+//	dir_south,
+//	dir_east,
+//	dir_west,
+//	dir_northeast,
+//	dir_northwest,
+//	dir_southeast,
+//	dir_southwest,
+//	dir_still,
+//	dir_fly,
+//	dir_init
+//} direction_t;
 
-typedef struct move_request {
-	direction_t to_dir;
-	pos_t to_pos;
-} move_request_t;
 
 typedef enum character_type {
 	char_pc, // @
@@ -91,7 +88,22 @@ static const int move_cost[num_character_types][num_terrain_types] = {
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 15, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 15, 15, INT_MAX},
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
 		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
+		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
+		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
+		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX}
 };
+
+typedef enum cardinal_dirs {
+	dir_northeast,
+	dir_north,
+	dir_northwest,
+	dir_east,
+	dir_west,
+	dir_southwest,
+	dir_south,
+	dir_southeast,
+	dir_num
+} cardinal_dirs_t;
 
 static pos_t all_dirs[8] = {
 		{ -1, -1 },

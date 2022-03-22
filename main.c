@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 		return quit;
 	}
 	world_init();
-	//world_print();
+	world_print();
 	world_gameLoop();
 	world_delete();
 	return 0;

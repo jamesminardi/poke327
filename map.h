@@ -4,7 +4,9 @@
 #ifndef MAP_XY
 #define MAP_XY
 #define mapxy(x, y) (map->m[y][x])
+#define mappos(pos) (world.cur_map->m[pos.y][pos.x])
 #define charxy(x, y) (map->char_m[y][x])
+#define charpos(pos) (world.cur_map->char_m[pos.y][pos.x])
 #endif // MAP_XY
 
 #include <stdio.h>
@@ -17,14 +19,6 @@
 #include "globals.h"
 #include "colors.h"
 
-static int char_weight[num_character_types] __attribute__((unused))=
-		{0, 10, 25, 50, 50, 50, 25};
-
-void move_char(map_t *map, character_t *c, pos_t pos);
-
-void pc_init(map_t *map);
-
-void npc_init(map_t *map, int num_npc);
 
 void terrain_init(map_t *map);
 

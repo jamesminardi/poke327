@@ -28,12 +28,16 @@ typedef struct path {
 	int cost;
 } path_t;
 
+static int char_weight[num_character_types] __attribute__((unused))=
+		{0, 10, 25, 50, 50, 50, 25};
 
 extern world_t world;
 
+void heap_delete_char(void *v);
+
 void world_init();
 
-void world_changeMap(move_request_t mv);
+void world_changeMap(pos_t to, pos_t from);
 
 void world_delete();
 
