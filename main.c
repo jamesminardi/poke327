@@ -4,6 +4,7 @@
 #include <time.h>
 #include <getopt.h>
 #include <string.h>
+#include <ncurses.h>
 #include "globals.h"
 #include "world.h"
 #include "map.h"
@@ -99,17 +100,52 @@ static int argument_handler(int argc, char *argv[]) {
 	return 0;
 }
 
+static void io_init_terminal(void) {
+	initscr();
+	raw();
+	noecho();
+	curs_set(0);
+	keypad(stdscr, TRUE);
+}
+
 int main(int argc, char *argv[]) {
 	//int seed, trainers;
 	int quit;
 	if ((quit = argument_handler(argc, argv))){
 		return quit;
 	}
+	//usleep(2500000);
+	//io_init_terminal();
+	//WINDOW *win = initscr();
+	initscr();
+	raw();
+	noecho();
+	curs_set(0);
+	keypad(stdscr, TRUE);
+
+	usleep(2500000);
 	world_init();
-	world_print();
 	world_gameLoop();
 	world_delete();
+	usleep(2500000);
+//	world_gameLoop();
+//	world_delete();
+//	clear();
+//	mvaddch(10,10,'@');
+//	refresh();
+//	usleep(2500000);
+
+	endwin();
+
+
+//	world_init();
+//	world_print();
+//	world_gameLoop();
+//	world_delete();
 	return 0;
+
+
+
 	//pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
 	//pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);
 

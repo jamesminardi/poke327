@@ -193,191 +193,58 @@ void terrain_init(map_t *map) {
 	map_placeMart(map);
 }
 
-/*
- * Prints entire map including characters & terrain
- */
-void map_print(map_t *map) {
-	int y;
-	int x;
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			if (charxy(x,y)) {
-				switch (charxy(x,y)->type) {
-					case char_pc:
-						PRINT_PC
-						break;
-					case char_rival:
-						PRINT_RIVAL
-						break;
-					case char_hiker:
-						PRINT_HIKER
-						break;
-					case char_statue:
-						PRINT_STATUE
-						break;
-					case char_pacer:
-						PRINT_PACER
-						break;
-					case char_wanderer:
-						PRINT_WANDERER
-						break;
-					case char_random:
-						PRINT_RANDOM
-						break;
-					default:
-						PRINT_DEFAULT
-						break;
-				}
-			} else {
-				switch (mapxy(x, y)) {
-					case ter_border:
-						PRINT_BORDER
-						break;
-					case ter_boulder:
-						PRINT_BOULDER
-						break;
-					case ter_mountain:
-						PRINT_MOUNTAIN
-						break;
-					case ter_tree:
-						PRINT_TREE
-						break;
-					case ter_forest:
-						PRINT_FOREST
-						break;
-					case ter_exit:
-						PRINT_EXIT
-						break;
-					case ter_path:
-						PRINT_PATH
-						break;
-					case ter_mart:
-						PRINT_MART
-						break;
-					case ter_center:
-						PRINT_CENTER
-						break;
-					case ter_grass:
-						PRINT_GRASS
-						break;
-					case ter_clearing:
-						PRINT_CLEARING
-						break;
-					case empty:
-						PRINT_EMPTY
-						break;
-					case debug:
-						PRINT_DEBUG
-						break;
-					default:
-						PRINT_DEFAULT
-						break;
-				}
-			}
-		}
-		putchar('\n');
+
+char ter_getSymbol(terrain_t t) {
+	switch (t) {
+		case ter_border:
+			return '%';
+		case ter_boulder:
+			return '%';
+		case ter_mountain:
+			return '%';
+		case ter_tree:
+			return '^';
+		case ter_forest:
+			return '^';
+		case ter_exit:
+			return '#';
+		case ter_path:
+			return '%';
+		case ter_mart:
+			return 'M';
+		case ter_center:
+			return 'C';
+		case ter_grass:
+			return ':';
+		case ter_clearing:
+			return '.';
+		case empty:
+			return ' ';
+		case debug:
+			return ' ';
+		default:
+			return ' ';
 	}
 }
 
-/*
- * Prints only terrain
- */
-void ter_print(map_t *map) {
-	int y;
-	int x;
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			switch (mapxy(x, y)) {
-				case ter_border:
-					PRINT_BORDER
-					break;
-				case ter_boulder:
-					PRINT_BOULDER
-					break;
-				case ter_mountain:
-					PRINT_MOUNTAIN
-					break;
-				case ter_tree:
-					PRINT_TREE
-					break;
-				case ter_forest:
-					PRINT_FOREST
-					break;
-				case ter_exit:
-					PRINT_EXIT
-					break;
-				case ter_path:
-					PRINT_PATH
-					break;
-				case ter_mart:
-					PRINT_MART
-					break;
-				case ter_center:
-					PRINT_CENTER
-					break;
-				case ter_grass:
-					PRINT_GRASS
-					break;
-				case ter_clearing:
-					PRINT_CLEARING
-					break;
-				case empty:
-					PRINT_EMPTY
-					break;
-				case debug:
-					PRINT_DEBUG
-					break;
-				default:
-					PRINT_DEFAULT
-					break;
-			}
-		}
-		putchar('\n');
-	}
-}
-
-/*
- * Prints only characters with dashes as separators
- */
-void char_print(map_t *map) {
-	int y;
-	int x;
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			if (charxy(x,y)) {
-				switch (charxy(x, y)->type) {
-					case char_pc:
-						PRINT_PC
-						break;
-					case char_rival:
-						PRINT_RIVAL
-						break;
-					case char_hiker:
-						PRINT_HIKER
-						break;
-					case char_statue:
-						PRINT_STATUE
-						break;
-					case char_pacer:
-						PRINT_PACER
-						break;
-					case char_wanderer:
-						PRINT_WANDERER
-						break;
-					case char_random:
-						PRINT_RANDOM
-						break;
-					case char_unoccupied:
-						PRINT_UNOCCUPIED
-						break;
-					default:
-						PRINT_DEFAULT
-						break;
-				}
-			} else {
-				PRINT_UNOCCUPIED
-			}
-		}
-		putchar('\n');
+char char_getSymbol(character_type_t t) {
+	switch (t) {
+		case char_pc:
+			return '@';
+		case char_rival:
+			return 'r';
+		case char_hiker:
+			return 'h';
+		case char_statue:
+			return 's';
+		case char_pacer:
+			return 'p';
+		case char_wanderer:
+			return 'w';
+		case char_random:
+			return 'r';
+		case char_unoccupied:
+		default:
+			return '-';
 	}
 }

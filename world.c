@@ -253,7 +253,7 @@ void world_changeMap(pos_t to, pos_t from) {
 
 	if (to.x < 0 || to.x > WORLD_X - 1 || to.y < 0 || to.y > WORLD_Y - 1) {
 		// ERROR: Out of bounds
-		printf("Out of bounds. Position did not change\n");
+		//printf("Out of bounds. Position did not change\n");
 		return;
 	}
 //	old_map = world.cur_map; // todo Deprecated?
@@ -322,10 +322,6 @@ void world_delete() {
 		}
 	}
 
-}
-
-void world_print() {
-	map_print(world.cur_map);
 }
 
 void print_hiker_dist() {
@@ -509,12 +505,6 @@ static void turn_neighbor_init(pos_t *neighbors, character_t *center) {
 
 }
 
-static void char_pcTurn(character_t *c) {
-	//move_char the PC if moving to new map
-	// But calculate next turn and reinsert into heap before swapping maps
-	c->next_turn += move_cost[char_pc][mappos(c->pos)];
-	heap_insert(&world.cur_map->turn, c);
-}
 static void char_rivalTurn(character_t *c) {
 	pos_t dest;
 	int min;
@@ -651,24 +641,60 @@ static void char_randomTurn(character_t *c) {
 	heap_insert(&world.cur_map->turn, c);
 }
 
+
+
+static int char_pcTurn(character_t *c) {
+	char input;
+
+	// Flush input buffer to avoid past inputs from getting used
+	flushinp();
+	input = getch();
+	if (input == 27/*ESC*/) {
+		return 1;
+	}
+	//move_char the PC if moving to new map
+	// But calculate next turn and reinsert into heap before swapping maps
+	c->next_turn += move_cost[char_pc][mappos(c->pos)];
+	heap_insert(&world.cur_map->turn, c);
+	return 0;
+}
+
+void world_updateScreen() {
+	clear();
+	int x, y;
+	for (y = 0; y < MAP_Y; y++) {
+		for(x = 0; x < MAP_X; x++) {
+			if (world.cur_map->char_m[y][x]) {
+				mvaddch(y+1, x, char_getSymbol(world.cur_map->char_m[y][x]->type));
+			} else {
+				mvaddch(y+1, x, ter_getSymbol(world.cur_map->m[y][x]));
+			}
+		}
+	}
+	refresh();
+}
+
 void world_gameLoop() {
+	int quit;
 	character_t *curr_char;
 	pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
 	pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
+
+	quit = 0;
+	world_updateScreen();
 	while (heap_peek_min(&world.cur_map->turn)) {
 
 		curr_char = ((character_t *) heap_remove_min(&world.cur_map->turn));
 		switch (curr_char->type) {
-			// Handle adding PC back into heap by
+
 			case char_pc:
-				world_print();
-				usleep(250000);
-				char_pcTurn(curr_char);
+				world_updateScreen();
+				quit = char_pcTurn(curr_char);
+				if (quit) {
+					return;
+				}
 				pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
 				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
-				//print_hiker_dist();
-				//print_rival_dist();
-				//usleep(250000);
 				break;
 			case char_rival:
 				char_rivalTurn(curr_char);
