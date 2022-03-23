@@ -292,7 +292,7 @@ void world_init() {
 	// Set spawn map location
 	world.cur_idx.x = (WORLD_X -1) / 2;
 	world.cur_idx.y = (WORLD_Y- 1) / 2;
-
+	world.quit_game_flag = 0;
 	// Initialize world to maps of null
 	int x;
 	int y;
@@ -640,23 +640,112 @@ static void char_randomTurn(character_t *c) {
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 }
+/**
+ * @return 1 if invalid move
+ */
+static int char_pcMove(character_t *c, pos_t dir) {
+	pos_t dest;
+	dest = c->pos;
 
+	if ((move_cost[c->type][world.cur_map->m[c->pos.y + dir.y][c->pos.x + dir.x]] == INT_MAX) ||
+		world.cur_map->char_m[c->pos.y + dir.y][c->pos.x + c->dir.x]) {
+		// Invalid terrain or occupied
+	}
 
+	if () {
+		// Walkable terrain and not occupied by another character
+	}
+}
 
-static int char_pcTurn(character_t *c) {
-	char input;
-
+static void char_pcTurn(character_t *c) {
+	int key;
+	int done = 0;
 	// Flush input buffer to avoid past inputs from getting used
 	flushinp();
-	input = getch();
-	if (input == 27/*ESC*/) {
-		return 1;
-	}
+	key = getch();
+	switch (key) {
+		// NorthWest
+		case '7':   // 7
+		case 'y':   // y
+			char_pcMove(c, all_dirs[dir_northwest]);
+			break;
+
+		// North
+		case '8':	// 8
+		case 'k':	// k
+			char_pcMove(c, all_dirs[dir_north]);
+			break;
+		// NorthEast
+		case '9':	// 9
+		case 'u': 	// u
+			char_pcMove(c, all_dirs[dir_northeast]);
+			break;
+
+		// West
+		case '4': 	// 4
+		case 'h': 	// h
+			char_pcMove(c, all_dirs[dir_west]);
+			break;
+
+		// East
+		case '6': 	// 6
+		case 'l': 	// l
+			char_pcMove(c, all_dirs[dir_east]);
+			break;
+
+		// SouthWest
+		case '1': 	// 1
+		case 'b': 	// b
+			char_pcMove(c, all_dirs[dir_southwest]);
+			break;
+
+		// South
+		case '2': 	// 2
+		case 'j': 	// j
+			char_pcMove(c, all_dirs[dir_south]);
+			break;
+
+		// SouthEast
+		case '3': 	// 3
+		case 'n': 	// n
+			char_pcMove(c, all_dirs[dir_southeast]);
+			break;
+
+		// NOP
+		case '5': 	// 5
+		case ' ': 	// space
+		case '.': 	// .
+			break;
+
+		// Enter a building
+		case '>': 	// >
+			break;
+
+		// List of trainers
+		case 't': 	// t
+			break;
+
+		// Scroll up list
+		case KEY_UP: // up arrow
+			break;
+
+		// Scroll down list
+		case KEY_DOWN: // down arrow
+			break;
+
+		// Return from list
+		case 27:	// esc
+			break;
+
+		// Quit the game
+		case 'q': 	// q
+			world.quit_game_flag = 1;
+			break;
+	} // switch(key)
 	//move_char the PC if moving to new map
 	// But calculate next turn and reinsert into heap before swapping maps
 	c->next_turn += move_cost[char_pc][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
-	return 0;
 }
 
 void world_updateScreen() {
@@ -675,24 +764,20 @@ void world_updateScreen() {
 }
 
 void world_gameLoop() {
-	int quit;
 	character_t *curr_char;
 	pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
 	pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
 
-	quit = 0;
 	world_updateScreen();
-	while (heap_peek_min(&world.cur_map->turn)) {
-
+	while (!world.quit_game_flag) {
+	// old while: heap_peek_min(&world.cur_map->turn)
 		curr_char = ((character_t *) heap_remove_min(&world.cur_map->turn));
 		switch (curr_char->type) {
 
 			case char_pc:
 				world_updateScreen();
-				quit = char_pcTurn(curr_char);
-				if (quit) {
-					return;
-				}
+				char_pcTurn(curr_char);
+
 				pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
 				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
 				break;
@@ -716,8 +801,8 @@ void world_gameLoop() {
 				break;
 			default:
 				break;
-		}
-	}
+		} // switch curr_char
+	} // while(!quit_game)
 
 
 }

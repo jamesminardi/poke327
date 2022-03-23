@@ -81,6 +81,8 @@ typedef struct world {
 
 	character_t *pc;
 	int seed;
+
+	int quit_game_flag;
 } world_t;
 
 static const int move_cost[num_character_types][num_terrain_types] = {
