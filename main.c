@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <ncurses.h>
+#include <panel.h>
 #include "globals.h"
 #include "world.h"
 #include "map.h"
@@ -19,6 +20,8 @@
 //} option_t;
 
 world_t world;
+WINDOW *windows[num_windows];
+PANEL *panels[num_windows];
 int num_trainers;
 
 static void print_help(char* title) {
@@ -100,12 +103,25 @@ static int argument_handler(int argc, char *argv[]) {
 	return 0;
 }
 
-static void io_init_terminal(void) {
+static void io_init_terminal() {
 	initscr();
 	raw();
 	noecho();
 	curs_set(0);
 	keypad(stdscr, TRUE);
+}
+
+void wins_init(){
+	windows[win_map] = newwin(MAP_Y, TERMINAL_X, 1, 0);
+	windows[win_top] = newwin(1, TERMINAL_X, 0, 0);
+	windows[win_bottom] = newwin(2, TERMINAL_X, TERMINAL_Y - 2, 0);
+	windows[win_battle] = newwin(MAP_Y-4, TERMINAL_X-4, 3, 2);
+	windows[win_trainers] = newwin(MAP_Y-4, TERMINAL_X-20, 3, 10);
+
+	box(windows[win_map], 0, 0);
+	box(windows[win_bottom], 0, 0);
+	box(windows[win_battle],0,0);
+	box(windows[win_trainers],0,0);
 }
 
 int main(int argc, char *argv[]) {
@@ -114,33 +130,27 @@ int main(int argc, char *argv[]) {
 	if ((quit = argument_handler(argc, argv))){
 		return quit;
 	}
-	//usleep(2500000);
-	//io_init_terminal();
-	//WINDOW *win = initscr();
-	initscr();
-	raw();
-	noecho();
-	curs_set(0);
-	keypad(stdscr, TRUE);
-	getch();
+	io_init_terminal();
+	wins_init();
+
+	/* Attach a panel to each window */ 	/* Order is bottom up */
+	panels[win_bottom] = new_panel(windows[win_bottom]);
+	panels[win_map] = new_panel(windows[win_map]);
+	panels[win_top] = new_panel(windows[win_top]);
+	panels[win_battle] = new_panel(windows[win_battle]);
+	panels[win_trainers] = new_panel(windows[win_trainers]);
+
+	hide_panel(panels[win_battle]);
+	hide_panel(panels[win_trainers]);
+
+	update_panels(); // Write panels to vitual screen in correct visibility order
+	doupdate(); // Shows to screen
 	world_init();
 	world_gameLoop();
 	world_delete();
-	usleep(2500000);
-//	world_gameLoop();
-//	world_delete();
-//	clear();
-//	mvaddch(10,10,'@');
-//	refresh();
-//	usleep(2500000);
+
 
 	endwin();
-
-
-//	world_init();
-//	world_print();
-//	world_gameLoop();
-//	world_delete();
 	return 0;
 
 
