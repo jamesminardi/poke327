@@ -7,7 +7,7 @@ void rand_pos(pos_t *pos) {
 
 void rand_dir(character_t *c) {
 	int i = rand() & 0x7;
-	c->dir = all_dirs[i];
+	c->attr.dir = all_dirs[i];
 }
 
 /*
@@ -84,35 +84,30 @@ static void world_initMap() {
 }
 
 void move_char(character_t *c, pos_t pos) {
+	// if moving the PC to itself, then check if the PC exists in the charmap somewhere else other than it's position
+	// Then move that PC position to its current position
+	if (c->type == char_pc && !charpos(c->pos) && (pos.x == c->pos.x && pos.y == c->pos.y)) {
+		charpos(pos) = world.pc;
+		world.pc->pos = pos;
+	}
+
+	if (c->type == char_pc && !charpos(c->pos) && (pos.x != c->pos.x || pos.y != c->pos.y)) {
+		charpos(pos) = world.pc;
+		world.pc->pos = pos;
+	}
+	if (c->type == char_pc && charpos(c->pos) && (pos.x != c->pos.x || pos.y != c->pos.y)) {
+		charpos(pos) = world.pc;
+		charpos(c->pos) = NULL;
+		world.pc->pos = pos;
+	}
+
 	// Set character position in character map
-	if (pos.x != c->pos.x || pos.y != c->pos.y) {
+	if (c->type != char_pc && (pos.x != c->pos.x || pos.y != c->pos.y)) {
 		charpos(pos) = charpos(c->pos);
 		charpos(c->pos) = NULL;
 		// Set character inner position
 		charpos(pos)->pos = pos;
 	}
-}
-
-
-/*
- * Called once per world by pc_init. Places PC on random path in current map and adds to queue
- * Assumptions:
- * 		Current map is set to spawn map
- * 		Character map for current map is already malloced
- */
-static void world_pcInit() {
-	// Set initial pc location to random place on path
-
-	pos_t pos;
-	do {
-		rand_pos(&pos);
-		// Redundant check for char_m being null since this func will be called before NPCS
-	} while (mappos(pos) != ter_path);
-	world.pc = malloc(sizeof(*(world.cur_map->char_m)));
-	world.pc->pos = (pos_t){ pos.x, pos.y};
-	world.pc->dir = (pos_t){0,0};
-
-	heap_insert(&world.cur_map->turn, world.pc);
 }
 
 /*
@@ -127,12 +122,12 @@ static void pc_init(pos_t relative_toDir) {
 		world.pc->pos.y = MAP_Y - 2;
 		move_char(world.pc, world.pc->pos);
 	}
-	else if (relative_toDir.x == all_dirs[dir_west].x && relative_toDir.y == all_dirs[dir_west].y) {
+	else if (relative_toDir.x == all_dirs[dir_east].x && relative_toDir.y == all_dirs[dir_east].y) {
 		world.pc->pos.x = 1;
-		world.pc->pos.y = world.cur_map->east;
+		world.pc->pos.y = world.cur_map->west;
 		move_char(world.pc, world.pc->pos);
 	}
-	else if (relative_toDir.x == all_dirs[dir_east].x && relative_toDir.y == all_dirs[dir_east].y) {
+	else if (relative_toDir.x == all_dirs[dir_west].x && relative_toDir.y == all_dirs[dir_west].y) {
 		world.pc->pos.x = MAP_X - 2;
 		world.pc->pos.y = world.cur_map->east;
 		move_char(world.pc, world.pc->pos);
@@ -142,9 +137,7 @@ static void pc_init(pos_t relative_toDir) {
 		world.pc->pos.y = 1;
 		move_char(world.pc, world.pc->pos);
 	}
-	// Means it's flying and not a init
-	else {
-		// Flying
+	else { // World Init PC
 		pos_t pos;
 		do {
 			rand_pos(&pos);
@@ -153,10 +146,12 @@ static void pc_init(pos_t relative_toDir) {
 
 		if (!world.pc) {
 			world.pc = malloc(sizeof(*(world.cur_map->char_m)));
-			world.pc->dir = (pos_t) {0, 0};
+			world.pc->attr.dir = (pos_t) {0, 0};
+			world.pc->attr.defeated = 0;
 			world.pc->pos = (pos_t) {pos.x, pos.y};
-			world.pc->next_turn = 0;
 			charpos(world.pc->pos) = world.pc;
+			world.pc->next_turn = 0;
+			heap_insert(&world.cur_map->turn, world.pc);
 		} else {
 			world.pc->pos = (pos_t) {pos.x, pos.y};
 			move_char(world.pc, world.pc->pos);
@@ -233,9 +228,9 @@ static void npc_init(){
 
 		if (new_char == char_pc 	|| new_char == char_statue ||
 			new_char == char_hiker  || new_char == char_rival) {
-			charpos(pos)->dir 	= (pos_t){0,0};
+			charpos(pos)->attr.dir 	= (pos_t){0,0};
 		} else {
-			charpos(pos)->dir 	= all_dirs[rand() % dir_num];
+			charpos(pos)->attr.dir 	= all_dirs[rand() % dir_num];
 		}
 		heap_insert(&world.cur_map->turn, charpos(pos));
 	}
@@ -246,7 +241,6 @@ static void npc_init(){
  * @param from 	Index of departure map in world units
  */
 void world_changeMap(pos_t to, pos_t from) {
-	map_t *old_map;
 
 	// Index of destination map relative to departure map
 	pos_t relative_toDir = (pos_t){to.x - from.x, to.y - from.y};
@@ -256,25 +250,22 @@ void world_changeMap(pos_t to, pos_t from) {
 		//printf("Out of bounds. Position did not change\n");
 		return;
 	}
-//	old_map = world.cur_map; // todo Deprecated?
-//	if (mv.to_dir != dir_init) {
-//		pc_remove(old_map);
-//	}
 
 	// Update current map index
 	world.cur_idx = to;
+	// Remove pc from previous map
+	if (world.pc) {
+		charpos(world.pc->pos) = NULL;
+	}
 
-	// Set current map pointer, and generate the destination map if it doesn't exist yet
+	// Generate new map
 	if (worldxy(world.cur_idx.x, world.cur_idx.y) == NULL) {
-		world_initMap();
+		world_initMap(); // Update cur_map
 		terrain_init(world.cur_map);
 		pc_init(relative_toDir);
-		heap_insert(&world.cur_map->turn, charpos(world.pc->pos));
 		// Put a pointer to the PC into the destination map
-		world.cur_map->char_m[world.pc->pos.y][world.pc->pos.x] = world.pc;
-		world.pc->next_turn = 0;
-		// Handled by game loop
-		// heap_insert(&world.cur_map->turn, &world.pc);
+		//charpos(world.pc->pos) = world.pc;
+		//world.pc->next_turn = 0;
 		npc_init();
 
 	} else {
@@ -583,18 +574,18 @@ static void char_pacerTurn(character_t *c) {
 	pos_t dest;
 	dest = c->pos;
 
-	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] !=
+	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] !=
 		 world.cur_map->m[c->pos.y][c->pos.x]) ||
-		 world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
-		c->dir.x *= -1;
-		c->dir.y *= -1;
+		 world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
+		c->attr.dir.x *= -1;
+		c->attr.dir.y *= -1;
 	}
 
-	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] ==
+	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] ==
 		 world.cur_map->m[c->pos.y][c->pos.x]) &&
-		!world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
-		dest.x = c->pos.x + c->dir.x;
-		dest.y = c->pos.y + c->dir.y;
+		!world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
+		dest.x = c->pos.x + c->attr.dir.x;
+		dest.y = c->pos.y + c->attr.dir.y;
 	}
 	move_char(c, dest);
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
@@ -604,17 +595,17 @@ static void char_wandererTurn(character_t *c) {
 	pos_t dest;
 	dest = c->pos;
 
-	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] !=
+	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] !=
 		 world.cur_map->m[c->pos.y][c->pos.x]) ||
-		world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
+		 world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
 		rand_dir(c);
 	}
 
-	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] ==
+	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] ==
 		 world.cur_map->m[c->pos.y][c->pos.x]) &&
-		!world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
-		dest.x = c->pos.x + c->dir.x;
-		dest.y = c->pos.y + c->dir.y;
+		!world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
+		dest.x = c->pos.x + c->attr.dir.x;
+		dest.y = c->pos.y + c->attr.dir.y;
 	}
 	move_char(c, dest);
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
@@ -624,127 +615,20 @@ static void char_randomTurn(character_t *c) {
 	pos_t dest;
 	dest = c->pos;
 
-	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]] == INT_MAX) ||
-		world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
-		c->dir.x *= -1;
-		c->dir.y *= -1;
+	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]] == INT_MAX) ||
+		world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
+		c->attr.dir.x *= -1;
+		c->attr.dir.y *= -1;
 	}
 
-	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]] != INT_MAX) &&
-		!world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
-		dest.x = c->pos.x + c->dir.x;
-		dest.y = c->pos.y + c->dir.y;
+	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]] != INT_MAX) &&
+		!world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
+		dest.x = c->pos.x + c->attr.dir.x;
+		dest.y = c->pos.y + c->attr.dir.y;
 	}
 	
 	move_char(c, dest);
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
-	heap_insert(&world.cur_map->turn, c);
-}
-/**
- * @return 1 if invalid move
- */
-static int char_pcMove(character_t *c, pos_t dir) {
-	pos_t dest;
-	dest = c->pos;
-
-	if ((move_cost[c->type][world.cur_map->m[c->pos.y + dir.y][c->pos.x + dir.x]] == INT_MAX) ||
-		world.cur_map->char_m[c->pos.y + dir.y][c->pos.x + c->dir.x]) {
-		// Invalid terrain or occupied
-	}
-
-	if () {
-		// Walkable terrain and not occupied by another character
-	}
-}
-
-static void char_pcTurn(character_t *c) {
-	int key;
-	int done = 0;
-	// Flush input buffer to avoid past inputs from getting used
-	flushinp();
-	key = getch();
-	switch (key) {
-		// NorthWest
-		case '7':   // 7
-		case 'y':   // y
-			char_pcMove(c, all_dirs[dir_northwest]);
-			break;
-
-		// North
-		case '8':	// 8
-		case 'k':	// k
-			char_pcMove(c, all_dirs[dir_north]);
-			break;
-		// NorthEast
-		case '9':	// 9
-		case 'u': 	// u
-			char_pcMove(c, all_dirs[dir_northeast]);
-			break;
-
-		// West
-		case '4': 	// 4
-		case 'h': 	// h
-			char_pcMove(c, all_dirs[dir_west]);
-			break;
-
-		// East
-		case '6': 	// 6
-		case 'l': 	// l
-			char_pcMove(c, all_dirs[dir_east]);
-			break;
-
-		// SouthWest
-		case '1': 	// 1
-		case 'b': 	// b
-			char_pcMove(c, all_dirs[dir_southwest]);
-			break;
-
-		// South
-		case '2': 	// 2
-		case 'j': 	// j
-			char_pcMove(c, all_dirs[dir_south]);
-			break;
-
-		// SouthEast
-		case '3': 	// 3
-		case 'n': 	// n
-			char_pcMove(c, all_dirs[dir_southeast]);
-			break;
-
-		// NOP
-		case '5': 	// 5
-		case ' ': 	// space
-		case '.': 	// .
-			break;
-
-		// Enter a building
-		case '>': 	// >
-			break;
-
-		// List of trainers
-		case 't': 	// t
-			break;
-
-		// Scroll up list
-		case KEY_UP: // up arrow
-			break;
-
-		// Scroll down list
-		case KEY_DOWN: // down arrow
-			break;
-
-		// Return from list
-		case 27:	// esc
-			break;
-
-		// Quit the game
-		case 'q': 	// q
-			world.quit_game_flag = 1;
-			break;
-	} // switch(key)
-	//move_char the PC if moving to new map
-	// But calculate next turn and reinsert into heap before swapping maps
-	c->next_turn += move_cost[char_pc][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 }
 
@@ -761,6 +645,135 @@ void world_updateScreen() {
 		}
 	}
 	refresh();
+}
+
+static void char_pcTurn(character_t *c) {
+	int key;
+	int done;
+	pos_t newPos;
+
+	// Flush input buffer to avoid past inputs from getting used
+	flushinp();
+	done = 0;
+	newPos = c->pos;
+	while (!done) {
+		world_updateScreen();
+		key = getch();
+		switch (key) {
+			// NorthWest
+			case '7':   // 7
+			case 'y':   // y
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_northwest].x, c->pos.y + all_dirs[dir_northwest].y};
+				done = 1;
+				break;
+				// North
+			case '8':    // 8
+			case 'k':    // k
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_north].x, c->pos.y + all_dirs[dir_north].y};
+				done = 1;
+				break;
+				// NorthEast
+			case '9':    // 9
+			case 'u':    // u
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_northeast].x, c->pos.y + all_dirs[dir_northeast].y};
+				done = 1;
+				break;
+				// West
+			case '4':    // 4
+			case 'h':    // h
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_west].x, c->pos.y + all_dirs[dir_west].y};
+				done = 1;
+				break;
+				// East
+			case '6':    // 6
+			case 'l':    // l
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_east].x, c->pos.y + all_dirs[dir_east].y};
+				done = 1;
+				break;
+				// SouthWest
+			case '1':    // 1
+			case 'b':    // b
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_southwest].x, c->pos.y + all_dirs[dir_southwest].y};
+				done = 1;
+				break;
+				// South
+			case '2':    // 2
+			case 'j':    // j
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_south].x, c->pos.y + all_dirs[dir_south].y};
+				done = 1;
+				break;
+				// SouthEast
+			case '3':    // 3
+			case 'n':    // n
+				newPos = (pos_t) {c->pos.x + all_dirs[dir_southeast].x, c->pos.y + all_dirs[dir_southeast].y};
+				done = 1;
+				break;
+
+				// NOP
+			case '5':    // 5
+			case ' ':    // space
+			case '.':    // .
+				done = 1;
+				break;
+
+				// Enter a building
+			case '>':    // >
+				break;
+
+				// List of trainers
+			case 't':    // t
+				break;
+
+				// Scroll up list
+			case KEY_UP: // up arrow
+				break;
+
+				// Scroll down list
+			case KEY_DOWN: // down arrow
+				break;
+
+				// Return from list
+			case 27:    // esc
+				break;
+
+				// Quit the game
+			case 'q':    // q
+				done = 1;
+				world.quit_game_flag = 1;
+				break;
+		} // switch(key)
+
+		if (mappos(newPos) == ter_exit) {
+			// Change maps
+			if (newPos.y < 1) { 		// N
+				world_changeMap((pos_t){world.cur_idx.x, world.cur_idx.y - 1}, world.cur_idx);
+			}
+			if (newPos.y >= MAP_Y - 1) { // S
+				world_changeMap((pos_t){world.cur_idx.x, world.cur_idx.y + 1}, world.cur_idx);
+			}
+			if (newPos.x >= MAP_X - 1) { // E
+				world_changeMap((pos_t){world.cur_idx.x + 1, world.cur_idx.y}, world.cur_idx);
+			}
+			if (newPos.x < 1) { 		// W
+				world_changeMap((pos_t){world.cur_idx.x - 1, world.cur_idx.y}, world.cur_idx);
+			}
+			world.pc->next_turn = ((character_t *)heap_peek_min(&world.cur_map->turn))->next_turn;
+		}
+		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !charpos(newPos)->attr.defeated) {
+			// Battle character
+			done = 1;
+		}
+		if (move_cost[c->type][mappos(newPos)] != INT_MAX && mappos(newPos) != ter_exit && !charpos(newPos)) {
+			// Move to that location
+			move_char(c, newPos);
+			done = 1;
+		}
+	} // while (!done)
+
+	//move_char the PC if moving to new map
+	// But calculate next turn and reinsert into heap before swapping maps
+	c->next_turn += move_cost[char_pc][mappos(c->pos)];
+	heap_insert(&world.cur_map->turn, c);
 }
 
 void world_gameLoop() {

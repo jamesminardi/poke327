@@ -122,8 +122,7 @@ int main(int argc, char *argv[]) {
 	noecho();
 	curs_set(0);
 	keypad(stdscr, TRUE);
-
-	usleep(2500000);
+	getch();
 	world_init();
 	world_gameLoop();
 	world_delete();

@@ -38,10 +38,15 @@ typedef enum character_type {
 	char_unoccupied
 } character_type_t;
 
+typedef struct char_attributes {
+	pos_t dir;
+	int defeated;
+} char_attributes_t;
+
 typedef struct character {
 	character_type_t type;
 	pos_t pos;
-	pos_t dir; // only for npc
+	char_attributes_t attr;
 	int next_turn;
 } character_t;
 
@@ -96,11 +101,11 @@ static const int move_cost[num_character_types][num_terrain_types] = {
 };
 
 typedef enum cardinal_dirs {
-	dir_northeast,
-	dir_north,
 	dir_northwest,
-	dir_east,
+	dir_north,
+	dir_northeast,
 	dir_west,
+	dir_east,
 	dir_southwest,
 	dir_south,
 	dir_southeast,
