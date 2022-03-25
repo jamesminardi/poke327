@@ -793,6 +793,7 @@ static void char_pcTurn(character_t *c) {
 
 				// Quit the game
 			case 'q':    // q
+			case 'Q':	 // Q
 				done = 1;
 				world.quit_game_flag = 1;
 				break;
