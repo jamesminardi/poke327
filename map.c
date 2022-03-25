@@ -209,7 +209,7 @@ char ter_getSymbol(terrain_t t) {
 		case ter_exit:
 			return '#';
 		case ter_path:
-			return '%';
+			return '#';
 		case ter_mart:
 			return 'M';
 		case ter_center:
