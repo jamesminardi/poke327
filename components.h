@@ -123,4 +123,13 @@ static pos_t all_dirs[8] = {
 		{ 1,  1  },
 };
 
+typedef enum window_type {
+	win_top,
+	win_battle,
+	win_map,
+	win_bottom,
+	win_trainers,
+	num_windows
+} window_type_t;
+
 #endif // COMPONENTS_H
