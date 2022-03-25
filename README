@@ -4,22 +4,38 @@ ASCII Pokémon roguelike in C
 Usage: ./poke327 -h | --help for switches
 
 
-# Notes:
-## There is an arbitrary cap on the number of trainers you can add (100). This is not because I satically allocated space for the trainers. All characters are dynamically allocated using malloc.
+In-game keybindings:
+    7 | y   Attempt to move PC one cell to upper left
+    8 | k   Attempt to move PC one cell up
+    9 | u   Attempt to move PC one cell to the upper right
+    6 | l   Attempt to move PC one cell to the right.
+    3 | n   Attempt to move PC one cell to the lower right.
+    2 | j   Attempt to move PC one cell down.
+    1 | b   Attempt to move PC one cell to the lower left.
+    4 | h   Attempt to move PC one cell to the left.
+    >       Attempt to enter building
+    5 | .   Rest turn for PC
+    t       View list of trainers on the map with relative positions to PC
+    up
+    down
+    ESC     Return to map when in a menu
+    Q | q   Quit the game
 
-## Hiker, Rival, and Stationary are implemented. Hiker and Rival will stop moving when they reach the PC.
+# Notes:
+## There is an arbitrary cap on the number of trainers you can add (100). This is not because I statically allocated space for the trainers. All characters are dynamically allocated using malloc.
+## Hiker and Rival will stop pathing to the PC after being defeated
+## Map state is stored when changing maps.
+## Returning to a previously visited map will be the same except a turn will be advanced for that action. This is a slight nerf to swapping between maps quickly
+## Hiker and Rival will path to the PC's last valid location if the PC moves to a tile with Infinity cost for the trainers.
 
 
 # bugs
-##Other characters not implemented
-
-##Hiker and Rival don't currently avoid other characters but instead wait for them to move.
-
+## Scrolling trainers screen not working
+## Hiker and Rival don't currently avoid other characters but instead wait for them to move.
 
 # Stuff I did
 ## I implemented a simple algorithm to allow me to weight how much each character is spawned. Right now the weights are: rival=10, hiker=25, random=25 and the rest 50
 ## I used getopt_long to implement the commandline argument switches which made things a lot easier and allowed me to have more control over switches.
-## Saving of NPCs locations between moving maps & moving the PC to the correct exit when moving maps is implemented but not shown when world_gameLoop() is called.
 
 # setup
 ## use make or make all to compile
