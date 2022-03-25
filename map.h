@@ -30,4 +30,5 @@ void char_print(map_t *map);
 
 char ter_getSymbol(terrain_t t);
 char char_getSymbol(character_type_t t);
+char * char_getString(character_type_t t);
 #endif // MAP_H

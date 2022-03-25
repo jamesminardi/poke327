@@ -496,35 +496,58 @@ static void turn_neighbor_init(pos_t *neighbors, character_t *center) {
 
 }
 
+void battle(character_t *c) {
+	// Battle
+	int done;
+	int key;
+	done  = 0;
+	// Right now, display to panel
+	show_panel(panels[win_battle]);
+	wclear(windows[win_battle]);
+	while (!done) {
+		box(windows[win_battle],0,0);
+		mvwaddstr(windows[win_battle], 4,4,"BATTLE: Press ESC to defeat your opponent!");
+
+		update_panels();
+		doupdate();
+		key = getch();
+		switch (key) {
+			case 27: // ESC
+				c->attr.defeated = 1;
+				hide_panel(panels[win_battle]);
+				// PC wins
+				// Mark trainer as defeated
+				// Return to map
+				done = 1;
+				break;
+		}
+	}
+}
+
 static void char_rivalTurn(character_t *c) {
 	pos_t dest;
 	int min;
 	int base;
 	int i;
-	int touch_flag;
 
 	base = rand() & 0x7;
 	dest = c->pos;
 	min = INT_MAX;
-	touch_flag = 0;
 	for (i = base; i < dir_num + base; i++) {
-		// Destination is the smallest move cost without a character already being there
-		if (world.cur_map->char_m[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] && world.cur_map->char_m[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x]->type == char_pc) {
-			touch_flag = 1;
-			break;
-		}
-		if ((world.rival_dist[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] < min) &&
-			!world.cur_map->char_m[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] ){
+		if ((world.rival_dist[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] < min)){
 
 			dest.x = c->pos.x + all_dirs[i & 0x7].x;
 			dest.y = c->pos.y + all_dirs[i & 0x7].y;
 			min = world.rival_dist[dest.y][dest.x];
 		}
 	}
-	if (!world.cur_map->char_m[dest.y][dest.x] && touch_flag == 0) {
+
+	if (!c->attr.defeated && charpos(dest) && charpos(dest)->type == char_pc) {
+		battle(c);
+	}
+	if (!c->attr.defeated && !world.cur_map->char_m[dest.y][dest.x]) {
 		move_char(c, dest);
 	}
-	touch_flag = 0;
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 
@@ -534,32 +557,28 @@ static void char_hikerTurn(character_t *c) {
 	int min;
 	int base;
 	int i;
-	int touch_flag;
 
 	base = rand() & 0x7;
 	dest = c->pos;
 	min = INT_MAX;
-	touch_flag = 0;
 	for (i = base; i < dir_num + base; i++) {
-		// Destination is the smallest move cost without a character already being there
-		if (world.cur_map->char_m[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] && world.cur_map->char_m[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x]->type == char_pc) {
-			touch_flag = 1;
-			break;
-		}
-		if ((world.rival_dist[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] < min) &&
-			!world.cur_map->char_m[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] ){
+		if ((world.rival_dist[c->pos.y + all_dirs[i & 0x7].y][c->pos.x + all_dirs[i & 0x7].x] < min)){
 
 			dest.x = c->pos.x + all_dirs[i & 0x7].x;
 			dest.y = c->pos.y + all_dirs[i & 0x7].y;
 			min = world.hiker_dist[dest.y][dest.x];
 		}
 	}
-	if (!world.cur_map->char_m[dest.y][dest.x] && touch_flag == 0) {
+
+	if (!c->attr.defeated && charpos(dest) && charpos(dest)->type == char_pc) {
+		battle(c);
+	}
+	if (!c->attr.defeated && !world.cur_map->char_m[dest.y][dest.x]) {
 		move_char(c, dest);
 	}
-	touch_flag = 0;
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
+
 }
 static void char_statueTurn(character_t *c) {
 	pos_t dest;
@@ -633,18 +652,68 @@ static void char_randomTurn(character_t *c) {
 }
 
 void world_updateScreen() {
-	clear();
+	wclear(windows[win_map]);
 	int x, y;
 	for (y = 0; y < MAP_Y; y++) {
 		for(x = 0; x < MAP_X; x++) {
 			if (world.cur_map->char_m[y][x]) {
-				mvaddch(y+1, x, char_getSymbol(world.cur_map->char_m[y][x]->type));
+				mvwaddch(windows[win_map], y, x, char_getSymbol(world.cur_map->char_m[y][x]->type));
 			} else {
-				mvaddch(y+1, x, ter_getSymbol(world.cur_map->m[y][x]));
+				mvwaddch(windows[win_map], y, x, ter_getSymbol(world.cur_map->m[y][x]));
 			}
 		}
 	}
-	refresh();
+	update_panels();
+	doupdate();
+	//wrefresh();
+}
+
+static char* relativePosString(char* output, int x, int y) {
+	pos_t relPos;
+	relPos.x = x - world.pc->pos.x;
+	relPos.y = y - world.pc->pos.y;
+	sprintf(output, "(%d, %d)", relPos.x, relPos.y);
+
+	return output;
+
+}
+
+void listTrainers() {
+	// Battle
+	int done;
+	int key;
+	done  = 0;
+	// Right now, display to panel
+	show_panel(panels[win_trainers]);
+	top_panel(panels[win_trainers]);
+	wclear(windows[win_trainers]);
+
+	box(windows[win_trainers],0,0);
+	mvwaddstr(windows[win_trainers], 1,1,"Trainers:");
+	int x, y;
+	int row = 1;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			if (world.cur_map->char_m[y][x]) {
+				char relposstr[20];
+				mvwprintw(windows[win_trainers], row, 1, "%s at %s relative",
+						  char_getString(world.cur_map->char_m[y][x]->type), relativePosString(relposstr,x,y));
+				row++;
+			}
+		}
+	}
+	while (!done) {
+
+		update_panels();
+		doupdate();
+		key = getch();
+		switch (key) {
+			case 27: // ESC
+				hide_panel(panels[win_trainers]);
+				done = 1;
+				break;
+		}
+	}
 }
 
 static void char_pcTurn(character_t *c) {
@@ -653,60 +722,55 @@ static void char_pcTurn(character_t *c) {
 	pos_t newPos;
 
 	// Flush input buffer to avoid past inputs from getting used
-	flushinp();
 	done = 0;
 	newPos = c->pos;
 	while (!done) {
 		world_updateScreen();
+		flushinp();
 		key = getch();
+		wclear(windows[win_top]);
+		update_panels();
+		doupdate();
 		switch (key) {
 			// NorthWest
 			case '7':   // 7
 			case 'y':   // y
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_northwest].x, c->pos.y + all_dirs[dir_northwest].y};
-				done = 1;
 				break;
 				// North
 			case '8':    // 8
 			case 'k':    // k
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_north].x, c->pos.y + all_dirs[dir_north].y};
-				done = 1;
 				break;
 				// NorthEast
 			case '9':    // 9
 			case 'u':    // u
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_northeast].x, c->pos.y + all_dirs[dir_northeast].y};
-				done = 1;
 				break;
 				// West
 			case '4':    // 4
 			case 'h':    // h
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_west].x, c->pos.y + all_dirs[dir_west].y};
-				done = 1;
 				break;
 				// East
 			case '6':    // 6
 			case 'l':    // l
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_east].x, c->pos.y + all_dirs[dir_east].y};
-				done = 1;
 				break;
 				// SouthWest
 			case '1':    // 1
 			case 'b':    // b
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_southwest].x, c->pos.y + all_dirs[dir_southwest].y};
-				done = 1;
 				break;
 				// South
 			case '2':    // 2
 			case 'j':    // j
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_south].x, c->pos.y + all_dirs[dir_south].y};
-				done = 1;
 				break;
 				// SouthEast
 			case '3':    // 3
 			case 'n':    // n
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_southeast].x, c->pos.y + all_dirs[dir_southeast].y};
-				done = 1;
 				break;
 
 				// NOP
@@ -718,22 +782,13 @@ static void char_pcTurn(character_t *c) {
 
 				// Enter a building
 			case '>':    // >
+				wclear(windows[win_top]);
+				mvwaddstr(windows[win_top], 0, 0, "Entering a building not yet implemented.");
 				break;
 
 				// List of trainers
 			case 't':    // t
-				break;
-
-				// Scroll up list
-			case KEY_UP: // up arrow
-				break;
-
-				// Scroll down list
-			case KEY_DOWN: // down arrow
-				break;
-
-				// Return from list
-			case 27:    // esc
+				listTrainers();
 				break;
 
 				// Quit the game
@@ -741,7 +796,20 @@ static void char_pcTurn(character_t *c) {
 				done = 1;
 				world.quit_game_flag = 1;
 				break;
+				// Scroll up list
+			case KEY_UP: // up arrow
+				// Scroll down list
+			case KEY_DOWN: // down arrow
+				// Return from list
+			case 27:    // esc
+			default:
+				wclear(windows[win_top]);
+				mvwaddstr(windows[win_top], 0, 0, "Invalid action.");
 		} // switch(key)
+		if (done) {
+			return;
+		}
+
 
 		if (mappos(newPos) == ter_exit) {
 			// Change maps
@@ -758,10 +826,15 @@ static void char_pcTurn(character_t *c) {
 				world_changeMap((pos_t){world.cur_idx.x - 1, world.cur_idx.y}, world.cur_idx);
 			}
 			world.pc->next_turn = ((character_t *)heap_peek_min(&world.cur_map->turn))->next_turn;
-		}
-		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !charpos(newPos)->attr.defeated) {
-			// Battle character
 			done = 1;
+		}
+		if (charpos(newPos) && charpos(newPos)->attr.defeated) {
+			wclear(windows[win_top]);
+			mvwaddstr(windows[win_top], 0, 0, "That trainer has already been defeated.");
+		}
+		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !charpos(newPos)->attr.defeated && charpos(newPos) != charpos(world.pc->pos)) {
+			// Battle character
+			battle(charpos(newPos));
 		}
 		if (move_cost[c->type][mappos(newPos)] != INT_MAX && mappos(newPos) != ter_exit && !charpos(newPos)) {
 			// Move to that location
@@ -790,9 +863,12 @@ void world_gameLoop() {
 			case char_pc:
 				world_updateScreen();
 				char_pcTurn(curr_char);
-
-				pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
-				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
+				if (move_cost[char_hiker][mappos(world.pc->pos)] != INT_MAX) {
+					pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
+				}
+				if (move_cost[char_rival][mappos(world.pc->pos)] != INT_MAX) {
+					pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc->pos);
+				}
 				break;
 			case char_rival:
 				char_rivalTurn(curr_char);

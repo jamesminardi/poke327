@@ -242,9 +242,31 @@ char char_getSymbol(character_type_t t) {
 		case char_wanderer:
 			return 'w';
 		case char_random:
-			return 'r';
+			return 'n';
 		case char_unoccupied:
 		default:
 			return '-';
+	}
+}
+
+char * char_getString(character_type_t t) {
+	switch (t) {
+		case char_pc:
+			return "Player Character";
+		case char_rival:
+			return "Rival Trainer";
+		case char_hiker:
+			return "Hiker Trainer";
+		case char_statue:
+			return "Stationary Trainer";
+		case char_pacer:
+			return "Pacer Trainer";
+		case char_wanderer:
+			return "Wanderer Trainer";
+		case char_random:
+			return "Random Walker Trainer";
+		case char_unoccupied:
+		default:
+			return "-";
 	}
 }

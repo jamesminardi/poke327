@@ -9,6 +9,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <ncurses.h>
+#include <panel.h>
 #include "components.h"
 #include "globals.h"
 #include "colors.h"
@@ -33,6 +34,8 @@ static int char_weight[num_character_types] __attribute__((unused))=
 		{0, 10, 25, 50, 50, 50, 25};
 
 extern world_t world;
+extern WINDOW *windows[num_windows];
+extern PANEL *panels[num_windows];
 
 void heap_delete_char(void *v);
 
