@@ -7,7 +7,7 @@ RM = rm -f
 CFLAGS = -Wall -ggdb -funroll-loops
 CXXFLAGS = -Wall -ggdb -funroll-loops
 
-LDFLAGS = -lncurses
+LDFLAGS = -lpanel -lncurses
 
 BIN = poke327
 OBJS = main.o world.o map.o heap.o
