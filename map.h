@@ -4,7 +4,9 @@
 #ifndef MAP_XY
 #define MAP_XY
 #define mapxy(x, y) (map->m[y][x])
+#define mappos(pos) (world.cur_map->m[pos.y][pos.x])
 #define charxy(x, y) (map->char_m[y][x])
+#define charpos(pos) (world.cur_map->char_m[pos.y][pos.x])
 #endif // MAP_XY
 
 #include <stdio.h>
@@ -17,18 +19,6 @@
 #include "globals.h"
 #include "colors.h"
 
-typedef struct map {
-	terrain_t m[MAP_Y][MAP_X];
-	character_t *char_m[MAP_Y][MAP_X];
-	int north, south, east, west;
-} map_t;
-
-static int char_weight[num_character_types] =
-		{0, 10, 25, 50, 50, 50, 25};
-
-void move_char(map_t *map, character_t *c, pos_t pos);
-
-void npc_init(map_t *map, int num_npc);
 
 void terrain_init(map_t *map);
 
@@ -38,4 +28,7 @@ void ter_print(map_t *map);
 
 void char_print(map_t *map);
 
+char ter_getSymbol(terrain_t t);
+char char_getSymbol(character_type_t t);
+char * char_getString(character_type_t t);
 #endif // MAP_H

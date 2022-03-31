@@ -180,75 +180,6 @@ static void map_placeTree(map_t *map) {
 	}
 }
 
-void move_char(map_t *map, character_t *c, pos_t pos) {
-	charxy(pos.x, pos.y) = charxy(c->pos.x, c->pos.y);
-	charxy(c->pos.x, c->pos.y) = NULL;
-	charxy(pos.x, pos.y)->pos.x = pos.x;
-	charxy(pos.x, pos.y)->pos.y = pos.y;
-}
-
-static character_type_t npc_get_random() {
-	int i, sum, rnd;
-	static int char_weight_sum = -1;
-
-	if (char_weight_sum == -1) {
-		char_weight_sum = 0;
-		for (i = 1; i < num_character_types; i++) {
-			char_weight_sum += char_weight[i];
-		}
-	}
-	// algorithm to get a random character with set weights from char_weight
-	rnd = rand() % char_weight_sum;
-	for ( i = 1; i < num_character_types; i++) {
-		if (rnd < char_weight[i]) {
-			return i;
-		}
-		rnd -= char_weight[i];
-	}
-}
-
-/*
- * Places NPS characters in map according to global num_characters
- */
-void npc_init(map_t *map, int num_npc){
-	int x, y;
-	character_type_t new_char;
-	int count, valid;
-
-	// decrement count till zero, adding a random character each time
-	valid = 0;
-	for (count = num_trainers; count > 0; count--){
-
-		// Always place a rival and hiker when possible
-		if 		(count == num_trainers)	   { new_char = char_rival; }
-		else if (count == num_trainers - 1){ new_char = char_hiker; }
-		else 	{new_char = npc_get_random(); }
-
-		do {
-			x = rand() % (MAP_X - 2) + 1;
-			y = rand() % (MAP_Y - 2) + 1;
-			if (charxy(x, y) == NULL && move_cost[new_char][mapxy(x,y)] != INT_MAX
-				&& mapxy(x,y) != ter_path) {
-				valid = 1;
-			}
-		} while (!valid);
-		charxy(x,y) = malloc(sizeof(*(map->char_m)));
-		charxy(x,y)->type = new_char;
-		charxy(x,y)->next_move = 0;
-		charxy(x,y)->pos.x = x;
-		charxy(x,y)->pos.y = y;
-		if (new_char == char_pc 	|| new_char == char_statue ||
-			new_char == char_hiker  || new_char == char_rival) {
-			charxy(x,y)->dir = dir_still;
-		} else {
-			charxy(x,y)->dir = rand() % 8;
-		}
-
-		valid = 0;
-	}
-}
-
-
 /*
  * Places all nodes on the map
  */
@@ -262,191 +193,80 @@ void terrain_init(map_t *map) {
 	map_placeMart(map);
 }
 
-/*
- * Prints entire map including characters & terrain
- */
-void map_print(map_t *map) {
-	int y;
-	int x;
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			if (charxy(x,y)) {
-				switch (charxy(x,y)->type) {
-					case char_pc:
-						PRINT_PC
-						break;
-					case char_rival:
-						PRINT_RIVAL
-						break;
-					case char_hiker:
-						PRINT_HIKER
-						break;
-					case char_statue:
-						PRINT_STATUE
-						break;
-					case char_pacer:
-						PRINT_PACER
-						break;
-					case char_wanderer:
-						PRINT_WANDERER
-						break;
-					case char_random:
-						PRINT_RANDOM
-						break;
-					default:
-						PRINT_DEFAULT
-						break;
-				}
-			} else {
-				switch (mapxy(x, y)) {
-					case ter_border:
-						PRINT_BORDER
-						break;
-					case ter_boulder:
-						PRINT_BOULDER
-						break;
-					case ter_mountain:
-						PRINT_MOUNTAIN
-						break;
-					case ter_tree:
-						PRINT_TREE
-						break;
-					case ter_forest:
-						PRINT_FOREST
-						break;
-					case ter_exit:
-						PRINT_EXIT
-						break;
-					case ter_path:
-						PRINT_PATH
-						break;
-					case ter_mart:
-						PRINT_MART
-						break;
-					case ter_center:
-						PRINT_CENTER
-						break;
-					case ter_grass:
-						PRINT_GRASS
-						break;
-					case ter_clearing:
-						PRINT_CLEARING
-						break;
-					case empty:
-						PRINT_EMPTY
-						break;
-					case debug:
-						PRINT_DEBUG
-						break;
-					default:
-						PRINT_DEFAULT
-						break;
-				}
-			}
-		}
-		putchar('\n');
+
+char ter_getSymbol(terrain_t t) {
+	switch (t) {
+		case ter_border:
+			return '%';
+		case ter_boulder:
+			return '%';
+		case ter_mountain:
+			return '%';
+		case ter_tree:
+			return '^';
+		case ter_forest:
+			return '^';
+		case ter_exit:
+			return '#';
+		case ter_path:
+			return '#';
+		case ter_mart:
+			return 'M';
+		case ter_center:
+			return 'C';
+		case ter_grass:
+			return ':';
+		case ter_clearing:
+			return '.';
+		case empty:
+			return ' ';
+		case debug:
+			return ' ';
+		default:
+			return ' ';
 	}
 }
 
-/*
- * Prints only terrain
- */
-void ter_print(map_t *map) {
-	int y;
-	int x;
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			switch (mapxy(x, y)) {
-				case ter_border:
-					PRINT_BORDER
-					break;
-				case ter_boulder:
-					PRINT_BOULDER
-					break;
-				case ter_mountain:
-					PRINT_MOUNTAIN
-					break;
-				case ter_tree:
-					PRINT_TREE
-					break;
-				case ter_forest:
-					PRINT_FOREST
-					break;
-				case ter_exit:
-					PRINT_EXIT
-					break;
-				case ter_path:
-					PRINT_PATH
-					break;
-				case ter_mart:
-					PRINT_MART
-					break;
-				case ter_center:
-					PRINT_CENTER
-					break;
-				case ter_grass:
-					PRINT_GRASS
-					break;
-				case ter_clearing:
-					PRINT_CLEARING
-					break;
-				case empty:
-					PRINT_EMPTY
-					break;
-				case debug:
-					PRINT_DEBUG
-					break;
-				default:
-					PRINT_DEFAULT
-					break;
-			}
-		}
-		putchar('\n');
+char char_getSymbol(character_type_t t) {
+	switch (t) {
+		case char_pc:
+			return '@';
+		case char_rival:
+			return 'r';
+		case char_hiker:
+			return 'h';
+		case char_statue:
+			return 's';
+		case char_pacer:
+			return 'p';
+		case char_wanderer:
+			return 'w';
+		case char_random:
+			return 'n';
+		case char_unoccupied:
+		default:
+			return '-';
 	}
 }
 
-/*
- * Prints only characters with dashes as separators
- */
-void char_print(map_t *map) {
-	int y;
-	int x;
-	for (y = 0; y < MAP_Y; y++) {
-		for (x = 0; x < MAP_X; x++) {
-			if (charxy(x,y)) {
-				switch (charxy(x, y)->type) {
-					case char_pc:
-						PRINT_PC
-						break;
-					case char_rival:
-						PRINT_RIVAL
-						break;
-					case char_hiker:
-						PRINT_HIKER
-						break;
-					case char_statue:
-						PRINT_STATUE
-						break;
-					case char_pacer:
-						PRINT_PACER
-						break;
-					case char_wanderer:
-						PRINT_WANDERER
-						break;
-					case char_random:
-						PRINT_RANDOM
-						break;
-					case char_unoccupied:
-						PRINT_UNOCCUPIED
-						break;
-					default:
-						PRINT_DEFAULT
-						break;
-				}
-			} else {
-				PRINT_UNOCCUPIED
-			}
-		}
-		putchar('\n');
+char * char_getString(character_type_t t) {
+	switch (t) {
+		case char_pc:
+			return "Player Character";
+		case char_rival:
+			return "Rival Trainer";
+		case char_hiker:
+			return "Hiker Trainer";
+		case char_statue:
+			return "Stationary Trainer";
+		case char_pacer:
+			return "Pacer Trainer";
+		case char_wanderer:
+			return "Wanderer Trainer";
+		case char_random:
+			return "Random Walker Trainer";
+		case char_unoccupied:
+		default:
+			return "-";
 	}
 }

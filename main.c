@@ -4,6 +4,8 @@
 #include <time.h>
 #include <getopt.h>
 #include <string.h>
+#include <ncurses.h>
+#include <panel.h>
 #include "globals.h"
 #include "world.h"
 #include "map.h"
@@ -18,6 +20,8 @@
 //} option_t;
 
 world_t world;
+WINDOW *windows[num_windows];
+PANEL *panels[num_windows];
 int num_trainers;
 
 static void print_help(char* title) {
@@ -99,16 +103,57 @@ static int argument_handler(int argc, char *argv[]) {
 	return 0;
 }
 
+static void io_init_terminal() {
+	initscr();
+	raw();
+	noecho();
+	curs_set(0);
+	keypad(stdscr, TRUE);
+}
+
+void wins_init(){
+	windows[win_map] = newwin(MAP_Y, TERMINAL_X, 1, 0);
+	windows[win_top] = newwin(1, TERMINAL_X, 0, 0);
+	windows[win_bottom] = newwin(2, TERMINAL_X, TERMINAL_Y - 2, 0);
+	windows[win_battle] = newwin(MAP_Y-4, TERMINAL_X-4, 3, 2);
+	windows[win_trainers] = newwin(MAP_Y-4, TERMINAL_X-20, 3, 10);
+
+	box(windows[win_map], 0, 0);
+	box(windows[win_bottom], 0, 0);
+	box(windows[win_battle],0,0);
+	box(windows[win_trainers],0,0);
+}
+
 int main(int argc, char *argv[]) {
-	int seed, trainers;
+	//int seed, trainers;
 	int quit;
 	if ((quit = argument_handler(argc, argv))){
 		return quit;
 	}
-	world_init();
-	world_print();
+	io_init_terminal();
+	wins_init();
 
+	/* Attach a panel to each window */ 	/* Order is bottom up */
+	panels[win_bottom] = new_panel(windows[win_bottom]);
+	panels[win_map] = new_panel(windows[win_map]);
+	panels[win_top] = new_panel(windows[win_top]);
+	panels[win_battle] = new_panel(windows[win_battle]);
+	panels[win_trainers] = new_panel(windows[win_trainers]);
+
+	hide_panel(panels[win_battle]);
+	hide_panel(panels[win_trainers]);
+
+	update_panels(); // Write panels to vitual screen in correct visibility order
+	doupdate(); // Shows to screen
+	world_init();
 	world_gameLoop();
+	world_delete();
+
+
+	endwin();
+	return 0;
+
+
 
 	//pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
 	//pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);
@@ -116,67 +161,65 @@ int main(int argc, char *argv[]) {
 	//print_hiker_dist();
 	//print_rival_dist();
 
-	char input;
-	int x, y;
-	move_request_t mv;
-
-	do {
-		printf("\n");
-		world_print();
-		printf("Current position is (%d,%d).  "
-			   "Enter command: ",
-			   world.cur_idx.x,
-			   world.cur_idx.y);
-
-		scanf(" %c", &input);
-		switch (input) {
-			case 'd':
-				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
-				print_hiker_dist();
-				break;
-			case 'n':
-				mv.to_pos.x = world.cur_idx.x;
-				mv.to_pos.y = world.cur_idx.y - 1;
-				mv.to_dir = dir_north;
-				world_move(mv);
-				break;
-			case 's':
-				mv.to_pos.x = world.cur_idx.x;
-				mv.to_pos.y = world.cur_idx.y + 1;
-				mv.to_dir = dir_south;
-				world_move(mv);
-				break;
-			case 'e':
-				mv.to_pos.x = world.cur_idx.x + 1;
-				mv.to_pos.y = world.cur_idx.y;
-				mv.to_dir = dir_east;
-				world_move(mv);
-				break;
-			case 'w':
-				mv.to_pos.x = world.cur_idx.x - 1;
-				mv.to_pos.y = world.cur_idx.y;
-				mv.to_dir = dir_west;
-				world_move(mv);
-				break;
-			case 'f':
-				scanf("%d", &x);
-				scanf("%d", &y);
-				mv.to_pos.x = x;
-				mv.to_pos.y = y;
-				mv.to_dir = dir_fly;
-				world_move(mv);
-				break;
-			case '?':
-			case 'h':
-				printf("Move with 'e'ast, 'w'est, 'n'orth, 's'outh or 'f'ly x y.\n"
-					   "Quit with 'q'.  '?' and 'h' print this help message.\n");
-				break;
-			default:
-				break;
-		}
-	} while (input != 'q');
-	world_delete();
-	return 0;
+//	char input;
+//	int x, y;
+//	move_request_t mv;
+//
+//	do {
+//		printf("\n");
+//		world_print();
+//		printf("Current position is (%d,%d).  "
+//			   "Enter command: ",
+//			   world.cur_idx.x,
+//			   world.cur_idx.y);
+//
+//		scanf(" %c", &input);
+//		switch (input) {
+//			case 'd':
+//				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
+//				print_hiker_dist();
+//				break;
+//			case 'n':
+//				mv.to_pos.x = world.cur_idx.x;
+//				mv.to_pos.y = world.cur_idx.y - 1;
+//				mv.to_dir = dir_north;
+//				world_move(mv);
+//				break;
+//			case 's':
+//				mv.to_pos.x = world.cur_idx.x;
+//				mv.to_pos.y = world.cur_idx.y + 1;
+//				mv.to_dir = dir_south;
+//				world_move(mv);
+//				break;
+//			case 'e':
+//				mv.to_pos.x = world.cur_idx.x + 1;
+//				mv.to_pos.y = world.cur_idx.y;
+//				mv.to_dir = dir_east;
+//				world_move(mv);
+//				break;
+//			case 'w':
+//				mv.to_pos.x = world.cur_idx.x - 1;
+//				mv.to_pos.y = world.cur_idx.y;
+//				mv.to_dir = dir_west;
+//				world_move(mv);
+//				break;
+//			case 'f':
+//				scanf("%d", &x);
+//				scanf("%d", &y);
+//				mv.to_pos.x = x;
+//				mv.to_pos.y = y;
+//				mv.to_dir = dir_fly;
+//				world_move(mv);
+//				break;
+//			case '?':
+//			case 'h':
+//				printf("Move with 'e'ast, 'w'est, 'n'orth, 's'outh or 'f'ly x y.\n"
+//					   "Quit with 'q'.  '?' and 'h' print this help message.\n");
+//				break;
+//			default:
+//				break;
+//		}
+//	} while (input != 'q');
 }
 
 

@@ -1,20 +1,39 @@
-all: poke327
+CC = gcc
+CXX = g++
+ECHO = echo
+RM = rm -f
 
-poke327: main.o world.o map.o heap.o
-	gcc main.o world.o map.o heap.o -o poke327
 
-main.o: main.c world.h globals.h
-	gcc -g -o main.o -c main.c
+CFLAGS = -Wall -ggdb -funroll-loops
+CXXFLAGS = -Wall -ggdb -funroll-loops
 
-world.o: world.c world.h globals.h colors.h components.h map.h heap.h
-	gcc -g -o world.o -c world.c
+LDFLAGS = -lpanel -lncurses
 
-map.o: map.c map.h globals.h colors.h components.h
-	gcc -g -o map.o -c map.c
+BIN = poke327
+OBJS = main.o world.o map.o heap.o
 
-heap.o: heap.c heap.h
-	gcc -Wall -Werror -g -o heap.o -c heap.c
+all: $(BIN)
+
+$(BIN): $(OBJS)
+	@$(ECHO) Linking $@
+	@$(CC) $^ -o $@ $(LDFLAGS)
+
+-include $(OBJS:.o=.d)
+
+%.o: %.c
+	@$(ECHO) Compiling $<
+	@$(CC) $(CFLAGS) -MMD -MF $*.d -c $<
+
+%.o: %.cpp
+	@$(ECHO) Compiling $<
+	@$(CXX) $(CXXFLAGS) -MMD -MF $*.d -c $<
+
+.PHONY: all clean clobber
 
 clean:
-	rm -f poke327 *~ *.o core
+	@$(ECHO) Removing all generated files
+	@$(RM) *.o $(BIN) *.d core vgcore.* gmon.out
 
+clobber: clean
+	@$(ECHO) Removing backup files
+	@$(RM) *~ \#* *pgm

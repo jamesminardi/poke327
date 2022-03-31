@@ -8,6 +8,8 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
+#include <ncurses.h>
+#include <panel.h>
 #include "components.h"
 #include "globals.h"
 #include "colors.h"
@@ -28,24 +30,18 @@ typedef struct path {
 	int cost;
 } path_t;
 
-typedef struct world {
-	map_t *w[WORLD_X][WORLD_Y];
-	pos_t cur_idx;
-	map_t *cur_map;
-
-	int hiker_dist[MAP_Y][MAP_X];
-	int rival_dist[MAP_Y][MAP_X];
-	int pc_dist[MAP_Y][MAP_X];
-
-	character_t *pc;
-	int seed;
-} world_t;
+static int char_weight[num_character_types] __attribute__((unused))=
+		{0, 10, 25, 50, 50, 50, 25};
 
 extern world_t world;
+extern WINDOW *windows[num_windows];
+extern PANEL *panels[num_windows];
+
+void heap_delete_char(void *v);
 
 void world_init();
 
-void world_move(move_request_t mv);
+void world_changeMap(pos_t to, pos_t from);
 
 void world_delete();
 
