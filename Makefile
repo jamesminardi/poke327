@@ -10,7 +10,7 @@ CXXFLAGS = -Wall -ggdb -funroll-loops
 LDFLAGS = -lpanel -lncurses
 
 BIN = poke327
-OBJS = main.o world.o map.o heap.o
+OBJS = main.o world.o map.o heap.o db_parse.o
 
 all: $(BIN)
 

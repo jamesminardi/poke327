@@ -125,33 +125,38 @@ void wins_init(){
 }
 
 int main(int argc, char *argv[]) {
-	//int seed, trainers;
-	int quit;
-	if ((quit = argument_handler(argc, argv))){
-		return quit;
-	}
-	io_init_terminal();
-	wins_init();
 
-	/* Attach a panel to each window */ 	/* Order is bottom up */
-	panels[win_bottom] = new_panel(windows[win_bottom]);
-	panels[win_map] = new_panel(windows[win_map]);
-	panels[win_top] = new_panel(windows[win_top]);
-	panels[win_battle] = new_panel(windows[win_battle]);
-	panels[win_trainers] = new_panel(windows[win_trainers]);
+	db_parse(true);
 
-	hide_panel(panels[win_battle]);
-	hide_panel(panels[win_trainers]);
-
-	update_panels(); // Write panels to vitual screen in correct visibility order
-	doupdate(); // Shows to screen
-	world_init();
-	world_gameLoop();
-	world_delete();
-
-
-	endwin();
 	return 0;
+
+//	//int seed, trainers;
+//	int quit;
+//	if ((quit = argument_handler(argc, argv))){
+//		return quit;
+//	}
+//	io_init_terminal();
+//	wins_init();
+//
+//	/* Attach a panel to each window */ 	/* Order is bottom up */
+//	panels[win_bottom] = new_panel(windows[win_bottom]);
+//	panels[win_map] = new_panel(windows[win_map]);
+//	panels[win_top] = new_panel(windows[win_top]);
+//	panels[win_battle] = new_panel(windows[win_battle]);
+//	panels[win_trainers] = new_panel(windows[win_trainers]);
+//
+//	hide_panel(panels[win_battle]);
+//	hide_panel(panels[win_trainers]);
+//
+//	update_panels(); // Write panels to vitual screen in correct visibility order
+//	doupdate(); // Shows to screen
+//	world_init();
+//	world_gameLoop();
+//	world_delete();
+//
+//
+//	endwin();
+//	return 0;
 
 
 
