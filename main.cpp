@@ -126,7 +126,7 @@ void wins_init(){
 
 int main(int argc, char *argv[]) {
 
-	db_parse(true);
+	//db_parse(true);
 
 	return 0;
 
