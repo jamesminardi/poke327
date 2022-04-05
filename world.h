@@ -8,6 +8,7 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
+#include <cstring>
 #include <ncurses.h>
 #include <panel.h>
 #include "components.h"

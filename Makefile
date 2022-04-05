@@ -7,10 +7,10 @@ RM = rm -f
 CFLAGS = -Wall -ggdb -funroll-loops
 CXXFLAGS = -Wall -ggdb -funroll-loops
 
-LDFLAGS = -lpanel -lncurses
+LDFLAGS = -lstdc++ -lpanel -lncurses
 
 BIN = poke327
-OBJS = main.o world.o map.o heap.o db_parse.o
+OBJS = main.o world.o map.o heap.o db_parse.o character.o
 
 all: $(BIN)
 

@@ -34,7 +34,7 @@ In-game keybindings:
 ## Hiker and Rival don't currently avoid other characters but instead wait for them to move.
 
 # Stuff I did
-## I implemented a simple algorithm to allow me to weight how much each character is spawned. Right now the weights are: rival=10, hiker=25, random=25 and the rest 50
+## I implemented a simple algorithm to allow me to weight how much each Character is spawned. Right now the weights are: rival=10, hiker=25, random=25 and the rest 50
 ## I used getopt_long to implement the commandline argument switches which made things a lot easier and allowed me to have more control over switches.
 
 # setup

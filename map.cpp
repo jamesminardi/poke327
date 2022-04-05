@@ -249,7 +249,7 @@ char char_getSymbol(character_type_t t) {
 	}
 }
 
-char * char_getString(character_type_t t) {
+std::string char_getString(character_type_t t) {
 	switch (t) {
 		case char_pc:
 			return "Player Character";

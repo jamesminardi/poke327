@@ -5,17 +5,17 @@ void rand_pos(pos_t *pos) {
 	pos->y = (rand() % (MAP_Y - 2)) + 1;
 }
 
-void rand_dir(character_t *c) {
+void rand_dir(Npc *c) {
 	int i = rand() & 0x7;
-	c->attr.dir = all_dirs[i];
+	c->dir = all_dirs[i];
 }
 
 /*
  * Compare movement cost of tile currently on
  */
 static int32_t turn_cmp(const void *key, const void *with) {
-	int key_moveCost = ((character_t *) key)->next_turn;
-	int with_moveCost = ((character_t *) with)->next_turn;
+	int key_moveCost = ((Character *) key)->next_turn;
+	int with_moveCost = ((Character *) with)->next_turn;
 	return key_moveCost - with_moveCost;
 }
 
@@ -34,7 +34,7 @@ void heap_delete_char(void *v) {
  */
 static void world_initMap() {
 	int x,y;
-	worldxy(world.cur_idx.x , world.cur_idx.y) = malloc(sizeof(*world.cur_map));
+	worldxy(world.cur_idx.x , world.cur_idx.y) = (map_t*)malloc(sizeof(*world.cur_map));
 	world.cur_map = worldxy(world.cur_idx.x, world.cur_idx.y);
 
 	/* Set exit positions */
@@ -83,7 +83,7 @@ static void world_initMap() {
 	heap_init(&world.cur_map->turn, turn_cmp, heap_delete_char);
 }
 
-void move_char(character_t *c, pos_t pos) {
+void move_char(Character *c, pos_t pos) {
 	// if moving the PC to itself, then check if the PC exists in the charmap somewhere else other than it's position
 	// Then move that PC position to its current position
 	if (c->type == char_pc && !charpos(c->pos) && (pos.x == c->pos.x && pos.y == c->pos.y)) {
@@ -145,9 +145,7 @@ static void pc_init(pos_t relative_toDir) {
 		} while (mappos(pos) != ter_path || world.cur_map->char_m[pos.y][pos.x] != NULL);
 
 		if (!world.pc) {
-			world.pc = malloc(sizeof(*(world.cur_map->char_m)));
-			world.pc->attr.dir = (pos_t) {0, 0};
-			world.pc->attr.defeated = 0;
+			world.pc = (Pc*)malloc(sizeof(*(world.cur_map->char_m)));
 			world.pc->pos = (pos_t) {pos.x, pos.y};
 			charpos(world.pc->pos) = world.pc;
 			world.pc->next_turn = 0;
@@ -189,7 +187,7 @@ static character_type_t npc_get_random() {
 	rnd = rand() % char_weight_sum;
 	for ( i = 1; i < num_character_types; i++) {
 		if (rnd < char_weight[i]) {
-			return i;
+			return (character_type_t)i;
 		}
 		rnd -= char_weight[i];
 	}
@@ -221,16 +219,17 @@ static void npc_init(){
 				 move_cost[new_char][mappos(pos)] == INT_MAX ||
 				mappos(pos) == ter_path);
 
-		charpos(pos) 			= malloc(sizeof(*(map->char_m)));
+		charpos(pos) 			= (Character*)malloc(sizeof(*(map->char_m)));
 		charpos(pos)->pos 		= (pos_t){pos.x,pos.y};
 		charpos(pos)->type 		= new_char;
 		charpos(pos)->next_turn = 0;
+		if(new_char == char_pc) {
 
-		if (new_char == char_pc 	|| new_char == char_statue ||
-			new_char == char_hiker  || new_char == char_rival) {
-			charpos(pos)->attr.dir 	= (pos_t){0,0};
+		}
+		else if (new_char == char_statue || new_char == char_hiker  || new_char == char_rival) {
+			((Npc*)charpos(pos))->dir 	= (pos_t){0,0};
 		} else {
-			charpos(pos)->attr.dir 	= all_dirs[rand() % dir_num];
+			((Npc*)charpos(pos))->dir 	= all_dirs[rand() % dir_num];
 		}
 		heap_insert(&world.cur_map->turn, charpos(pos));
 	}
@@ -446,7 +445,7 @@ void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_type_t ch
 		}
 	}
 
-	while ((c = heap_remove_min(&heap))) {
+	while ((c = (path_t*)heap_remove_min(&heap))) {
 		c->hn = NULL; // mark as visited
 		pos_t neighbors[8];
 		neighbor_init(neighbors, c);
@@ -469,7 +468,7 @@ void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_type_t ch
 
 
 
-static void turn_neighbor_init(pos_t *neighbors, character_t *center) {
+static void turn_neighbor_init(pos_t *neighbors, Character *center) {
 	neighbors[dir_north].y = center->pos.y - 1;
 	neighbors[dir_north].x = center->pos.x;
 
@@ -496,7 +495,7 @@ static void turn_neighbor_init(pos_t *neighbors, character_t *center) {
 
 }
 
-void battle(character_t *c) {
+void battle(Npc *c) {
 	// Battle
 	int done;
 	int key;
@@ -513,7 +512,8 @@ void battle(character_t *c) {
 		key = getch();
 		switch (key) {
 			case 27: // ESC
-				c->attr.defeated = 1;
+				c->defeated = 1;
+				wclear(windows[win_battle]);
 				hide_panel(panels[win_battle]);
 				// PC wins
 				// Mark trainer as defeated
@@ -524,7 +524,7 @@ void battle(character_t *c) {
 	}
 }
 
-static void char_rivalTurn(character_t *c) {
+static void char_rivalTurn(Npc *c) {
 	pos_t dest;
 	int min;
 	int base;
@@ -542,17 +542,17 @@ static void char_rivalTurn(character_t *c) {
 		}
 	}
 
-	if (!c->attr.defeated && charpos(dest) && charpos(dest)->type == char_pc) {
+	if (!c->defeated && charpos(dest) && charpos(dest)->type == char_pc) {
 		battle(c);
 	}
-	if (!c->attr.defeated && !world.cur_map->char_m[dest.y][dest.x]) {
+	if (!c->defeated && !world.cur_map->char_m[dest.y][dest.x]) {
 		move_char(c, dest);
 	}
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 
 }
-static void char_hikerTurn(character_t *c) {
+static void char_hikerTurn(Npc *c) {
 	pos_t dest;
 	int min;
 	int base;
@@ -570,17 +570,17 @@ static void char_hikerTurn(character_t *c) {
 		}
 	}
 
-	if (!c->attr.defeated && charpos(dest) && charpos(dest)->type == char_pc) {
+	if (!c->defeated && charpos(dest) && charpos(dest)->type == char_pc) {
 		battle(c);
 	}
-	if (!c->attr.defeated && !world.cur_map->char_m[dest.y][dest.x]) {
+	if (!c->defeated && !world.cur_map->char_m[dest.y][dest.x]) {
 		move_char(c, dest);
 	}
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 
 }
-static void char_statueTurn(character_t *c) {
+static void char_statueTurn(Npc *c) {
 	pos_t dest;
 	dest = c->pos;
 	if (!world.cur_map->char_m[dest.y][dest.x]) {
@@ -589,61 +589,61 @@ static void char_statueTurn(character_t *c) {
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 }
-static void char_pacerTurn(character_t *c) {
+static void char_pacerTurn(Npc *c) {
 	pos_t dest;
 	dest = c->pos;
 
-	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] !=
+	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] !=
 		 world.cur_map->m[c->pos.y][c->pos.x]) ||
-		 world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
-		c->attr.dir.x *= -1;
-		c->attr.dir.y *= -1;
+		 world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
+		c->dir.x *= -1;
+		c->dir.y *= -1;
 	}
 
-	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] ==
+	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] ==
 		 world.cur_map->m[c->pos.y][c->pos.x]) &&
-		!world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
-		dest.x = c->pos.x + c->attr.dir.x;
-		dest.y = c->pos.y + c->attr.dir.y;
+		!world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
+		dest.x = c->pos.x + c->dir.x;
+		dest.y = c->pos.y + c->dir.y;
 	}
 	move_char(c, dest);
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 }
-static void char_wandererTurn(character_t *c) {
+static void char_wandererTurn(Npc *c) {
 	pos_t dest;
 	dest = c->pos;
 
-	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] !=
+	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] !=
 		 world.cur_map->m[c->pos.y][c->pos.x]) ||
-		 world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
+		 world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
 		rand_dir(c);
 	}
 
-	if ((world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x] ==
+	if ((world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x] ==
 		 world.cur_map->m[c->pos.y][c->pos.x]) &&
-		!world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
-		dest.x = c->pos.x + c->attr.dir.x;
-		dest.y = c->pos.y + c->attr.dir.y;
+		!world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
+		dest.x = c->pos.x + c->dir.x;
+		dest.y = c->pos.y + c->dir.y;
 	}
 	move_char(c, dest);
 	c->next_turn += move_cost[c->type][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 }
-static void char_randomTurn(character_t *c) {
+static void char_randomTurn(Npc *c) {
 	pos_t dest;
 	dest = c->pos;
 
-	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]] == INT_MAX) ||
-		world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
-		c->attr.dir.x *= -1;
-		c->attr.dir.y *= -1;
+	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]] == INT_MAX) ||
+		world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
+		c->dir.x *= -1;
+		c->dir.y *= -1;
 	}
 
-	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]] != INT_MAX) &&
-		!world.cur_map->char_m[c->pos.y + c->attr.dir.y][c->pos.x + c->attr.dir.x]) {
-		dest.x = c->pos.x + c->attr.dir.x;
-		dest.y = c->pos.y + c->attr.dir.y;
+	if ((move_cost[c->type][world.cur_map->m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]] != INT_MAX) &&
+		!world.cur_map->char_m[c->pos.y + c->dir.y][c->pos.x + c->dir.x]) {
+		dest.x = c->pos.x + c->dir.x;
+		dest.y = c->pos.y + c->dir.y;
 	}
 	
 	move_char(c, dest);
@@ -668,13 +668,12 @@ void world_updateScreen() {
 	//wrefresh();
 }
 
-static char* relativePosString(char* output, int x, int y) {
+static std::string relativePosString(int x, int y) {
 	pos_t relPos;
 	relPos.x = x - world.pc->pos.x;
 	relPos.y = y - world.pc->pos.y;
-	sprintf(output, "(%d, %d)", relPos.x, relPos.y);
-
-	return output;
+	std::string str = "(" + std::to_string(relPos.x) + ", " + std::to_string(relPos.y) + ")";
+	return str;
 
 }
 
@@ -695,9 +694,8 @@ void listTrainers() {
 	for (y = 0; y < MAP_Y; y++) {
 		for (x = 0; x < MAP_X; x++) {
 			if (world.cur_map->char_m[y][x]) {
-				char relposstr[20];
 				mvwprintw(windows[win_trainers], row, 1, "%s at %s relative",
-						  char_getString(world.cur_map->char_m[y][x]->type), relativePosString(relposstr,x,y));
+						  char_getString(world.cur_map->char_m[y][x]->type).c_str(), relativePosString(x,y).c_str());
 				row++;
 			}
 		}
@@ -716,7 +714,7 @@ void listTrainers() {
 	}
 }
 
-static void char_pcTurn(character_t *c) {
+static void char_pcTurn(Character *c) {
 	int key;
 	int done;
 	pos_t newPos;
@@ -826,16 +824,16 @@ static void char_pcTurn(character_t *c) {
 			if (newPos.x < 1) { 		// W
 				world_changeMap((pos_t){world.cur_idx.x - 1, world.cur_idx.y}, world.cur_idx);
 			}
-			world.pc->next_turn = ((character_t *)heap_peek_min(&world.cur_map->turn))->next_turn;
+			world.pc->next_turn = ((Character *)heap_peek_min(&world.cur_map->turn))->next_turn;
 			done = 1;
 		}
-		if (charpos(newPos) && charpos(newPos)->attr.defeated) {
+		if (charpos(newPos) && ((Npc*)charpos(newPos))->defeated) {
 			wclear(windows[win_top]);
 			mvwaddstr(windows[win_top], 0, 0, "That trainer has already been defeated.");
 		}
-		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !charpos(newPos)->attr.defeated && charpos(newPos) != charpos(world.pc->pos)) {
+		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !((Npc*)charpos(newPos))->defeated && charpos(newPos) != charpos(world.pc->pos)) {
 			// Battle character
-			battle(charpos(newPos));
+			battle((Npc*)charpos(newPos));
 		}
 		if (move_cost[c->type][mappos(newPos)] != INT_MAX && mappos(newPos) != ter_exit && !charpos(newPos)) {
 			// Move to that location
@@ -851,14 +849,14 @@ static void char_pcTurn(character_t *c) {
 }
 
 void world_gameLoop() {
-	character_t *curr_char;
+	Character *curr_char;
 	pathfind(world.cur_map, world.rival_dist, char_rival, world.pc->pos);
 	pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
 
 	world_updateScreen();
 	while (!world.quit_game_flag) {
 	// old while: heap_peek_min(&world.cur_map->turn)
-		curr_char = ((character_t *) heap_remove_min(&world.cur_map->turn));
+		curr_char = ((Character *) heap_remove_min(&world.cur_map->turn));
 		switch (curr_char->type) {
 
 			case char_pc:
@@ -872,22 +870,22 @@ void world_gameLoop() {
 				}
 				break;
 			case char_rival:
-				char_rivalTurn(curr_char);
+				char_rivalTurn((Npc*)curr_char);
 				break;
 			case char_hiker:
-				char_hikerTurn(curr_char);
+				char_hikerTurn((Npc*)curr_char);
 				break;
 			case char_statue:
-				char_statueTurn(curr_char);
+				char_statueTurn((Npc*)curr_char);
 				break;
 			case char_pacer:
-				char_pacerTurn(curr_char);
+				char_pacerTurn((Npc*)curr_char);
 				break;
 			case char_wanderer:
-				char_wandererTurn(curr_char);
+				char_wandererTurn((Npc*)curr_char);
 				break;
 			case char_random:
-				char_randomTurn(curr_char);
+				char_randomTurn((Npc*)curr_char);
 				break;
 			default:
 				break;

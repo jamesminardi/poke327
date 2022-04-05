@@ -15,6 +15,7 @@
 #include <math.h>
 #include <time.h>
 #include <limits.h>
+#include <string>
 #include "components.h"
 #include "globals.h"
 #include "colors.h"
@@ -30,5 +31,5 @@ void char_print(map_t *map);
 
 char ter_getSymbol(terrain_t t);
 char char_getSymbol(character_type_t t);
-char * char_getString(character_type_t t);
+std::string char_getString(character_type_t t);
 #endif // MAP_H

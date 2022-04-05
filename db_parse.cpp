@@ -1,3 +1,7 @@
+/*
+ * File obtained from professor's code drop
+ */
+
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -16,8 +20,7 @@ static char *next_token(char *start, char delim)
 
 	start = s;
 
-	for (i = 0; s[i] && s[i] != delim; i++)
-		;
+	for (i = 0; s[i] && s[i] != delim; i++);
 	s[i] = '\0';
 	s = s + i + 1;
 
@@ -44,10 +47,10 @@ void db_parse(bool print)
 	int count;
 
 	i = (strlen(getenv("HOME")) +
-		 strlen("/.poke327/pokedex/pokedex/data/csv/") + 1);
+		 strlen("/.poke327/cs327database/") + 1);
 	prefix = (char *) malloc(i);
 	strcpy(prefix, getenv("HOME"));
-	strcat(prefix, "/.poke327/pokedex/pokedex/data/csv/");
+	strcat(prefix, "/.poke327/cs327database/");
 
 	if (stat(prefix, &buf)) {
 		free(prefix);
@@ -55,10 +58,9 @@ void db_parse(bool print)
 	}
 
 	if (!prefix && !stat("/share/cs327", &buf)) {
-		prefix = strdup("/share/cs327/pokedex/pokedex/data/csv/");
+		prefix = strdup("/share/cs327/cs327database/");
 	} else if (!prefix) {
-		// Your third location goes here, if needed.
-		// prefix is freed later, so be sure you malloc it
+		prefix = strdup("/home/student/cs327/share/cs327database/");
 	}
 
 	//No error checking on file load from here on out.  Missing
