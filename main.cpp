@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
 	world_gameLoop();
 	world_delete();
 	endwin();
-	
+
 	return 0;
 }
 
