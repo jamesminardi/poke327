@@ -21,4 +21,11 @@ extern int num_trainers;
 
 #define MIN_SEED 0
 
+// 3 Movement turn buffer between random encounters
+#define RANDOM_ENCOUNTER_BUFFER 3
+
+
+#define NUM_POKEMON 1092
+#define NUM_
+
 #endif // GLOBALS_H
