@@ -18,28 +18,37 @@ In-game keybindings:
     t       View list of trainers on the map with relative positions to PC
     up
     down
-    ESC     Return to map when in a menu
+    ESC     Return to map when in a menu (e.g. defeat a trainer or random pokemon)
     Q | q   Quit the game
-
-# Notes:
-## There is an arbitrary cap on the number of trainers you can add (100). This is not because I statically allocated space for the trainers. All characters are dynamically allocated using malloc.
-## Hiker and Rival will stop pathing to the PC after being defeated
-## Map state is stored when changing maps.
-## Returning to a previously visited map will be the same except a turn will be advanced for that action. This is a slight nerf to swapping between maps quickly
-## Hiker and Rival will path to the PC's last valid location if the PC moves to a tile with Infinity cost for the trainers.
-
-
-# bugs
-## Scrolling trainers screen not working
-## Hiker and Rival don't currently avoid other characters but instead wait for them to move.
-
-# Stuff I did
-## I implemented a simple algorithm to allow me to weight how much each Character is spawned. Right now the weights are: rival=10, hiker=25, random=25 and the rest 50
-## I used getopt_long to implement the commandline argument switches which made things a lot easier and allowed me to have more control over switches.
 
 # setup
 ## use make or make all to compile
-
 ## make clean will clean the directory of compiled files
+
+# 1.07
+## Notes:
+### There is a 10% chance to encounter a random pokemon when moving in tall grass
+### The random pokemon has a random moveset of max=2 with only moves in its level-up learnset
+### This means pokemon (especially lower level pokemon) won't have any moves because we are using version 19 of the pokemon games
+### When encountering a random pokemon, all of its stats are shown including level, gender, shiny, stats, and ivs.
+### Pres ESC to defeat the random pokemon.
+
+
+# 1.05
+## Notes:
+### There is an arbitrary cap on the number of trainers you can add (100). This is not because I statically allocated space for the trainers. All characters are dynamically allocated using malloc.
+### Hiker and Rival will stop pathing to the PC after being defeated
+### Map state is stored when changing maps.
+### Returning to a previously visited map will be the same except a turn will be advanced for that action. This is a slight nerf to swapping between maps quickly
+### Hiker and Rival will path to the PC's last valid location if the PC moves to a tile with Infinity cost for the trainers.
+
+## bugs
+## Scrolling trainers screen not working correctly
+## Hiker and Rival don't currently avoid other characters but instead wait for them to move.
+
+## Stuff I did
+## I implemented a simple algorithm to allow me to weight how much each Character is spawned. Right now the weights are: rival=10, hiker=25, random=25 and the rest 50
+## I used getopt_long to implement the commandline argument switches which made things a lot easier and allowed me to have more control over switches.
+
 
 
