@@ -223,6 +223,7 @@ static void npc_init(){
 		charpos(pos)->pos 		= (pos_t){pos.x,pos.y};
 		charpos(pos)->type 		= new_char;
 		charpos(pos)->next_turn = 0;
+		((Npc*)charpos(pos))->defeated = 0;
 		if(new_char == char_pc) {
 
 		}
@@ -944,10 +945,12 @@ void listTrainers() {
 static void char_pcTurn(Character *c) {
 	int key;
 	int done;
+	int moving;
 	pos_t newPos;
 	static int random_encounter_buffer_count = RANDOM_ENCOUNTER_BUFFER;
 	// Flush input buffer to avoid past inputs from getting used
 	done = 0;
+	moving = 0;
 	newPos = c->pos;
 	while (!done) {
 		world_updateScreen();
@@ -961,41 +964,49 @@ static void char_pcTurn(Character *c) {
 			case '7':   // 7
 			case 'y':   // y
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_northwest].x, c->pos.y + all_dirs[dir_northwest].y};
+				moving = 1;
 				break;
 				// North
 			case '8':    // 8
 			case 'k':    // k
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_north].x, c->pos.y + all_dirs[dir_north].y};
+				moving = 1;
 				break;
 				// NorthEast
 			case '9':    // 9
 			case 'u':    // u
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_northeast].x, c->pos.y + all_dirs[dir_northeast].y};
+				moving = 1;
 				break;
 				// West
 			case '4':    // 4
 			case 'h':    // h
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_west].x, c->pos.y + all_dirs[dir_west].y};
+				moving = 1;
 				break;
 				// East
 			case '6':    // 6
 			case 'l':    // l
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_east].x, c->pos.y + all_dirs[dir_east].y};
+				moving = 1;
 				break;
 				// SouthWest
 			case '1':    // 1
 			case 'b':    // b
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_southwest].x, c->pos.y + all_dirs[dir_southwest].y};
+				moving = 1;
 				break;
 				// South
 			case '2':    // 2
 			case 'j':    // j
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_south].x, c->pos.y + all_dirs[dir_south].y};
+				moving = 1;
 				break;
 				// SouthEast
 			case '3':    // 3
 			case 'n':    // n
 				newPos = (pos_t) {c->pos.x + all_dirs[dir_southeast].x, c->pos.y + all_dirs[dir_southeast].y};
+				moving = 1;
 				break;
 
 				// NOP
@@ -1003,17 +1014,23 @@ static void char_pcTurn(Character *c) {
 			case ' ':    // space
 			case '.':    // .
 				done = 1;
+				moving = 0;
 				break;
 
 				// Enter a building
 			case '>':    // >
 				wclear(windows[win_top]);
 				mvwaddstr(windows[win_top], 0, 0, "Entering a building not yet implemented.");
+				world_updateScreen();
+				moving = 0;
+				done = 0;
 				break;
 
 				// List of trainers
 			case 't':    // t
 				listTrainers();
+				moving = 0;
+				done = 0;
 				break;
 
 				// Quit the game
@@ -1032,25 +1049,25 @@ static void char_pcTurn(Character *c) {
 				wclear(windows[win_top]);
 				mvwaddstr(windows[win_top], 0, 0, "Invalid action.");
 		} // switch(key)
-		if (done) {
+		if (world.quit_game_flag) {
 			return;
 		}
 
 		// Check if PC can move there & Check if NPC exists and is defeated
-		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && ((Npc*)charpos(newPos))->defeated) {
+		if (moving && move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && ((Npc*)charpos(newPos))->defeated) {
 			wclear(windows[win_top]);
 			mvwaddstr(windows[win_top], 0, 0, "That trainer has already been defeated.");
 		}
 		// Check if PC can move there & Check if NPC exists  amd is undefeated
 		// Battle npc
-		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !((Npc*)charpos(newPos))->defeated && charpos(newPos) != charpos(world.pc->pos)) {
+		if (moving && move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !((Npc*)charpos(newPos))->defeated && charpos(newPos) != charpos(world.pc->pos)) {
 			// Battle character
 			npc_battle((Npc *) charpos(newPos));
 			// Does not use up turn, so player can move again after defeating and NPC
 		}
 		// Check if PC can move there & Check if unoccupied by NPC
 		// Move to that space
-		if (move_cost[c->type][mappos(newPos)] != INT_MAX && mappos(newPos) != ter_exit && !charpos(newPos)) {
+		if (moving && move_cost[c->type][mappos(newPos)] != INT_MAX && mappos(newPos) != ter_exit && !charpos(newPos)) {
 			// Move to that location
 			move_char(c, newPos);
 			// Check for random encounter (10%)
@@ -1062,7 +1079,7 @@ static void char_pcTurn(Character *c) {
 			done = 1;
 		}
 
-		if (mappos(newPos) == ter_exit) {
+		if (moving && mappos(newPos) == ter_exit) {
 			// Change maps
 			if (newPos.y < 1) { 		// N
 				world_changeMap((pos_t){world.cur_idx.x, world.cur_idx.y - 1}, world.cur_idx);
