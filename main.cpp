@@ -146,84 +146,15 @@ int main(int argc, char *argv[]) {
 
 	hide_panel(panels[win_battle]);
 	hide_panel(panels[win_trainers]);
-	getch();
+	//getch();
 	update_panels(); // Write panels to vitual screen in correct visibility order
 	doupdate(); // Shows to screen
 	world_init();
 	world_gameLoop();
 	world_delete();
-
-
 	endwin();
+	
 	return 0;
-
-
-
-	//pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc.pos);
-	//pathfind(world.cur_map, world.rival_dist, char_hiker, world.pc.pos);
-
-	//print_hiker_dist();
-	//print_rival_dist();
-
-//	char input;
-//	int x, y;
-//	move_request_t mv;
-//
-//	do {
-//		printf("\n");
-//		world_print();
-//		printf("Current position is (%d,%d).  "
-//			   "Enter command: ",
-//			   world.cur_idx.x,
-//			   world.cur_idx.y);
-//
-//		scanf(" %c", &input);
-//		switch (input) {
-//			case 'd':
-//				pathfind(world.cur_map, world.hiker_dist, char_hiker, world.pc->pos);
-//				print_hiker_dist();
-//				break;
-//			case 'n':
-//				mv.to_pos.x = world.cur_idx.x;
-//				mv.to_pos.y = world.cur_idx.y - 1;
-//				mv.to_dir = dir_north;
-//				world_move(mv);
-//				break;
-//			case 's':
-//				mv.to_pos.x = world.cur_idx.x;
-//				mv.to_pos.y = world.cur_idx.y + 1;
-//				mv.to_dir = dir_south;
-//				world_move(mv);
-//				break;
-//			case 'e':
-//				mv.to_pos.x = world.cur_idx.x + 1;
-//				mv.to_pos.y = world.cur_idx.y;
-//				mv.to_dir = dir_east;
-//				world_move(mv);
-//				break;
-//			case 'w':
-//				mv.to_pos.x = world.cur_idx.x - 1;
-//				mv.to_pos.y = world.cur_idx.y;
-//				mv.to_dir = dir_west;
-//				world_move(mv);
-//				break;
-//			case 'f':
-//				scanf("%d", &x);
-//				scanf("%d", &y);
-//				mv.to_pos.x = x;
-//				mv.to_pos.y = y;
-//				mv.to_dir = dir_fly;
-//				world_move(mv);
-//				break;
-//			case '?':
-//			case 'h':
-//				printf("Move with 'e'ast, 'w'est, 'n'orth, 's'outh or 'f'ly x y.\n"
-//					   "Quit with 'q'.  '?' and 'h' print this help message.\n");
-//				break;
-//			default:
-//				break;
-//		}
-//	} while (input != 'q');
 }
 
 
