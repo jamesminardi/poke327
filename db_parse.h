@@ -16,6 +16,14 @@ struct pokemon_db {
 	int is_default;
 };
 
+struct pokemon_stats_db {
+	int pokemon_id;
+	int stat_id;
+	int base_stat;
+	int effort;
+
+};
+
 struct move_db {
 	int id;
 	char identifier[30];
@@ -73,6 +81,7 @@ struct experience_db {
 };
 
 extern pokemon_move_db pokemon_moves[528239];
+extern pokemon_stats_db pokemon_stats[6553];
 extern pokemon_db pokemon[1093];
 extern char *types[19];
 extern move_db moves[845];

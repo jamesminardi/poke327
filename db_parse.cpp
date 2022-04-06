@@ -28,6 +28,7 @@ static char *next_token(char *start, char delim)
 }
 
 pokemon_move_db pokemon_moves[528239];
+pokemon_stats_db pokemon_stats[6553];
 pokemon_db pokemon[1093];
 char *types[19];
 move_db moves[845];
@@ -67,9 +68,12 @@ void db_parse(bool print)
 	//files are "user error".
 	prefix_len = strlen(prefix);
 
-	prefix = (char *) realloc(prefix, prefix_len + strlen("pokemon.csv") + 1);
-	strcpy(prefix + prefix_len, "pokemon.csv");
 
+
+	/***************** POKEMON *****************/
+	prefix = (char *) realloc(prefix, prefix_len + strlen("pokemon.csv") + 1);
+
+	strcpy(prefix + prefix_len, "pokemon.csv");
 	f = fopen(prefix, "r");
 
 	//No null byte copied here, so prefix is not technically a string anymore.
@@ -88,11 +92,9 @@ void db_parse(bool print)
 		pokemon[i].order = atoi(next_token(NULL, ','));
 		pokemon[i].is_default = atoi(next_token(NULL, ','));
 	}
-
 	fclose(f);
-
 	if (print) {
-		for (i = 0; i < 1092; i++) {
+		for (i = 0; i <= 1092; i++) {
 			printf("%d %s %d %d %d %d %d %d\n", pokemon[i].id, pokemon[i].identifier,
 				   pokemon[i].species_id, pokemon[i].height, pokemon[i].weight,
 				   pokemon[i].base_experience, pokemon[i].order, pokemon[i].is_default);
@@ -100,6 +102,44 @@ void db_parse(bool print)
 	}
 
 
+
+	/***************** POKEMON STATS *****************/
+	// Every Pokémon with the base stats for each stat type
+	prefix = (char *) realloc(prefix, prefix_len + strlen("pokemon_stats.csv") + 1);
+	strcpy(prefix + prefix_len, "pokemon_stats.csv");
+
+	f = fopen(prefix, "r");
+
+	//No null byte copied here, so prefix is not technically a string anymore.
+	prefix = (char *) realloc(prefix, prefix_len + 1);
+
+	fgets(line, 800, f);
+
+	for (i = 1; i <= 6552; i++) {
+		fgets(line, 800, f);
+		pokemon_stats[i].pokemon_id = atoi((tmp = next_token(line, ',')));
+		tmp = next_token(NULL, ',');
+		pokemon_stats[i].stat_id = *tmp ? atoi(tmp) : -1;
+		tmp = next_token(NULL, ',');
+		pokemon_stats[i].base_stat = *tmp ? atoi(tmp) : -1;
+		tmp = next_token(NULL, ',');
+		pokemon_stats[i].effort = *tmp ? atoi(tmp) : -1;
+	}
+	fclose(f);
+
+	if (print) {
+		for (i = 0; i < 6552; i++) {
+			printf("%d %d %d %d\n",
+				   pokemon_stats[i].pokemon_id,
+				   pokemon_stats[i].stat_id,
+				   pokemon_stats[i].base_stat,
+				   pokemon_stats[i].effort);
+		}
+	}
+	print = 0;
+
+
+	/***************** MOVES *****************/
 	prefix = (char *) realloc(prefix, prefix_len + strlen("moves.csv") + 1);
 	strcpy(prefix + prefix_len, "moves.csv");
 
@@ -165,6 +205,10 @@ void db_parse(bool print)
 		}
 	}
 
+
+
+
+	/***************** POKEMON MOVES *****************/
 	prefix = (char *) realloc(prefix, prefix_len + strlen("pokemon_moves.csv") + 1);
 	strcpy(prefix + prefix_len, "pokemon_moves.csv");
 
@@ -205,6 +249,8 @@ void db_parse(bool print)
 		}
 	}
 
+
+	/***************** POKEMON SPECIES *****************/
 	prefix = (char *) realloc(prefix, prefix_len + strlen("pokemon_species.csv") + 1);
 	strcpy(prefix + prefix_len, "pokemon_species.csv");
 
@@ -286,6 +332,9 @@ void db_parse(bool print)
 	}
 
 
+
+
+	/***************** EXPERIENCE *****************/
 	prefix = (char *) realloc(prefix, prefix_len + strlen("experience.csv") + 1);
 	strcpy(prefix + prefix_len, "experience.csv");
 
@@ -316,6 +365,10 @@ void db_parse(bool print)
 		}
 	}
 
+
+
+
+	/***************** TYPE NAMES *****************/
 	prefix = (char *) realloc(prefix, prefix_len + strlen("type_names.csv") + 1);
 	strcpy(prefix + prefix_len, "type_names.csv");
 
@@ -345,7 +398,6 @@ void db_parse(bool print)
 		fgets(line, 800, f); // 11
 		fgets(line, 800, f); // 12
 	}
-
 	fclose(f);
 
 	if (print) {
@@ -353,6 +405,6 @@ void db_parse(bool print)
 			printf("%s\n", types[i]);
 		}
 	}
-
 	free(prefix);
+
 }
