@@ -495,7 +495,234 @@ static void turn_neighbor_init(pos_t *neighbors, Character *center) {
 
 }
 
-void battle(Npc *c) {
+
+/*
+ * Find manhattan distance from x,y
+ */
+static int find_manhattan_distance(pos_t p) {
+	return abs(p.x - ((WORLD_X - 1) / 2)) + abs(p.y - ((WORLD_Y - 1) / 2));
+}
+
+void random_battle() {
+	int done;
+	int key;
+	int pid = rand() % 1092 + 1;
+	int shiny;
+	char shinystr[20];
+	int genderid;
+	char genderstr[20];
+	move_db move1;
+	move_db move2;
+	char stats[400];
+	char hp[200];
+	char atk[200];
+	char def[200];
+	char spatk[200];
+	char spdef[200];
+	char speed[200];
+	if (rand() % 8192 == 0) {
+		shiny = 1;
+	} else {
+		shiny = 0;
+	}
+	genderid = rand() % 2;
+
+	if (genderid) {
+		sprintf(genderstr, "gender: male");
+	} else {
+		sprintf(genderstr, "gender: female");
+	}
+
+	if (shiny) {
+		sprintf(shinystr, "shiny: true");
+	} else {
+		sprintf(shinystr, "shiny: false");
+	}
+
+
+	// Calculate level
+	int min_level, max_level, level;
+	int dist = abs(world.cur_idx.x - ((WORLD_X - 1) / 2)) + abs(world.cur_idx.y - ((WORLD_Y - 1) / 2));
+	if (dist <= 200) {
+		min_level = 1;
+		max_level = dist / 2;
+	} else {
+		min_level = (dist - 200) / 2;
+		max_level = 100;
+	}
+	if (max_level < 1) {
+		max_level = 1;
+	}
+	level = rand() % (max_level - min_level + 1) + min_level;
+
+
+	// Calculate moves (After doing level)
+	std::vector<move_db> valid_moves;
+	int i;
+	for (pokemon_move_db m : pokemon_moves) {
+		if (m.pokemon_id == pokemon[pid].species_id && m.version_group_id == 19 &&
+			m.pokemon_move_method_id == 1 && level >= m.level) {
+			for (move_db fmove : moves) {
+				if (fmove.id == m.move_id) {
+					valid_moves.push_back(fmove);
+					break;
+				}
+			}
+		}
+	}
+
+	int move1_done = 0;
+	int move2_done = 0;
+	while (!valid_moves.empty()) {
+		if (!move1_done) {
+			int rand_move = rand() % valid_moves.size();
+			move1 = valid_moves.at(rand_move);
+			valid_moves.erase(valid_moves.begin() + rand_move);
+			move1_done = 1;
+		}
+		else {
+			int rand_move = rand() % valid_moves.size();
+			if (move1.id == valid_moves.at(rand_move).id) {
+				valid_moves.erase(valid_moves.begin() + rand_move);
+			} else {
+				move2 = valid_moves.at(rand_move);
+				move2_done = 1;
+				break;
+			}
+		}
+	}
+	if (!move1_done) {
+		move_db tmp;
+		tmp.id = -1;
+		sprintf(tmp.identifier, "No available move in v19");
+		move1 = tmp;
+	}
+	if (!move2_done) {
+		move_db tmp;
+		tmp.id = -1;
+		sprintf(tmp.identifier, "No available move in v19");
+		move2 = tmp;
+	}
+
+
+//	if (valid_moves.size() > 1) {
+//		int move1_id = rand() % valid_moves.size();
+//		for (move_db m1 : valid_moves) {
+//			if (m1.id == (valid_moves.begin() + move1_id)->id) {
+//				move1 = m1;
+//			}
+//		}
+//		int move2_id = rand() % valid_moves.size();
+//		for (move_db m2 : valid_moves) {
+//			if (m2.id == (valid_moves.begin() + move2_id)->id && m2.id != move1.id) {
+//				move2 = m2;
+//			}
+//		}
+//	}
+//	if (valid_moves.size() == 1) {
+//		int move2_id = rand() % valid_moves.size();
+//		for (auto && m : valid_moves) {
+//			if (m.id == move2_id && m.id != move1.id) {
+//				move1 = m;
+//			}
+//		}
+//		move_db mov;
+//		sprintf(mov.identifier, "No available move in v19");
+//		move2 = mov;
+//	}
+//	if (valid_moves.size() == 0) {
+//		move_db mov;
+//		sprintf(mov.identifier, "No available move in v19");
+//		move1 = mov;
+//		move2 = mov;
+//	}
+
+
+	//calculate stats
+	for (auto &&p : pokemon_stats) {
+		if (p.pokemon_id == pokemon[pid].id) {
+			switch (p.stat_id) {
+				case 1: // hp
+					std::sprintf(hp, "hp: %d\tiv: %d", p.base_stat, rand() % 16);
+					break;
+				case 2: //atk
+					std::sprintf(atk, "atk: %d\tiv: %d", p.base_stat, rand() % 16);
+					break;
+				case 3: //def
+					std::sprintf(def, "def: %d\tiv: %d", p.base_stat, rand() % 16);
+					break;
+				case 4: // spa
+					std::sprintf(spatk, "SPatk: %d\tiv: %d", p.base_stat, rand() % 16);
+					break;
+				case 5: //spd
+					std::sprintf(spdef, "SPdef: %d\tiv: %d", p.base_stat, rand() % 16);
+					break;
+				case 6: //speed
+					std::sprintf(speed, "speed: %d\tiv: %d", p.base_stat, rand() % 16);
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	std::sprintf(stats,
+			"A wild %s appeard!\n"
+				  " id: %d\n"
+				  " specied_id: %d\n"
+				  " height: %d\n"
+				  " weight: %d\n"
+				  " order: %d\n"
+				  " is_default: %d\n"
+				  " level: %d\n"
+				  " move1: %s\n"
+				  " move2: %s\n\n"
+				  " PRESS ESC TO DEFEAT...",
+				   	pokemon[pid].identifier,
+				   	pokemon[pid].id,
+				   	pokemon[pid].species_id,
+					pokemon[pid].height,
+					pokemon[pid].weight,
+					pokemon[pid].order,
+					pokemon[pid].is_default,
+					level,
+					move1.identifier,
+					move2.identifier);
+
+
+	show_panel(panels[win_battle]);
+	wclear(windows[win_battle]);
+
+	done = 0;
+	while (!done) {
+
+		mvwaddstr(windows[win_battle], 1,1, stats);
+		mvwaddstr(windows[win_battle], 1,45, hp);
+		mvwaddstr(windows[win_battle], 2,45, atk);
+		mvwaddstr(windows[win_battle], 3,45, def);
+		mvwaddstr(windows[win_battle], 4,45, spatk);
+		mvwaddstr(windows[win_battle], 5,45, spdef);
+		mvwaddstr(windows[win_battle], 6,45, speed);
+		mvwaddstr(windows[win_battle], 7,45, genderstr);
+		mvwaddstr(windows[win_battle], 8,45, shinystr);
+		box(windows[win_battle],0,0);
+		update_panels();
+		doupdate();
+
+		key = getch();
+		switch (key) {
+			case 27: // ESC
+				wclear(windows[win_battle]);
+				hide_panel(panels[win_battle]);
+				// PC defeats pokemon
+				// Return to map
+				done = 1;
+				break;
+		}
+	}
+}
+
+void npc_battle(Npc *c) {
 	// Battle
 	int done;
 	int key;
@@ -543,7 +770,7 @@ static void char_rivalTurn(Npc *c) {
 	}
 
 	if (!c->defeated && charpos(dest) && charpos(dest)->type == char_pc) {
-		battle(c);
+		npc_battle(c);
 	}
 	if (!c->defeated && !world.cur_map->char_m[dest.y][dest.x]) {
 		move_char(c, dest);
@@ -571,7 +798,7 @@ static void char_hikerTurn(Npc *c) {
 	}
 
 	if (!c->defeated && charpos(dest) && charpos(dest)->type == char_pc) {
-		battle(c);
+		npc_battle(c);
 	}
 	if (!c->defeated && !world.cur_map->char_m[dest.y][dest.x]) {
 		move_char(c, dest);
@@ -718,7 +945,7 @@ static void char_pcTurn(Character *c) {
 	int key;
 	int done;
 	pos_t newPos;
-
+	static int random_encounter_buffer_count = RANDOM_ENCOUNTER_BUFFER;
 	// Flush input buffer to avoid past inputs from getting used
 	done = 0;
 	newPos = c->pos;
@@ -809,6 +1036,31 @@ static void char_pcTurn(Character *c) {
 			return;
 		}
 
+		// Check if PC can move there & Check if NPC exists and is defeated
+		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && ((Npc*)charpos(newPos))->defeated) {
+			wclear(windows[win_top]);
+			mvwaddstr(windows[win_top], 0, 0, "That trainer has already been defeated.");
+		}
+		// Check if PC can move there & Check if NPC exists  amd is undefeated
+		// Battle npc
+		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !((Npc*)charpos(newPos))->defeated && charpos(newPos) != charpos(world.pc->pos)) {
+			// Battle character
+			npc_battle((Npc *) charpos(newPos));
+			// Does not use up turn, so player can move again after defeating and NPC
+		}
+		// Check if PC can move there & Check if unoccupied by NPC
+		// Move to that space
+		if (move_cost[c->type][mappos(newPos)] != INT_MAX && mappos(newPos) != ter_exit && !charpos(newPos)) {
+			// Move to that location
+			move_char(c, newPos);
+			// Check for random encounter (10%)
+			if (mappos(newPos) == ter_grass && random_encounter_buffer_count < 1 && rand() % 10 == 0) {
+				random_battle();
+				random_encounter_buffer_count = RANDOM_ENCOUNTER_BUFFER;
+			}
+			random_encounter_buffer_count--;
+			done = 1;
+		}
 
 		if (mappos(newPos) == ter_exit) {
 			// Change maps
@@ -821,29 +1073,19 @@ static void char_pcTurn(Character *c) {
 			if (newPos.x >= MAP_X - 1) { // E
 				world_changeMap((pos_t){world.cur_idx.x + 1, world.cur_idx.y}, world.cur_idx);
 			}
-			if (newPos.x < 1) { 		// W
-				world_changeMap((pos_t){world.cur_idx.x - 1, world.cur_idx.y}, world.cur_idx);
+			if (newPos.x < 1) {        // W
+				world_changeMap((pos_t) {world.cur_idx.x - 1, world.cur_idx.y}, world.cur_idx);
 			}
-			world.pc->next_turn = ((Character *)heap_peek_min(&world.cur_map->turn))->next_turn;
-			done = 1;
+			if (((Character *)heap_peek_min(&world.cur_map->turn)) != NULL) {
+				world.pc->next_turn = ((Character *) heap_peek_min(&world.cur_map->turn))->next_turn;
+				done = 1;
+			}
 		}
-		if (charpos(newPos) && ((Npc*)charpos(newPos))->defeated) {
-			wclear(windows[win_top]);
-			mvwaddstr(windows[win_top], 0, 0, "That trainer has already been defeated.");
-		}
-		if (move_cost[c->type][mappos(newPos)] != INT_MAX && charpos(newPos) && !((Npc*)charpos(newPos))->defeated && charpos(newPos) != charpos(world.pc->pos)) {
-			// Battle character
-			battle((Npc*)charpos(newPos));
-		}
-		if (move_cost[c->type][mappos(newPos)] != INT_MAX && mappos(newPos) != ter_exit && !charpos(newPos)) {
-			// Move to that location
-			move_char(c, newPos);
-			done = 1;
-		}
+
 	} // while (!done)
 
-	//move_char the PC if moving to new map
-	// But calculate next turn and reinsert into heap before swapping maps
+	// calculate next turn and reinsert into
+	// If the PC moved to a new map, it's next turn is the minimum in the heap + the tile cost
 	c->next_turn += move_cost[char_pc][mappos(c->pos)];
 	heap_insert(&world.cur_map->turn, c);
 }

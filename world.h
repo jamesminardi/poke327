@@ -9,13 +9,16 @@
 #include <time.h>
 #include <unistd.h>
 #include <cstring>
+#include <string>
 #include <ncurses.h>
+#include <vector>
 #include <panel.h>
 #include "components.h"
 #include "globals.h"
 #include "colors.h"
 #include "map.h"
 #include "heap.h"
+#include "db_parse.h"
 
 #ifndef WORLD_XY
 #define WORLD_XY
@@ -37,6 +40,14 @@ static int char_weight[num_character_types] __attribute__((unused))=
 extern world_t world;
 extern WINDOW *windows[num_windows];
 extern PANEL *panels[num_windows];
+
+extern pokemon_db pokemon[1093];
+extern pokemon_stats_db pokemon_stats[6553];
+extern pokemon_move_db pokemon_moves[528239];
+extern char *types[19];
+extern move_db moves[845];
+extern pokemon_species_db species[899];
+extern experience_db experience[601];
 
 void heap_delete_char(void *v);
 
