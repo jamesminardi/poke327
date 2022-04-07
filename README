@@ -13,7 +13,7 @@ In-game keybindings:
     2 | j   Attempt to move PC one cell down.
     1 | b   Attempt to move PC one cell to the lower left.
     4 | h   Attempt to move PC one cell to the left.
-    >       Attempt to enter building
+    >       Attempt to enter building (SHIFT + '>')
     5 | .   Rest turn for PC
     t       View list of trainers on the map with relative positions to PC
     up
