@@ -1,89 +1,92 @@
-commit a5eff2e12b3640d20219be0ccbe1e2805576cf25
+commit c216905b235258e11a9d39df74785f06a88aab2a
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:19:43 2022 -0500
+Date:   Wed Apr 6 19:52:52 2022 -0500
 
-    Add Q to options of quicking
+    Update
 
-commit 977c66129d8194074d1c87f81e9f060e5ea846d3
+commit c43400107c03a2bd567f7ea59bd137ae01031de1
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:19:22 2022 -0500
+Date:   Wed Apr 6 19:52:26 2022 -0500
 
-    Update readme for 1.05
+    Update readme
 
-commit 248b8d257d5728c86548ecb55c9f078fb7eeee22
+commit 31b00d872cb94849d77d1d2d253305a691542997
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:06:01 2022 -0500
+Date:   Wed Apr 6 18:31:12 2022 -0500
 
-    Add trainer, building, and battle screens. Implement PC and trainer initiated battles.
+    Fix bug of npc's not moving
 
-commit 682f646291310bd5fae238595f5392704b5a8dc4
+commit 7209348178a715b04d46b39ad4dd5e191c6a16bb
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:04:41 2022 -0500
+Date:   Wed Apr 6 18:30:21 2022 -0500
 
-    Add window and panel initialization
+    Readme updated for 1.07
 
-commit f4f5c5e207a697bb3d6caeb8941c5cb2e1950e4c
+commit 1c4fbc5d92c386c650954c4d25416bafae97d072
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:04:21 2022 -0500
+Date:   Wed Apr 6 13:47:41 2022 -0500
 
-    Add ncurses window types
+    formatting
 
-commit 60894f31e445f62b65ac1ffc9ced03e981129c4f
+commit 15c960332ccbf4889bb85aff0a8ee5e0483a3095
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:03:56 2022 -0500
+Date:   Wed Apr 6 13:47:11 2022 -0500
 
-    Add terminal global varaibles
+    Add random encounter battles
 
-commit 3fdde7456e5853d23062c7049f242f8babb8174f
+commit b90a282d443435529cb50fff7e132aea1ad42076
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:03:44 2022 -0500
+Date:   Wed Apr 6 13:46:26 2022 -0500
 
-    Link ncurses panels
+    Remove getch wait at beginning
 
-commit 7d8d25a0ebba61e21444b78c86cff9e1844f94b2
+commit 12e6f53914824827981096f13e058ef590848906
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Thu Mar 24 22:05:17 2022 -0500
+Date:   Wed Apr 6 13:45:43 2022 -0500
 
-    Fix path being wrong symbol
+    Add random encounter step buffer
 
-commit 236b386b949162b4cd37170f013e4c7ea0121716
+commit 6ad22e5cf7c0c9ae650dcf1a66b2a62cbbf2433d
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Thu Mar 24 22:04:12 2022 -0500
+Date:   Wed Apr 6 13:45:30 2022 -0500
 
-    Cross map movement complete
+    Add pokemon stats to parsing
 
-commit 92f79287168e3ea5b53352aacf7b8d442851d279
+commit c7f29521ff820b236165a774c2e55859263f16e8
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Mar 23 00:42:12 2022 -0500
+Date:   Tue Apr 5 00:23:21 2022 -0500
 
-    Add pc input function
+    Refactored for c++. Still using c-syle structs, etc
 
-commit 397c63a34139fdc5606688001e525fa6b098d9cc
+commit 886894d2039272aee7b2203106dcb16cbf924132
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Tue Mar 22 23:05:13 2022 -0500
+Date:   Tue Apr 5 00:22:45 2022 -0500
 
-    Transition to ncurses
+    Move pos into own file
 
-commit 9db7ba57242a6236cd08c736ac1d622e911eefc8
+commit 98cfafc3dda45138569a0651736563a0eb54ce9c
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Tue Mar 22 05:17:34 2022 -0500
+Date:   Tue Apr 5 00:22:28 2022 -0500
 
-    Refactor 1.04 complete
+    Create classes for characters
 
-commit 5453f2bb6e1d67ecab5325ad6102c7ef2c499f5c
+commit 387e7698767339c607d76807bc02e5629f6a23d3
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Mon Mar 21 16:39:48 2022 -0500
+Date:   Mon Apr 4 22:08:53 2022 -0500
 
-    Start of refactoring for 1.04
+    Add db_parse files
 
-commit cadf0d19311a8ebccd610646dc6462e062ae91c9
+commit 657109f80fbfb65f2c52927f9758e09003e6b9ed
+Merge: d5c225b 948f845
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Thu Mar 31 12:45:00 2022 -0500
+
+    Merge pull request #7 from jamesminardi/dev-1.05
+    
+    Dev 1.05 (Final C Version)
+
+commit 948f8452af305c0cadf1b2edcfc8e9b745ec7570
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Mon Mar 21 12:05:35 2022 -0500
+Date:   Fri Mar 25 02:20:33 2022 -0500
 
-    Remove -werror
-
-commit b69b66dbd68baeef46fae82eb4627932f09a60c9
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Sun Mar 20 22:34:15 2022 -0500
-
-    Update makefile for 1.05
+    Update for 1.05
