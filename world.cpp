@@ -1021,9 +1021,6 @@ static void char_pcTurn(Character *c) {
 			case '>':    // >
 				wclear(windows[win_top]);
 				mvwaddstr(windows[win_top], 0, 0, "Entering a building not yet implemented.");
-				world_updateScreen();
-				moving = 0;
-				done = 0;
 				break;
 
 				// List of trainers
