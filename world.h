@@ -15,6 +15,7 @@
 #include <panel.h>
 #include "components.h"
 #include "globals.h"
+#include "character.h"
 #include "colors.h"
 #include "map.h"
 #include "heap.h"
@@ -26,6 +27,38 @@
 #endif // WORLD_XY
 
 #define ter_cost(x, y, c) move_cost[c][map->m[y][x]]
+
+//class World {
+//public:
+//	Map *w[WORLD_X][WORLD_Y];
+//	Pos *cur_idx;
+//	Map *cur_map;
+//	int hiker_dist[MAP_Y][MAP_X];
+//	int rival_dist[MAP_Y][MAP_X];
+//	int pc_dist[MAP_Y][MAP_X];
+//	Pc *pc;
+//	int seed;
+//	int quit_game_flag;
+//	World(int seed);
+//	~World();
+//private:
+//	Map *w[WORLD_X][WORLD_Y];
+//};
+
+typedef struct world {
+	map_t *w[WORLD_X][WORLD_Y];
+	pos_t cur_idx;
+	map_t *cur_map;
+
+	int hiker_dist[MAP_Y][MAP_X];
+	int rival_dist[MAP_Y][MAP_X];
+	int pc_dist[MAP_Y][MAP_X];
+
+	Pc *pc;
+	int seed;
+
+	int quit_game_flag;
+} world_t;
 
 typedef struct path {
 	heap_node_t *hn;
@@ -48,8 +81,6 @@ extern char *types[19];
 extern move_db moves[845];
 extern pokemon_species_db species[899];
 extern experience_db experience[601];
-
-void heap_delete_char(void *v);
 
 void world_init();
 

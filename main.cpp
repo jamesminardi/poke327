@@ -30,7 +30,7 @@ static void print_help(char* title) {
 	printf("Options:\n");
 	printf("  -h --help\t\tShow this screen.\n");
 	printf("  --setseed=<s>\t\tSet world seed {0..} [default: random].\n");
-	printf("  --numtrainers=<n>\tSet number of trainers per map {0..100} [default: 10].\n");
+	printf("  --numtrainers=<n>\tSet number of trainers per map {0..150} [default: 10].\n");
 }
 
 /*
@@ -70,7 +70,7 @@ static int argument_handler(int argc, char *argv[]) {
 			// NUM_TRAINERS
 			case 't': num_trainers = atoi(optarg);
 				if (num_trainers < MIN_TRAINERS || num_trainers > MAX_TRAINERS) {
-					printf("Option --numtrainers requires argument {0..100}.\n");
+					printf("Option --numtrainers requires argument {0..150}.\n");
 					print_help(argv[0]);
 					quit = 1;
 					break;

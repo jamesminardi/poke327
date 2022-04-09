@@ -23,7 +23,7 @@
 //	dir_init
 //} direction_t;
 
-
+class Character;
 
 typedef enum terrain {
 	debug, 			// 0
@@ -49,54 +49,6 @@ typedef struct map {
 	heap_t turn;
 	int north, south, east, west;
 } map_t;
-
-typedef struct world {
-	map_t *w[WORLD_X][WORLD_Y];
-	pos_t cur_idx;
-	map_t *cur_map;
-
-	int hiker_dist[MAP_Y][MAP_X];
-	int rival_dist[MAP_Y][MAP_X];
-	int pc_dist[MAP_Y][MAP_X];
-
-	Pc *pc;
-	int seed;
-
-	int quit_game_flag;
-} world_t;
-
-static const int move_cost[num_character_types][num_terrain_types] = {
-		{ INT_MAX, INT_MAX, INT_MAX, 10, 10, 20, 10, INT_MAX, INT_MAX, 10, 10, INT_MAX, INT_MAX, INT_MAX },
-		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 15, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 15, 15, INT_MAX},
-		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
-		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
-		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
-		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},
-		{ INT_MAX, INT_MAX, INT_MAX, INT_MAX,10, 20, 10, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX}
-};
-
-typedef enum cardinal_dirs {
-	dir_northwest,
-	dir_north,
-	dir_northeast,
-	dir_west,
-	dir_east,
-	dir_southwest,
-	dir_south,
-	dir_southeast,
-	dir_num
-} cardinal_dirs_t;
-
-static pos_t all_dirs[8] = {
-		{ -1, -1 },
-		{ 0,  -1 },
-		{ 1,  -1 },
-		{ -1, 0  },
-		{ 1,  0  },
-		{ -1, 1  },
-		{ 0,  1  },
-		{ 1,  1  },
-};
 
 typedef enum window_type {
 	win_top,

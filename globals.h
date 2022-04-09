@@ -15,7 +15,7 @@
 #define GRASS_NODES 15
 
 #define DEFAULT_TRAINERS 10
-#define MAX_TRAINERS 100
+#define MAX_TRAINERS 150
 #define MIN_TRAINERS 0
 extern int num_trainers;
 
