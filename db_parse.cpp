@@ -1,5 +1,6 @@
 /*
  * File obtained from professor's code drop
+ * Edited by James Minardi
  */
 
 #include <cstdio>
@@ -47,8 +48,7 @@ void db_parse(bool print)
 	int j;
 	int count;
 
-	i = (strlen(getenv("HOME")) +
-		 strlen("/.poke327/cs327database/") + 1);
+	i = (strlen(getenv("HOME")) + strlen("/.poke327/cs327database/") + 1);
 	prefix = (char *) malloc(i);
 	strcpy(prefix, getenv("HOME"));
 	strcat(prefix, "/.poke327/cs327database/");
@@ -67,7 +67,6 @@ void db_parse(bool print)
 	//No error checking on file load from here on out.  Missing
 	//files are "user error".
 	prefix_len = strlen(prefix);
-
 
 
 	/***************** POKEMON *****************/
@@ -301,6 +300,11 @@ void db_parse(bool print)
 		species[i].order =  *tmp ? atoi(tmp) : -1;
 		tmp = next_token(NULL, ',');
 		species[i].conquest_order =  *tmp ? atoi(tmp) : -1;
+		species[i].levelup_moves = 0;
+		species[i].num_levelup_moves = 0;
+		species[i].base_stat[0] = species[i].base_stat[1] =
+		species[i].base_stat[2] = species[i].base_stat[3] =
+		species[i].base_stat[4] = species[i].base_stat[5] = 0;
 	}
 
 	fclose(f);
@@ -406,5 +410,11 @@ void db_parse(bool print)
 		}
 	}
 	free(prefix);
+}
 
+pokemon_species_db::~pokemon_species_db()
+{
+	if (levelup_moves) {
+		free(levelup_moves);
+	}
 }

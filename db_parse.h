@@ -1,5 +1,6 @@
 /*
  * File obtained from professor's code drop
+ * Edited by James Minardi
  */
 
 #ifndef DB_PARSE_H
@@ -42,6 +43,11 @@ struct move_db {
 	int super_contest_effect_id;
 };
 
+struct levelup_move {
+	int level;
+	int move;
+};
+
 struct pokemon_move_db {
 	int pokemon_id;
 	int version_group_id;
@@ -72,6 +78,11 @@ struct pokemon_species_db {
 	int is_mythical;
 	int order;
 	int conquest_order;
+
+	levelup_move *levelup_moves;
+	unsigned num_levelup_moves;
+	int base_stat[6];
+	~pokemon_species_db();
 };
 
 struct experience_db {
