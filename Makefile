@@ -10,7 +10,7 @@ CXXFLAGS = -Wall -ggdb -funroll-loops
 LDFLAGS = -lstdc++ -lpanel -lncurses
 
 BIN = poke327
-OBJS = main.o world.o map.o heap.o db_parse.o character.o
+OBJS = main.o world.o map.o heap.o db_parse.o character.o pokemon.o
 
 all: $(BIN)
 
