@@ -8,16 +8,15 @@
 #define MAP_Y 21
 #define MAP_X 80
 
-#define TERMINAL_Y 24
-#define TERMINAL_X 80
-
 #define MAX_TREES 60
 #define GRASS_NODES 15
 
 #define DEFAULT_TRAINERS 10
 #define MAX_TRAINERS 150
 #define MIN_TRAINERS 0
+
 extern int num_trainers;
+extern int seed;
 
 #define MIN_SEED 0
 

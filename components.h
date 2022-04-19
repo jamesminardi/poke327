@@ -4,7 +4,6 @@
 #include <climits>
 #include "heap.h"
 #include "globals.h"
-#include "character.h"
 #include "pos.h"
 
 
@@ -43,6 +42,39 @@ typedef enum terrain {
 	num_terrain_types // 14
 } terrain_t;
 
+char ter_getSymbol(terrain_t t) {
+	switch (t) {
+		case ter_border:
+			return '%';
+		case ter_boulder:
+			return '%';
+		case ter_mountain:
+			return '%';
+		case ter_tree:
+			return '^';
+		case ter_forest:
+			return '^';
+		case ter_exit:
+			return '#';
+		case ter_path:
+			return '#';
+		case ter_mart:
+			return 'M';
+		case ter_center:
+			return 'C';
+		case ter_grass:
+			return ':';
+		case ter_clearing:
+			return '.';
+		case empty:
+			return ' ';
+		case debug:
+			return ' ';
+		default:
+			return ' ';
+	}
+}
+
 typedef struct map {
 	terrain_t m[MAP_Y][MAP_X];
 	Character *char_m[MAP_Y][MAP_X];
@@ -50,13 +82,5 @@ typedef struct map {
 	int north, south, east, west;
 } map_t;
 
-typedef enum window_type {
-	win_top,
-	win_battle,
-	win_map,
-	win_bottom,
-	win_trainers,
-	num_windows
-} window_type_t;
 
 #endif // COMPONENTS_H

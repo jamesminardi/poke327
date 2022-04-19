@@ -20,6 +20,7 @@
 #include "map.h"
 #include "heap.h"
 #include "db_parse.h"
+#include "io.h"
 
 #ifndef WORLD_XY
 #define WORLD_XY
@@ -28,49 +29,63 @@
 
 #define ter_cost(x, y, c) move_cost[c][map->m[y][x]]
 
-//class World {
-//public:
-//	Map *w[WORLD_X][WORLD_Y];
-//	Pos *cur_idx;
-//	Map *cur_map;
-//	int hiker_dist[MAP_Y][MAP_X];
-//	int rival_dist[MAP_Y][MAP_X];
-//	int pc_dist[MAP_Y][MAP_X];
-//	Pc *pc;
-//	int seed;
-//	int quit_game_flag;
-//	World(int seed);
-//	~World();
-//private:
-//	Map *w[WORLD_X][WORLD_Y];
-//};
 
-typedef struct world {
-	map_t *w[WORLD_X][WORLD_Y];
-	pos_t cur_idx;
-	map_t *cur_map;
+typedef Pos *Pos;
 
+class World {
+public:
+
+	World(int seed, int num_trainers);
+	~World();
+
+	Map *w[WORLD_X][WORLD_Y];
+	Pos cur_idx;
+	Map *cur_map;
+	Pc *pc;
+	const int seed;
+	const int num_trainers;
+	int quit;
 	int hiker_dist[MAP_Y][MAP_X];
 	int rival_dist[MAP_Y][MAP_X];
 	int pc_dist[MAP_Y][MAP_X];
 
-	Pc *pc;
-	int seed;
+	void gameLoop();
+	void changeMap(Pos to);
+	void initMap();
+	Map* getMap(int x, int y);
+	Map* getMap(Pos pos);
+	void World::setMap(int x, int y, Map* map);
+	void World::setMap(Pos pos, Map* map);
+private:
+	Map *w[WORLD_X][WORLD_Y];
+};
 
-	int quit_game_flag;
-} world_t;
+//typedef struct world {
+//	map_t *w[WORLD_X][WORLD_Y];
+//	Pos cur_idx;
+//	map_t *cur_map;
+//
+//	int hiker_dist[MAP_Y][MAP_X];
+//	int rival_dist[MAP_Y][MAP_X];
+//	int pc_dist[MAP_Y][MAP_X];
+//
+//	Pc *pc;
+//	int seed;
+//
+//	int quit_game_flag;
+//} world_t;
 
 typedef struct path {
 	heap_node_t *hn;
-	pos_t pos;
-	pos_t from;
+	Pos pos;
+	Pos from;
 	int cost;
 } path_t;
 
 static int char_weight[num_character_types] __attribute__((unused))=
 		{0, 10, 25, 50, 50, 50, 25};
 
-extern world_t world;
+extern World* world;
 extern WINDOW *windows[num_windows];
 extern PANEL *panels[num_windows];
 
@@ -84,7 +99,7 @@ extern experience_db experience[601];
 
 void world_init();
 
-void world_changeMap(pos_t to, pos_t from);
+void world_changeMap(Pos to, Pos from);
 
 void world_delete();
 
@@ -96,7 +111,7 @@ void print_hiker_dist();
 
 void print_rival_dist();
 
-void pathfind(map_t *map, int char_dist[MAP_Y][MAP_X], const character_type_t character, const pos_t start);
+void pathfind(Map *map, int char_dist[MAP_Y][MAP_X], const character_type_t character, const Pos start);
 
 void world_gameLoop();
 

@@ -1,78 +1,175 @@
 #include "map.h"
 
 /*
+ * Places all nodes on the map
+ */
+Map::Map() {
+//	// Terrain and buildings
+//	int x,y;
+//	for (y = 0; y < MAP_Y; y++) {
+//		for (x = 0; x < MAP_X; x++) {
+//			this->charM[y][x] = NULL;
+//			this->terM[y][x] = ter_clearing;
+//		}
+//	}
+//	this->placeTree();
+//	this->placeGrass();
+//	this->placePath();
+//	this->placeBorder();
+//	this->placeExits();
+//	this->placeCenter();
+//	this->placeMart();
+//
+//	this->placeNpc();
+
+}
+
+/*
+ * Initializes Map and places PC on map
+ */
+Map::Map(Pos pc_pos) {
+
+}
+
+Map::Map(int north, int south, int east, int west) : north(north), south(south), east(east), west(west) {
+	// Terrain and buildings
+	int x,y;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			this->charM[y][x] = NULL;
+			this->terM[y][x] = ter_clearing;
+		}
+	}
+	this->placeTree();
+	this->placeGrass();
+	this->placePath();
+	this->placeBorder();
+	this->placeExits();
+	this->placeCenter();
+	this->placeMart();
+
+	//this->placeNpc();
+
+	heap_init(&this->turn, turn_cmp, heap_delete_char);
+}
+
+Map::~Map() {
+	int x,y;
+	for (y = 0; y < MAP_Y; y++) {
+		for (x = 0; x < MAP_X; x++) {
+			delete this->charM[y][x];
+		}
+	}
+}
+
+void Map::placeCharacters(Pc* pc){
+	this->setChar(pc->pos, pc);
+	heap_insert(&this->turn, pc);
+	this->placeNpc();
+}
+
+Character* Map::getChar(int x, int y) {
+	return this->charM[y][x];
+}
+Character* Map::getChar(Pos pos) {
+	return this->charM[pos.y][pos.x];
+}
+void Map::setChar(int x, int y, Character* c) {
+	this->charM[y][x] = c;
+}
+void Map::setChar(Pos pos, Character* c) {
+	this->charM[pos.y][pos.x] = c;
+}
+
+terrain_t Map::getTerrain(int x, int y) {
+	return this->terM[y][x];
+}
+terrain_t Map::getTerrain(Pos pos) {
+	return this->terM[pos.y][pos.x];
+}
+void Map::setTerrain(int x, int y, terrain_t ter) {
+	this->terM[y][x] = ter;
+}
+void Map::setTerrain(Pos pos, terrain_t ter) {
+	this->terM[pos.y][pos.x] = ter;
+}
+
+/*
  * Finds valid 2x2 building location coordinate.
  * Coordinate is the top left-most unit.
  */
-static void find_validBuildingLocation(map_t *map, int *x, int *y) {
+void Map::find_validBuildingLocation(int *x, int *y) {
 	do {
 		*x = rand() % (MAP_X - 3) + 1;
 		*y = rand() % (MAP_Y - 3) + 1;
-		if ((((mapxy(*x, *y - 1) == ter_path) && (mapxy(*x + 1, *y - 1) == ter_path)) ||
-			 ((mapxy(*x - 1, *y) == ter_path) && (mapxy(*x - 1, *y + 1) == ter_path)) ||
-			 ((mapxy(*x + 2, *y) == ter_path) && (mapxy(*x + 2, *y + 1) == ter_path)) ||
-			 ((mapxy(*x, *y + 2) == ter_path) && (mapxy(*x + 2, *y + 2) == ter_path)))&&
+		if ((((this->getTerrain(*x, 	  	*y - 1) == ter_path) && (this->getTerrain(*x + 1, *y - 1) == ter_path)) ||
+			 ((this->getTerrain(*x - 1,	*y	 ) == ter_path) && (this->getTerrain(*x - 1, *y + 1) == ter_path)) ||
+			 ((this->getTerrain(*x + 2,	*y	 ) == ter_path) && (this->getTerrain(*x + 2, *y + 1) == ter_path)) ||
+			 ((this->getTerrain(*x,    	*y + 2) == ter_path) && (this->getTerrain(*x + 2, *y + 2) == ter_path)))&&
 
-			(((mapxy(*x, 	 *y)	 != ter_mart) && (mapxy(*x, 	*y) 	!= ter_center)  &&
-			  (mapxy(*x + 1, *y) 	 != ter_mart) && (mapxy(*x + 1, *y) 	!= ter_center)  &&
-			  (mapxy(*x, 	 *y + 1) != ter_mart) && (mapxy(*x, 	*y + 1) != ter_center)  &&
-			  (mapxy(*x + 1, *y + 1) != ter_mart) && (mapxy(*x + 1, *y + 1) != ter_center)))&&
+			(((this->getTerrain(*x, 	 	*y	 ) != ter_mart) && (this->getTerrain(*x, 	*y) 	   != ter_center)  &&
+			  (this->getTerrain(*x + 1, 	*y	 ) != ter_mart) && (this->getTerrain(*x + 1, *y) 	   != ter_center)  &&
+			  (this->getTerrain(*x, 	 	*y + 1) != ter_mart) && (this->getTerrain(*x, 	*y + 1) != ter_center)  &&
+			  (this->getTerrain(*x + 1, 	*y + 1) != ter_mart) && (this->getTerrain(*x + 1, *y + 1) != ter_center)))&&
 
-			(((mapxy(*x, 	 *y)	 != ter_path) &&
-			  (mapxy(*x + 1, *y)	 != ter_path) &&
-			  (mapxy(*x, 	 *y + 1) != ter_path) &&
-			  (mapxy(*x + 1, *y + 1) != ter_path)))) {
+			(((this->getTerrain(*x, 	 	*y)	   != ter_path) &&
+			  (this->getTerrain(*x + 1, 	*y)	   != ter_path) &&
+			  (this->getTerrain(*x, 	 	*y + 1) != ter_path) &&
+			  (this->getTerrain(*x + 1, 	*y + 1) != ter_path)))) {
 			break;
 		}
 	} while (1);
 }
 
-static void map_placeMart(map_t *map) {
+void Map::placeMart() {
 	int x;
 	int y;
-	find_validBuildingLocation(map, &x, &y);
-	mapxy(x, 	 y) 	= ter_mart;
-	mapxy(x + 1, y) 	= ter_mart;
-	mapxy(x + 1, y + 1) = ter_mart;
-	mapxy(x, 	 y + 1) = ter_mart;
+	find_validBuildingLocation(&x, &y);
+	this->setTerrain(	x, 		  y,      ter_mart);
+	this->setTerrain(x + 1, 	  y, 	  ter_mart);
+	this->setTerrain(x + 1, 	y + 1, ter_mart);
+	this->setTerrain(	x,		y + 1, ter_mart);
 }
 
-static void map_placeCenter(map_t *map) {
+void Map::placeCenter() {
 	int x;
 	int y;
-	find_validBuildingLocation(map, &x, &y);
-	mapxy(x, 	 y) 	= ter_center;
-	mapxy(x + 1, y)	 	= ter_center;
-	mapxy(x + 1, y + 1) = ter_center;
-	mapxy(x, 	 y + 1) = ter_center;
+	find_validBuildingLocation(&x, &y);
+	this->setTerrain(	x, 		  y,      ter_center);
+	this->setTerrain(x + 1, 	  y, 	  ter_center);
+	this->setTerrain(x + 1, 	y + 1, ter_center);
+	this->setTerrain(	x,		y + 1, ter_center);
 }
 
 /*
  * Places border walls with path exits
  */
-static void map_placeBorder(map_t *map) {
+void Map::placeBorder() {
 	int y;
 	int x;
 	// left & right
 	for (y = 0; y < MAP_Y; y++) {
-		mapxy(0, y) = ter_border;
-		mapxy(MAP_X - 1, y) = ter_border;
+		this->setTerrain(0, y, ter_border);
+		this->setTerrain(MAP_X - 1, y, ter_border);
 	}
 	// top & bottom
 	for (x = 0; x < MAP_X; x++) {
-		mapxy(x, 0) = ter_border;
-		mapxy(x, MAP_Y - 1) = ter_border;
+		this->setTerrain(x, 0, 		  ter_border);
+		this->setTerrain(x, MAP_Y - 1, ter_border);
 	}
-	mapxy(map->north, 	0) 		 	= ter_exit;
-	mapxy(map->south, 	MAP_Y - 1)	= ter_exit;
-	mapxy(0, 			map->west) 	= ter_exit;
-	mapxy(MAP_X - 1, 	map->east)	= ter_exit;
+}
+
+void Map::placeExits() {
+	setTerrain(north, 0, ter_exit);
+	setTerrain(south, MAP_Y - 1, ter_exit);
+	setTerrain(0, west, ter_exit);
+	setTerrain(MAP_X - 1, east, ter_exit);
 }
 
 /*
  * Does not place path on border
  */
-static void map_placePath(map_t *map) {
+void Map::placePath() {
 	int x_break, y_break;
 
 	/* Find road paths that wont create a double road */
@@ -80,36 +177,36 @@ static void map_placePath(map_t *map) {
 		x_break = rand() % (MAP_X - 6) + 3;
 		y_break = rand() % (MAP_Y - 6) + 3;
 
-	} while (abs(map->north - x_break) == 1 || abs(map->south - x_break == 1) ||
-			 abs(map->west  - y_break) == 1 || abs(map->east  - y_break == 1));
+	} while (abs(this->north - x_break) == 1 || abs(this->south - x_break == 1) ||
+			 abs(this->west  - y_break) == 1 || abs(this->east  - y_break == 1));
 
 	/* Place roads by connecting opposite exits together with the break */
 	/* East to West */
 	int i;
-	for (i = 1; 	  i < x_break; 	 i++) { mapxy(i, map->west) = ter_path; }
-	for (i = x_break; i < MAP_X - 1; i++) { mapxy(i, map->east) = ter_path; }
+	for (i = 1; 	  i < x_break; 	 i++) { this->setTerrain(i, this->west, ter_path); }
+	for (i = x_break; i < MAP_X - 1; i++) { this->setTerrain(i, this->east, ter_path); }
 
-	if (map->west <  map->east) {
-		for (i = map->west; i <  map->east; i++) { mapxy(x_break, i) = ter_path; }
+	if (this->west <  this->east) {
+		for (i = this->west; i <  this->east; i++) { this->setTerrain(x_break, i, ter_path); }
 	}
-	if (map->west >= map->east) {
-		for (i = map->east; i <= map->west; i++) { mapxy(x_break, i) = ter_path; }
+	if (this->west >= this->east) {
+		for (i = this->east; i <= this->west; i++) { this->setTerrain(x_break, i, ter_path); }
 	}
 	/* North to South */
-	for (i = 1; 	  i < y_break; 	 i++) { mapxy(map->north, i) = ter_path; }
-	for (i = y_break; i < MAP_Y - 1; i++) { mapxy(map->south, i) = ter_path; }
-	if (map->north <  map->south) {
-		for (i = map->north; i <  map->south; i++) { mapxy(i, y_break) = ter_path; }
+	for (i = 1; 	  i < y_break; 	 i++) { this->setTerrain(this->north, i, ter_path); }
+	for (i = y_break; i < MAP_Y - 1; i++) { this->setTerrain(this->south, i, ter_path); }
+	if (this->north <  this->south) {
+		for (i = this->north; i <  this->south; i++) { this->setTerrain(i, y_break, ter_path); }
 	}
-	if (map->north >= map->south) {
-		for (i = map->south; i <= map->north; i++) { mapxy(i, y_break) = ter_path; }
+	if (this->north >= this->south) {
+		for (i = this->south; i <= this->north; i++) { this->setTerrain(i, y_break, ter_path); }
 	}
 }
 
 /*
  * Places grass nodes in random locations on the map
  */
-static void map_placeGrass(map_t *map) {
+void Map::placeGrass() {
 	int x_pos, y_pos, x_size, y_size;
 	int node_count;
 	int x, y;
@@ -119,7 +216,7 @@ static void map_placeGrass(map_t *map) {
 		do {
 			x_pos = rand() % MAP_X;
 			y_pos = rand() % MAP_Y;
-		} while (mapxy(x_pos, y_pos) == ter_grass);
+		} while (this->getTerrain(x_pos, y_pos) == ter_grass);
 
 		x_size = rand() % 5 + 4;
 		y_size = rand() % 4 + 2;
@@ -129,7 +226,7 @@ static void map_placeGrass(map_t *map) {
 			for (x = x_pos - x_size; x < x_pos + x_size; x++) {
 				if (y >= 0 && y < MAP_Y) {
 					if (x >= 0 && x < MAP_X) {
-						mapxy(x, y) = ter_grass;
+						this->setTerrain(x, y, ter_grass);
 					}
 				}
 			}
@@ -141,7 +238,7 @@ static void map_placeGrass(map_t *map) {
  * Returns 0 if invalid position for a tree.
  * Single trees can not be adjacent to one another or forests
  */
-static int is_validTree(map_t *map, int x, int y) {
+int Map::is_validTree(int x, int y) {
 
 	int valid = 1;
 
@@ -149,24 +246,24 @@ static int is_validTree(map_t *map, int x, int y) {
 		valid = 0;
 	}
 
-	if ((mapxy(x, y) 	 	 == ter_tree)	|| (mapxy(x, y + 1) 	== ter_tree) ||
-		(mapxy(x, y - 1) 	 == ter_tree)	|| (mapxy(x + 1, y) 	== ter_tree) ||
-		(mapxy(x - 1, y) 	 == ter_tree)	|| (mapxy(x - 1, y - 1) == ter_tree) ||
-		(mapxy(x + 1, y - 1) == ter_tree)	|| (mapxy(x - 1, y + 1) == ter_tree) ||
-		(mapxy(x + 1, y + 1) == ter_tree)) {
+	if ((this->getTerrain(x, y) 	 	  	  == ter_tree) || (this->getTerrain(x, y + 1) 		== ter_tree) ||
+		(this->getTerrain(x, y - 1) 		  == ter_tree) || (this->getTerrain(x + 1, y) 		== ter_tree) ||
+		(this->getTerrain(x - 1, y) 	 	  == ter_tree) || (this->getTerrain(x - 1, y - 1) == ter_tree) ||
+		(this->getTerrain(x + 1, y - 1) == ter_tree) || (this->getTerrain(x - 1, y + 1) == ter_tree) ||
+		(this->getTerrain(x + 1, y + 1) == ter_tree)) {
 		valid = 0;
 	}
-	if ((mapxy(x, y) 	 	 == ter_forest)	|| (mapxy(x, y + 1) 	== ter_forest) ||
-		(mapxy(x, y - 1) 	 == ter_forest)	|| (mapxy(x + 1, y) 	== ter_forest) ||
-		(mapxy(x - 1, y) 	 == ter_forest)	|| (mapxy(x - 1, y - 1) == ter_forest) ||
-		(mapxy(x + 1, y - 1) == ter_forest)	|| (mapxy(x - 1, y + 1) == ter_forest) ||
-		(mapxy(x + 1, y + 1) == ter_forest)) {
+	if ((this->getTerrain(x, y) 	 	 	  == ter_forest) || (this->getTerrain(x, y + 1) 		  == ter_forest) ||
+		(this->getTerrain(x, y - 1) 	 	  == ter_forest) || (this->getTerrain(x + 1, y) 		  == ter_forest) ||
+		(this->getTerrain(x - 1, y) 	 	  == ter_forest) || (this->getTerrain(x - 1, y - 1) == ter_forest) ||
+		(this->getTerrain(x + 1, y - 1) == ter_forest) || (this->getTerrain(x - 1, y + 1) == ter_forest) ||
+		(this->getTerrain(x + 1, y + 1) == ter_forest)) {
 		valid = 0;
 	}
 	return valid;
 }
 
-static void map_placeTree(map_t *map) {
+void Map::placeTree() {
 
 	int x, y, n;
 	for (n = 0; n < MAX_TREES; n++) {
@@ -174,99 +271,70 @@ static void map_placeTree(map_t *map) {
 		do {
 			x = rand() % (MAP_X - 2) + 1;
 			y = rand() % (MAP_Y - 2) + 1;
-		} while (!is_validTree(map, x, y));
+		} while (!is_validTree(x, y));
 
-		mapxy(x, y) = ter_tree;
+		this->setTerrain(x, y, ter_tree);
+	}
+}
+
+void Map::placePc(Pc *pc, Pos relativeToDir){
+	// Set pc position to correct exit location based on the previous map
+	if (relativeToDir.x == dirs[dir_north].x && relativeToDir.y == dirs[dir_north].y) {
+		pc->pos = {this->south, MAP_Y - 2};
+		pc->move((map*)this, pc->pos);
+	}
+	else if (relativeToDir.x == dirs[dir_east].x && relativeToDir.y == dirs[dir_east].y) {
+		pc->pos.x = 1;
+		pc->pos.y = this->west;
+		pc->move((map*)this, pc->pos);
+	}
+	else if (relativeToDir.x == dirs[dir_west].x && relativeToDir.y == dirs[dir_west].y) {
+		pc->pos.x = MAP_X - 2;
+		pc->pos.y = this->east;
+		pc->move((map*)this, pc->pos);
+	}
+	else if (relativeToDir.x == dirs[dir_south].x && relativeToDir.y == dirs[dir_south].y) {
+		pc->pos.x = this->north;
+		pc->pos.y = 1;
+		pc->move((map*)this, pc->pos);
+	}
+	else { // Fly / Teleport
+		Pos pos;
+		do {
+			rand_pos(&pos);
+			// Redundant check for char_m being null since this func will be called before NPCS
+		} while (this->getTerrain(pos) != ter_path || this->getChar(pos) != nullptr);
+		pc->pos = (Pos){pos.x, pos.y};
+		pc->move((map*)this, pc->pos);
+
 	}
 }
 
 /*
- * Places all nodes on the map
+ * Places NPC characters in map according to global num_characters
+ * Also places NPCs in map heap
+ * Does not place NPC on terrain it can not path on or paths
  */
-void terrain_init(map_t *map) {
-	// Terrain and buildings
-	map_placeTree(map);
-	map_placeGrass(map);
-	map_placePath(map);
-	map_placeBorder(map);
-	map_placeCenter(map);
-	map_placeMart(map);
-}
+void Map::placeNpc(){
+	Pos pos;
+	character_type_t newChar;
 
+	// decrement count till zero, adding a random character each time
+	int count;
+	for (count = num_trainers; count > 0; count--){
 
-char ter_getSymbol(terrain_t t) {
-	switch (t) {
-		case ter_border:
-			return '%';
-		case ter_boulder:
-			return '%';
-		case ter_mountain:
-			return '%';
-		case ter_tree:
-			return '^';
-		case ter_forest:
-			return '^';
-		case ter_exit:
-			return '#';
-		case ter_path:
-			return '#';
-		case ter_mart:
-			return 'M';
-		case ter_center:
-			return 'C';
-		case ter_grass:
-			return ':';
-		case ter_clearing:
-			return '.';
-		case empty:
-			return ' ';
-		case debug:
-			return ' ';
-		default:
-			return ' ';
-	}
-}
+		// Always place a rival and hiker when possible
+		// This block is icky lol
+		if 		(count == num_trainers)	   { newChar = char_rival; }
+		else if (count == num_trainers - 1){ newChar = char_hiker; }
+		else 	{ newChar = npc_getRandom(); }
 
-char char_getSymbol(character_type_t t) {
-	switch (t) {
-		case char_pc:
-			return '@';
-		case char_rival:
-			return 'r';
-		case char_hiker:
-			return 'h';
-		case char_statue:
-			return 's';
-		case char_pacer:
-			return 'p';
-		case char_wanderer:
-			return 'w';
-		case char_random:
-			return 'n';
-		case char_unoccupied:
-		default:
-			return '-';
-	}
-}
-
-std::string char_getString(character_type_t t) {
-	switch (t) {
-		case char_pc:
-			return "Player Character";
-		case char_rival:
-			return "Rival Trainer";
-		case char_hiker:
-			return "Hiker Trainer";
-		case char_statue:
-			return "Stationary Trainer";
-		case char_pacer:
-			return "Pacer Trainer";
-		case char_wanderer:
-			return "Wanderer Trainer";
-		case char_random:
-			return "Random Walker Trainer";
-		case char_unoccupied:
-		default:
-			return "-";
+		do {
+			rand_pos(&pos);
+		} while (this->getChar(pos) ||
+				 move_cost[newChar][this->getTerrain(pos)] == INT_MAX ||
+				this->getTerrain(pos) == ter_path);
+		this->setChar(pos, new Character(newChar, pos.x, pos.y, 0));
+		heap_insert(&this->turn, this->getChar(pos));
 	}
 }

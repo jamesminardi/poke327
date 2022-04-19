@@ -17,17 +17,65 @@
 #include <limits.h>
 #include <string>
 #include "components.h"
+#include "character.h"
 #include "globals.h"
 #include "colors.h"
+#include "pos.h"
+
+class Map {
+public:
+	heap_t turn;
+	int north, south, east, west;
+	terrain_t terM[MAP_Y][MAP_X];
+	Character* charM[MAP_Y][MAP_X];
 
 
-void terrain_init(map_t *map);
+	Map();
+	Map(Pos pc_pos);
+	Map(int north, int south, int east, int west);
+	~Map();
+	void placeCharacters(Pc* pc);
+	Character* getChar(int x, int y);
+	Character* getChar(Pos pos);
+	void setChar(int x, int y, Character* c);
+	void setChar(Pos pos, Character* c);
 
-void map_print(map_t *map);
+	terrain_t getTerrain(int x, int y);
+	terrain_t getTerrain(Pos pos);
+	void setTerrain(int x, int y, terrain_t ter);
+	void setTerrain(Pos pos, terrain_t ter);
 
-void ter_print(map_t *map);
+	void placeMart();
+	void placeCenter();
+	void placeBorder();
+	void placeExits();
+	void placePath();
+	void placeGrass();
+	void placeTree();
 
-void char_print(map_t *map);
+	void placePc(Pc *pc, Pos pc_pos);
+	void placeNpc();
+private:
+	void find_validBuildingLocation(int *x, int *y);
+
+	int is_validTree(int x, int y);
+};
+
+static Pos rand_path(Map* map) {
+	Pos pos;
+	do {
+		rand_pos(&pos);
+	} while (map->getTerrain(pos) != ter_path);
+	return pos;
+}
+
+//void terrain_init(map_t *map);
+//
+//void map_print(map_t *map);
+//
+//void ter_print(map_t *map);
+//
+//void char_print(map_t *map);
 
 char ter_getSymbol(terrain_t t);
 char char_getSymbol(character_type_t t);
