@@ -8,20 +8,20 @@ static void find_validBuildingLocation(map_t *map, int *x, int *y) {
 	do {
 		*x = rand() % (MAP_X - 3) + 1;
 		*y = rand() % (MAP_Y - 3) + 1;
-		if ((((mapxy(*x, *y - 1) == ter_path) && (mapxy(*x + 1, *y - 1) == ter_path)) ||
-			 ((mapxy(*x - 1, *y) == ter_path) && (mapxy(*x - 1, *y + 1) == ter_path)) ||
-			 ((mapxy(*x + 2, *y) == ter_path) && (mapxy(*x + 2, *y + 1) == ter_path)) ||
-			 ((mapxy(*x, *y + 2) == ter_path) && (mapxy(*x + 2, *y + 2) == ter_path)))&&
+		if ((((m_terxy(*x, *y - 1) == ter_path) && (m_terxy(*x + 1, *y - 1) == ter_path)) ||
+			 ((m_terxy(*x - 1, *y) == ter_path) && (m_terxy(*x - 1, *y + 1) == ter_path)) ||
+			 ((m_terxy(*x + 2, *y) == ter_path) && (m_terxy(*x + 2, *y + 1) == ter_path)) ||
+			 ((m_terxy(*x, *y + 2) == ter_path) && (m_terxy(*x + 2, *y + 2) == ter_path))) &&
 
-			(((mapxy(*x, 	 *y)	 != ter_mart) && (mapxy(*x, 	*y) 	!= ter_center)  &&
-			  (mapxy(*x + 1, *y) 	 != ter_mart) && (mapxy(*x + 1, *y) 	!= ter_center)  &&
-			  (mapxy(*x, 	 *y + 1) != ter_mart) && (mapxy(*x, 	*y + 1) != ter_center)  &&
-			  (mapxy(*x + 1, *y + 1) != ter_mart) && (mapxy(*x + 1, *y + 1) != ter_center)))&&
+			(((m_terxy(*x, *y) != ter_mart) && (m_terxy(*x, *y) != ter_center) &&
+			  (m_terxy(*x + 1, *y) != ter_mart) && (m_terxy(*x + 1, *y) != ter_center) &&
+			  (m_terxy(*x, *y + 1) != ter_mart) && (m_terxy(*x, *y + 1) != ter_center) &&
+			  (m_terxy(*x + 1, *y + 1) != ter_mart) && (m_terxy(*x + 1, *y + 1) != ter_center))) &&
 
-			(((mapxy(*x, 	 *y)	 != ter_path) &&
-			  (mapxy(*x + 1, *y)	 != ter_path) &&
-			  (mapxy(*x, 	 *y + 1) != ter_path) &&
-			  (mapxy(*x + 1, *y + 1) != ter_path)))) {
+			(((m_terxy(*x, *y) != ter_path) &&
+			  (m_terxy(*x + 1, *y) != ter_path) &&
+			  (m_terxy(*x, *y + 1) != ter_path) &&
+			  (m_terxy(*x + 1, *y + 1) != ter_path)))) {
 			break;
 		}
 	} while (1);
@@ -31,20 +31,20 @@ static void map_placeMart(map_t *map) {
 	int x;
 	int y;
 	find_validBuildingLocation(map, &x, &y);
-	mapxy(x, 	 y) 	= ter_mart;
-	mapxy(x + 1, y) 	= ter_mart;
-	mapxy(x + 1, y + 1) = ter_mart;
-	mapxy(x, 	 y + 1) = ter_mart;
+	m_terxy(x, y) 	= ter_mart;
+	m_terxy(x + 1, y) 	= ter_mart;
+	m_terxy(x + 1, y + 1) = ter_mart;
+	m_terxy(x, y + 1) = ter_mart;
 }
 
 static void map_placeCenter(map_t *map) {
 	int x;
 	int y;
 	find_validBuildingLocation(map, &x, &y);
-	mapxy(x, 	 y) 	= ter_center;
-	mapxy(x + 1, y)	 	= ter_center;
-	mapxy(x + 1, y + 1) = ter_center;
-	mapxy(x, 	 y + 1) = ter_center;
+	m_terxy(x, y) 	= ter_center;
+	m_terxy(x + 1, y)	 	= ter_center;
+	m_terxy(x + 1, y + 1) = ter_center;
+	m_terxy(x, y + 1) = ter_center;
 }
 
 /*
@@ -55,18 +55,18 @@ static void map_placeBorder(map_t *map) {
 	int x;
 	// left & right
 	for (y = 0; y < MAP_Y; y++) {
-		mapxy(0, y) = ter_border;
-		mapxy(MAP_X - 1, y) = ter_border;
+		m_terxy(0, y) = ter_border;
+		m_terxy(MAP_X - 1, y) = ter_border;
 	}
 	// top & bottom
 	for (x = 0; x < MAP_X; x++) {
-		mapxy(x, 0) = ter_border;
-		mapxy(x, MAP_Y - 1) = ter_border;
+		m_terxy(x, 0) = ter_border;
+		m_terxy(x, MAP_Y - 1) = ter_border;
 	}
-	mapxy(map->north, 	0) 		 	= ter_exit;
-	mapxy(map->south, 	MAP_Y - 1)	= ter_exit;
-	mapxy(0, 			map->west) 	= ter_exit;
-	mapxy(MAP_X - 1, 	map->east)	= ter_exit;
+	m_terxy(map->north, 0) 		 	= ter_exit;
+	m_terxy(map->south, MAP_Y - 1)	= ter_exit;
+	m_terxy(0, map->west) 	= ter_exit;
+	m_terxy(MAP_X - 1, map->east)	= ter_exit;
 }
 
 /*
@@ -86,23 +86,23 @@ static void map_placePath(map_t *map) {
 	/* Place roads by connecting opposite exits together with the break */
 	/* East to West */
 	int i;
-	for (i = 1; 	  i < x_break; 	 i++) { mapxy(i, map->west) = ter_path; }
-	for (i = x_break; i < MAP_X - 1; i++) { mapxy(i, map->east) = ter_path; }
+	for (i = 1; 	  i < x_break; 	 i++) { m_terxy(i, map->west) = ter_path; }
+	for (i = x_break; i < MAP_X - 1; i++) { m_terxy(i, map->east) = ter_path; }
 
 	if (map->west <  map->east) {
-		for (i = map->west; i <  map->east; i++) { mapxy(x_break, i) = ter_path; }
+		for (i = map->west; i <  map->east; i++) { m_terxy(x_break, i) = ter_path; }
 	}
 	if (map->west >= map->east) {
-		for (i = map->east; i <= map->west; i++) { mapxy(x_break, i) = ter_path; }
+		for (i = map->east; i <= map->west; i++) { m_terxy(x_break, i) = ter_path; }
 	}
 	/* North to South */
-	for (i = 1; 	  i < y_break; 	 i++) { mapxy(map->north, i) = ter_path; }
-	for (i = y_break; i < MAP_Y - 1; i++) { mapxy(map->south, i) = ter_path; }
+	for (i = 1; 	  i < y_break; 	 i++) { m_terxy(map->north, i) = ter_path; }
+	for (i = y_break; i < MAP_Y - 1; i++) { m_terxy(map->south, i) = ter_path; }
 	if (map->north <  map->south) {
-		for (i = map->north; i <  map->south; i++) { mapxy(i, y_break) = ter_path; }
+		for (i = map->north; i <  map->south; i++) { m_terxy(i, y_break) = ter_path; }
 	}
 	if (map->north >= map->south) {
-		for (i = map->south; i <= map->north; i++) { mapxy(i, y_break) = ter_path; }
+		for (i = map->south; i <= map->north; i++) { m_terxy(i, y_break) = ter_path; }
 	}
 }
 
@@ -119,7 +119,7 @@ static void map_placeGrass(map_t *map) {
 		do {
 			x_pos = rand() % MAP_X;
 			y_pos = rand() % MAP_Y;
-		} while (mapxy(x_pos, y_pos) == ter_grass);
+		} while (m_terxy(x_pos, y_pos) == ter_grass);
 
 		x_size = rand() % 5 + 4;
 		y_size = rand() % 4 + 2;
@@ -129,7 +129,7 @@ static void map_placeGrass(map_t *map) {
 			for (x = x_pos - x_size; x < x_pos + x_size; x++) {
 				if (y >= 0 && y < MAP_Y) {
 					if (x >= 0 && x < MAP_X) {
-						mapxy(x, y) = ter_grass;
+						m_terxy(x, y) = ter_grass;
 					}
 				}
 			}
@@ -149,18 +149,18 @@ static int is_validTree(map_t *map, int x, int y) {
 		valid = 0;
 	}
 
-	if ((mapxy(x, y) 	 	 == ter_tree)	|| (mapxy(x, y + 1) 	== ter_tree) ||
-		(mapxy(x, y - 1) 	 == ter_tree)	|| (mapxy(x + 1, y) 	== ter_tree) ||
-		(mapxy(x - 1, y) 	 == ter_tree)	|| (mapxy(x - 1, y - 1) == ter_tree) ||
-		(mapxy(x + 1, y - 1) == ter_tree)	|| (mapxy(x - 1, y + 1) == ter_tree) ||
-		(mapxy(x + 1, y + 1) == ter_tree)) {
+	if ((m_terxy(x, y) == ter_tree) || (m_terxy(x, y + 1) == ter_tree) ||
+		(m_terxy(x, y - 1) == ter_tree) || (m_terxy(x + 1, y) == ter_tree) ||
+		(m_terxy(x - 1, y) == ter_tree) || (m_terxy(x - 1, y - 1) == ter_tree) ||
+		(m_terxy(x + 1, y - 1) == ter_tree) || (m_terxy(x - 1, y + 1) == ter_tree) ||
+		(m_terxy(x + 1, y + 1) == ter_tree)) {
 		valid = 0;
 	}
-	if ((mapxy(x, y) 	 	 == ter_forest)	|| (mapxy(x, y + 1) 	== ter_forest) ||
-		(mapxy(x, y - 1) 	 == ter_forest)	|| (mapxy(x + 1, y) 	== ter_forest) ||
-		(mapxy(x - 1, y) 	 == ter_forest)	|| (mapxy(x - 1, y - 1) == ter_forest) ||
-		(mapxy(x + 1, y - 1) == ter_forest)	|| (mapxy(x - 1, y + 1) == ter_forest) ||
-		(mapxy(x + 1, y + 1) == ter_forest)) {
+	if ((m_terxy(x, y) == ter_forest) || (m_terxy(x, y + 1) == ter_forest) ||
+		(m_terxy(x, y - 1) == ter_forest) || (m_terxy(x + 1, y) == ter_forest) ||
+		(m_terxy(x - 1, y) == ter_forest) || (m_terxy(x - 1, y - 1) == ter_forest) ||
+		(m_terxy(x + 1, y - 1) == ter_forest) || (m_terxy(x - 1, y + 1) == ter_forest) ||
+		(m_terxy(x + 1, y + 1) == ter_forest)) {
 		valid = 0;
 	}
 	return valid;
@@ -176,7 +176,7 @@ static void map_placeTree(map_t *map) {
 			y = rand() % (MAP_Y - 2) + 1;
 		} while (!is_validTree(map, x, y));
 
-		mapxy(x, y) = ter_tree;
+		m_terxy(x, y) = ter_tree;
 	}
 }
 
@@ -224,49 +224,5 @@ char ter_getSymbol(terrain_t t) {
 			return ' ';
 		default:
 			return ' ';
-	}
-}
-
-char char_getSymbol(character_type_t t) {
-	switch (t) {
-		case char_pc:
-			return '@';
-		case char_rival:
-			return 'r';
-		case char_hiker:
-			return 'h';
-		case char_statue:
-			return 's';
-		case char_pacer:
-			return 'p';
-		case char_wanderer:
-			return 'w';
-		case char_random:
-			return 'n';
-		case char_unoccupied:
-		default:
-			return '-';
-	}
-}
-
-std::string char_getString(character_type_t t) {
-	switch (t) {
-		case char_pc:
-			return "Player Character";
-		case char_rival:
-			return "Rival Trainer";
-		case char_hiker:
-			return "Hiker Trainer";
-		case char_statue:
-			return "Stationary Trainer";
-		case char_pacer:
-			return "Pacer Trainer";
-		case char_wanderer:
-			return "Wanderer Trainer";
-		case char_random:
-			return "Random Walker Trainer";
-		case char_unoccupied:
-		default:
-			return "-";
 	}
 }

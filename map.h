@@ -3,10 +3,18 @@
 
 #ifndef MAP_XY
 #define MAP_XY
-#define mapxy(x, y) (map->m[y][x])
-#define mappos(pos) (world.cur_map->m[pos.y][pos.x])
-#define charxy(x, y) (map->char_m[y][x])
-#define charpos(pos) (world.cur_map->char_m[pos.y][pos.x])
+#define m_terxy(x, y) (map->terM[y][x])
+#define m_charxy(x, y) (map->charM[y][x])
+#define m_terpos(pos) (map->terM[pos.y][pos.x])
+#define m_charpos(pos) (map->charM[pos.y][pos.x])
+
+#define w_terxy(x,y) (world.cur_map->terM[y][x])
+#define w_terpos(pos) (world.cur_map->terM[pos.y][pos.x])
+#define w_charxy(x,y) (world.cur_map->charM[y][x])
+#define w_charpos(pos) (world.cur_map->charM[pos.y][pos.x])
+#define w_mapxy(x,y) (world.cur_map->charM[pos.y][pos.x])
+
+
 #endif // MAP_XY
 
 #include <stdio.h>
