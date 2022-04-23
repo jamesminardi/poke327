@@ -3,8 +3,26 @@ Text based Pokémon roguelike in C
 
 Usage: ./poke327 -h | --help for switches
 
+NEW 1.08 keybindings:
+In battle:
+    a | b | c | d | e | f
+            Attempt to swap to pokemon in that slot
+
+    1 | 2 | 3 | 4
+            Attempt to use move in that slot
+
+    5       Attempt to flee the battle
+
+    Q       Force quit the game (Must reset terminal)
+
+Backpack:
+    x       Attempt to throw pokeball
+    y       Attempt to use potion
+    z       Attempt to use revive
+    ESC     Leave potion/revive menu
 
 In-game keybindings:
+    B | i   Open backpack to use items
     7 | y   Attempt to move PC one cell to upper left
     8 | k   Attempt to move PC one cell up
     9 | u   Attempt to move PC one cell to the upper right
@@ -18,12 +36,25 @@ In-game keybindings:
     t       View list of trainers on the map with relative positions to PC
     up
     down
-    ESC     Return to map when in a menu (e.g. defeat a trainer or random pokemon)
+    ESC     Return to map when in a menu
     Q | q   Quit the game
 
 # setup
 ## use make or make all to compile
 ## make clean will clean the directory of compiled files
+
+# 1.08
+## Notes:
+### You start with 5 of each of the 3 items
+### If a message has "..." at the top, it requires an acknowledgement (Press any key to continue)
+### capital B for bag in overworld. Or use i
+### If you have no pokemon alive, you will be followed by trainers but not battled
+### If you lose to a trainer, it is marked as defeated just so they don't keep following you
+### Menus can be finicky, but you just have to pay attention to whether or not you're selecting a move or acknowledging a message at the top.
+### If you press capital Q during a battle, it will force exit the program. Ignore this. If you do it you have to reset your terminal, only there for debugging
+## No known major bugs
+
+
 
 # 1.07
 ## Notes:
@@ -32,7 +63,6 @@ In-game keybindings:
 ### This means pokemon (especially lower level pokemon) won't have any moves because we are using version 19 of the pokemon games
 ### When encountering a random pokemon, all of its stats are shown including level, gender, shiny, stats, and ivs.
 ### Pres ESC to defeat the random pokemon.
-
 
 # 1.05
 ## Notes:
