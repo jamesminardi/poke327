@@ -1,92 +1,72 @@
-commit c216905b235258e11a9d39df74785f06a88aab2a
+commit 283e8031d1d7866d983cce9c320a06e8800117f5
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 19:52:52 2022 -0500
+Date:   Sat Apr 23 04:46:04 2022 -0500
 
-    Update
+    Add readme for 1.08
 
-commit c43400107c03a2bd567f7ea59bd137ae01031de1
+commit c020999467ac460a8cf1684fc314e75491d121e2
 Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 19:52:26 2022 -0500
+Date:   Sat Apr 23 04:32:44 2022 -0500
 
-    Update readme
+    add new files to makefile
+
+commit a04443345164a5d0e1671aafe6f400e7493a8948
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:32:24 2022 -0500
+
+    add pokemon generation to NPCS
+
+commit a1b6323a21efdb9491ccf652f68539714ec10952
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:31:45 2022 -0500
+
+    Overhaul macros for world + map access
+
+commit ecfe0a7ce68b1fce08b71840f8a91f04872543b0
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:31:09 2022 -0500
+
+    alter startup
+
+commit 0aecdf6ab5a41945d4295a6ecbc869787fe56b03
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:30:50 2022 -0500
+
+    add pokemon types parsing
+
+commit ebf2e899e87fe64cc96584307a1ffca91cc098e7
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:30:08 2022 -0500
+
+    Add move enum for battles
+
+commit d7829a24f52c571242d18e2920c65942c35931e2
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:29:46 2022 -0500
+
+    Add methods to interact with character's pokemon team
+
+commit 20ab9c284ffbccd793f3f9f5ad0b58547f2b8e70
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:29:12 2022 -0500
+
+    Add relative and manhattan method to position class
+
+commit a7e97c8480f2bb0a17073c7f2cf5271da5327a71
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:28:43 2022 -0500
+
+    Create class for pokemon and auto generate stats based on level
+
+commit bc1b7659f162bcb7b593e056ee5b6cfe64e92f91
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:28:00 2022 -0500
+
+    Create methods for battling wild pokemon and trainer
+
 
 commit 31b00d872cb94849d77d1d2d253305a691542997
 Author: jamesminardi <jamesminardip@gmail.com>
 Date:   Wed Apr 6 18:31:12 2022 -0500
 
     Fix bug of npc's not moving
-
-commit 7209348178a715b04d46b39ad4dd5e191c6a16bb
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 18:30:21 2022 -0500
-
-    Readme updated for 1.07
-
-commit 1c4fbc5d92c386c650954c4d25416bafae97d072
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 13:47:41 2022 -0500
-
-    formatting
-
-commit 15c960332ccbf4889bb85aff0a8ee5e0483a3095
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 13:47:11 2022 -0500
-
-    Add random encounter battles
-
-commit b90a282d443435529cb50fff7e132aea1ad42076
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 13:46:26 2022 -0500
-
-    Remove getch wait at beginning
-
-commit 12e6f53914824827981096f13e058ef590848906
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 13:45:43 2022 -0500
-
-    Add random encounter step buffer
-
-commit 6ad22e5cf7c0c9ae650dcf1a66b2a62cbbf2433d
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Wed Apr 6 13:45:30 2022 -0500
-
-    Add pokemon stats to parsing
-
-commit c7f29521ff820b236165a774c2e55859263f16e8
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Tue Apr 5 00:23:21 2022 -0500
-
-    Refactored for c++. Still using c-syle structs, etc
-
-commit 886894d2039272aee7b2203106dcb16cbf924132
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Tue Apr 5 00:22:45 2022 -0500
-
-    Move pos into own file
-
-commit 98cfafc3dda45138569a0651736563a0eb54ce9c
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Tue Apr 5 00:22:28 2022 -0500
-
-    Create classes for characters
-
-commit 387e7698767339c607d76807bc02e5629f6a23d3
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Mon Apr 4 22:08:53 2022 -0500
-
-    Add db_parse files
-
-commit 657109f80fbfb65f2c52927f9758e09003e6b9ed
-Merge: d5c225b 948f845
-Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
-Date:   Thu Mar 31 12:45:00 2022 -0500
-
-    Merge pull request #7 from jamesminardi/dev-1.05
-    
-    Dev 1.05 (Final C Version)
-
-commit 948f8452af305c0cadf1b2edcfc8e9b745ec7570
-Author: jamesminardi <jamesminardip@gmail.com>
-Date:   Fri Mar 25 02:20:33 2022 -0500
-
-    Update for 1.05
