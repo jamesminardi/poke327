@@ -19,13 +19,15 @@
 #include "map.h"
 #include "heap.h"
 #include "db_parse.h"
+#include "io.h"
 
 #ifndef WORLD_XY
 #define WORLD_XY
 #define worldxy(x, y) (world.w[y][x])
+#define worldpos(pos) (world.w[pos.y][pos.x])
 #endif // WORLD_XY
 
-#define ter_cost(x, y, c) move_cost[c][map->m[y][x]]
+#define ter_cost(x, y, c) move_cost[c][map->terM[y][x]]
 
 typedef struct path {
 	heap_node_t *hn;
@@ -38,8 +40,6 @@ static int char_weight[num_character_types] __attribute__((unused))=
 		{0, 10, 25, 50, 50, 50, 25};
 
 extern world_t world;
-extern WINDOW *windows[num_windows];
-extern PANEL *panels[num_windows];
 
 extern pokemon_db pokemon[1093];
 extern pokemon_stats_db pokemon_stats[6553];
