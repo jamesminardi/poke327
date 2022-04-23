@@ -1,7 +1,9 @@
 #ifndef POKE327_CHARACTER_H
 #define POKE327_CHARACTER_H
 
-#include "pos.h"
+#include <vector>
+#include "Pos.h"
+#include "pokemon.h"
 
 typedef enum character_type {
 	char_pc, // @
@@ -20,6 +22,17 @@ public:
 	character_type_t type;
 	pos_t pos;
 	int next_turn;
+	std::vector<Pokemon*> pokemon;
+	char getSymbol();
+	const char* getName();
+	void addPokemon(Pokemon* pokemon);
+	void removePokemon(int i);
+
+	Pokemon *firstAvailablePokemon(); // Nullptr possible
+
+	int pokeballs;
+	int revives;
+	int potions;
 };
 
 class Pc : public Character {
