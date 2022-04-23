@@ -5,7 +5,7 @@
 #include "heap.h"
 #include "globals.h"
 #include "character.h"
-#include "pos.h"
+#include "Pos.h"
 
 
 //// Do not change first 8. Locked by npc_init
@@ -23,7 +23,13 @@
 //	dir_init
 //} direction_t;
 
-
+typedef enum move {
+	move_1,
+	move_2,
+	move_3,
+	move_4,
+	nop
+}move_t;
 
 typedef enum terrain {
 	debug, 			// 0
@@ -44,8 +50,8 @@ typedef enum terrain {
 } terrain_t;
 
 typedef struct map {
-	terrain_t m[MAP_Y][MAP_X];
-	Character *char_m[MAP_Y][MAP_X];
+	terrain_t terM[MAP_Y][MAP_X];
+	Character *charM[MAP_Y][MAP_X];
 	heap_t turn;
 	int north, south, east, west;
 } map_t;
@@ -62,7 +68,7 @@ typedef struct world {
 	Pc *pc;
 	int seed;
 
-	int quit_game_flag;
+	int quit;
 } world_t;
 
 static const int move_cost[num_character_types][num_terrain_types] = {
@@ -97,14 +103,5 @@ static pos_t all_dirs[8] = {
 		{ 0,  1  },
 		{ 1,  1  },
 };
-
-typedef enum window_type {
-	win_top,
-	win_battle,
-	win_map,
-	win_bottom,
-	win_trainers,
-	num_windows
-} window_type_t;
 
 #endif // COMPONENTS_H
