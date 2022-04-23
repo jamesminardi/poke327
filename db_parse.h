@@ -24,6 +24,12 @@ struct pokemon_stats_db {
 
 };
 
+struct pokemon_types_db {
+	int pokemon_id;
+	int type_id;
+	int slot;
+};
+
 struct move_db {
 	int id;
 	char identifier[30];
@@ -51,6 +57,11 @@ struct pokemon_move_db {
 	int order;
 };
 
+struct levelup_move {
+	int level;
+	int move;
+};
+
 struct pokemon_species_db {
 	int id;
 	char identifier[30];
@@ -72,6 +83,11 @@ struct pokemon_species_db {
 	int is_mythical;
 	int order;
 	int conquest_order;
+
+	levelup_move *levelup_moves;
+	unsigned num_levelup_moves;
+	int base_stat[6];
+	~pokemon_species_db();
 };
 
 struct experience_db {
@@ -82,6 +98,7 @@ struct experience_db {
 
 extern pokemon_move_db pokemon_moves[528239];
 extern pokemon_stats_db pokemon_stats[6553];
+extern pokemon_types_db pokemon_types[1676];
 extern pokemon_db pokemon[1093];
 extern char *types[19];
 extern move_db moves[845];

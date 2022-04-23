@@ -29,8 +29,10 @@ static char *next_token(char *start, char delim)
 
 pokemon_move_db pokemon_moves[528239];
 pokemon_stats_db pokemon_stats[6553];
+pokemon_types_db pokemon_types[1676];
 pokemon_db pokemon[1093];
 char *types[19];
+
 move_db moves[845];
 pokemon_species_db species[899];
 experience_db experience[601];
@@ -69,7 +71,7 @@ void db_parse(bool print)
 	prefix_len = strlen(prefix);
 
 
-
+	//print = false;
 	/***************** POKEMON *****************/
 	prefix = (char *) realloc(prefix, prefix_len + strlen("pokemon.csv") + 1);
 
@@ -101,7 +103,37 @@ void db_parse(bool print)
 		}
 	}
 
+	//print = true;
+	/***************** POKEMON TYPES *****************/
+	prefix = (char *) realloc(prefix, prefix_len + strlen("pokemon_types.csv") + 1);
+	strcpy(prefix + prefix_len, "pokemon_types.csv");
 
+	f = fopen(prefix, "r");
+
+	//No null byte copied here, so prefix is not technically a string anymore.
+	prefix = (char *) realloc(prefix, prefix_len + 1);
+
+	fgets(line, 800, f);
+
+	for (i = 1; i <= 1675; i++) {
+		fgets(line, 800, f);
+		pokemon_types[i].pokemon_id = atoi((tmp = next_token(line, ',')));
+		tmp = next_token(NULL, ',');
+		pokemon_types[i].type_id = *tmp ? atoi(tmp) : -1;
+		tmp = next_token(NULL, ',');
+		pokemon_types[i].slot = *tmp ? atoi(tmp) : -1;
+	}
+	fclose(f);
+
+	if (print) {
+		for (i = 0; i < 1675; i++) {
+			printf("%d %d %d\n",
+				   pokemon_types[i].pokemon_id,
+				   pokemon_types[i].type_id,
+				   pokemon_types[i].slot);
+		}
+	}
+	//print = false;
 
 	/***************** POKEMON STATS *****************/
 	// Every Pokémon with the base stats for each stat type
@@ -136,7 +168,6 @@ void db_parse(bool print)
 				   pokemon_stats[i].effort);
 		}
 	}
-	print = 0;
 
 
 	/***************** MOVES *****************/
@@ -301,6 +332,11 @@ void db_parse(bool print)
 		species[i].order =  *tmp ? atoi(tmp) : -1;
 		tmp = next_token(NULL, ',');
 		species[i].conquest_order =  *tmp ? atoi(tmp) : -1;
+		species[i].levelup_moves = 0;
+		species[i].num_levelup_moves = 0;
+		species[i].base_stat[0] = species[i].base_stat[1] =
+		species[i].base_stat[2] = species[i].base_stat[3] =
+		species[i].base_stat[4] = species[i].base_stat[5] = 0;
 	}
 
 	fclose(f);
@@ -407,4 +443,11 @@ void db_parse(bool print)
 	}
 	free(prefix);
 
+}
+
+pokemon_species_db::~pokemon_species_db()
+{
+	if (levelup_moves) {
+		free(levelup_moves);
+	}
 }
