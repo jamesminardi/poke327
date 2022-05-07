@@ -149,9 +149,9 @@ static void pc_init(pos_t relative_toDir) {
 			world.pc->pos = (pos_t) {pos.x, pos.y};
 			w_charpos(world.pc->pos) = world.pc;
 			world.pc->next_turn = 0;
-			world.pc->pokeballs = 1;
+			world.pc->pokeballs = 10;
 			world.pc->revives = 1;
-			world.pc->potions = 1;
+			world.pc->potions = 5;
 			world.pc->money = 500;
 			heap_insert(&world.cur_map->turn, world.pc);
 		} else {

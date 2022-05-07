@@ -574,7 +574,10 @@ static void io_battle_revive(Pokemon* curr_pokemon, int &turn_consumed) {
 	int done;
 	int key;
 	char msg[TERMINAL_X];
-
+	if (world.pc->revives <=0) {
+		world.pc->revives = 0;
+		return;
+	}
 	done = 0;
 	while (!done) {
 		io_display_message("Select the pokemon to revive (+50% HP from 0), or press ESC to back out.", false);
@@ -631,6 +634,11 @@ static void io_battle_potion(Pokemon* curr_pokemon, int &turn_consumed) {
 	int done;
 	int key;
 	char msg[TERMINAL_X];
+
+	if (world.pc->potions <=0) {
+		world.pc->potions = 0;
+		return;
+	}
 
 	done = 0;
 	while (!done) {
@@ -855,26 +863,51 @@ static void io_random_encounter() {
 				{
 					if (pc->pokeballs <= 0) {
 						io_display_message("You don't have any pokeballs...", true);
-					} else if (pc->pokemon.size() < 6) {
-						io_display_message("The wild pokemon has been added to your team...", true);
-						pc->pokeballs--;
-						pc->addPokemon(wild_pokemon);
-						battle_over = 1;
-					} else {
-						io_display_message("The wild pokemon ran away...", true);
-						pc->pokeballs--;
-						delete wild_pokemon;
-						battle_over = 1;
+						break;
 					}
-				}
+					pc->pokeballs--;
+
+					int m = rand() % 256;
+					int f = (int)((wild_pokemon->get_max_hp() * 255 * 4.0) / (wild_pokemon->get_hp() * 12.0));
+					if (f < 1) {
+						f = 1;
+					} else if (f > 255) {
+						f = 255;
+					}
+
+					if (f >= m) {
+						// Caught
+
+						if (pc->pokemon.size() < 6) {
+							io_display_message("The wild pokemon has been added to your team...", true);
+							pc->addPokemon(wild_pokemon);
+							battle_over = 1;
+						} else {
+							io_display_message("The wild pokemon has been added to your box...", true);
+							pc->box.push_back(wild_pokemon);
+							battle_over = 1;
+						}
+					} else {
+						io_display_message("The wild pokemon broke free from the pokeball...", true);
+						battle_over = 0;
+					}
 					break;
+				}
 				case 'y':
 					// Use potion
+					if (pc->potions <= 0) {
+						io_display_message("You don't have any potions...", true);
+						break;
+					}
 					io_battle_potion(curr_pokemon, turn_consumed);
 					pc_move = nop;
 					break;
 				case 'z':
 					// Use revive
+					if (pc->revives <= 0) {
+						io_display_message("You don't have any revives...", true);
+						break;
+					}
 					io_battle_revive(curr_pokemon, turn_consumed);
 					pc_move = nop;
 					break;
@@ -1375,96 +1408,6 @@ void io_trainer_battle(Npc *c) {
 	c->defeated = 1;
 }
 
-static void swap_box_pokemon(int pokemon_slot) {
-	int done;
-	int key;
-	show_panel(panels[win_mart]);
-	top_panel(panels[win_mart]);
-	done = 0;
-	while(!done) {
-		wclear(windows[win_mart]);
-		io_display_message(
-				"Select pokemon in party to swap",
-				false);
-		// redisplay pokemart
-
-		flushinp();
-		key = getch();
-		switch (key) {
-			case '1':
-				if (world.pc->pokemon.size() < 1) {
-					io_display_message("You do not have a pokemon in that slot...", true);
-				} else {
-					// Swap pokemon_slot with curr_pokemon
-					Pokemon* temp = world.pc->pokemon[0];
-					world.pc->pokemon[0] = world.pc->box.at(pokemon_slot);
-					world.pc->box.at(pokemon_slot) = temp;
-				}
-				done = 1;
-				break;
-			case '2':
-				if (world.pc->pokemon.size() < 2) {
-					io_display_message("You do not have a pokemon in that slot...", true);
-				} else {
-					// Swap pokemon_slot with curr_pokemon
-					Pokemon* temp = world.pc->pokemon[1];
-					world.pc->pokemon[1] = world.pc->box.at(pokemon_slot);
-					world.pc->box.at(pokemon_slot) = temp;
-				}
-				done = 1;
-				break;
-			case '3':
-				if (world.pc->pokemon.size() < 3) {
-					io_display_message("You do not have a pokemon in that slot...", true);
-				} else {
-					// Swap pokemon_slot with curr_pokemon
-					Pokemon* temp = world.pc->pokemon[2];
-					world.pc->pokemon[2] = world.pc->box.at(pokemon_slot);
-					world.pc->box.at(pokemon_slot) = temp;
-				}
-				done = 1;
-				break;
-			case '4':
-				if (world.pc->pokemon.size() < 4) {
-					io_display_message("You do not have a pokemon in that slot...", true);
-				} else {
-					// Swap pokemon_slot with curr_pokemon
-					Pokemon* temp = world.pc->pokemon[3];
-					world.pc->pokemon[3] = world.pc->box.at(pokemon_slot);
-					world.pc->box.at(pokemon_slot) = temp;
-				}
-				done = 1;
-				break;
-			case '5':
-				if (world.pc->pokemon.size() < 5) {
-					io_display_message("You do not have a pokemon in that slot...", true);
-				} else {
-					// Swap pokemon_slot with curr_pokemon
-					Pokemon* temp = world.pc->pokemon[4];
-					world.pc->pokemon[4] = world.pc->box.at(pokemon_slot);
-					world.pc->box.at(pokemon_slot) = temp;
-				}
-				done = 1;
-				break;
-			case '6':
-				if (world.pc->pokemon.size() < 6) {
-					io_display_message("You do not have a pokemon in that slot...", true);
-				} else {
-					// Swap pokemon_slot with curr_pokemon
-					Pokemon* temp = world.pc->pokemon[5];
-					world.pc->pokemon[5] = world.pc->box.at(pokemon_slot);
-					world.pc->box.at(pokemon_slot) = temp;
-				}
-				done = 1;
-				break;
-			default:
-				io_display_message("Not a valid action. Please swap pokemon first...", true);
-				done = 0;
-				break;
-		}
-	}
-}
-
 static void io_heal_all() {
 	int i;
 	for (i = 0; i < world.pc->pokemon.size(); i++) {
@@ -1507,6 +1450,101 @@ static void io_display_center() {
 	doupdate();
 }
 
+
+
+static void swap_box_pokemon(int pokemon_slot) {
+	int done;
+	int key;
+	show_panel(panels[win_mart]);
+	top_panel(panels[win_mart]);
+	done = 0;
+	while(!done) {
+		wclear(windows[win_mart]);
+		io_display_message(
+				"Select pokemon in party to swap",
+				false);
+		// redisplay pokemart
+		io_display_center();
+
+		flushinp();
+		key = getch();
+		switch (key) {
+			case '0':
+				if (world.pc->pokemon.size() < 1) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[0];
+					world.pc->pokemon[0] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '1':
+				if (world.pc->pokemon.size() < 2) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[1];
+					world.pc->pokemon[1] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '2':
+				if (world.pc->pokemon.size() < 3) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[2];
+					world.pc->pokemon[2] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '3':
+				if (world.pc->pokemon.size() < 4) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[3];
+					world.pc->pokemon[3] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '4':
+				if (world.pc->pokemon.size() < 5) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[4];
+					world.pc->pokemon[4] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '5':
+				if (world.pc->pokemon.size() < 6) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[5];
+					world.pc->pokemon[5] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			default:
+				io_display_message("Not a valid action. Please swap pokemon first...", true);
+				done = 0;
+				break;
+		}
+	}
+}
+
+
+
 static void io_center() {
 	int done;
 	int key;
@@ -1537,6 +1575,7 @@ static void io_center() {
 		} else if (swapped == 0) {
 			io_display_message("Invalid action. ESC to leave or letter to swap pokemon...", true);
 		}
+		swapped = 0;
 	}
 	wclear(windows[win_center]);
 	wclear(windows[win_center]);
@@ -1545,7 +1584,38 @@ static void io_center() {
 }
 
 static void io_mart() {
+	int done;
+	int key;
+	int swapped = 0;
+	show_panel(panels[win_center]);
+	top_panel(panels[win_center]);
+	done = 0;
+	while(!done) {
+		wclear(windows[win_center]);
+		io_display_message("Your pokemon have been healed. Select a pokemon in box to swap to party", false);
+		io_heal_all();
+		io_display_center();
 
+		flushinp();
+		key = getch();
+
+		switch (key) {
+			// NorthWest
+			case 'x':
+				break;
+			case 'y':
+				break;
+			case 'z':
+				break;
+			default:
+				break;
+		}
+		
+
+	}
+	wclear(windows[win_center]);
+	wclear(windows[win_top]);
+	hide_panel(panels[win_center]);
 }
 
 void io_player_turn() {
@@ -1562,6 +1632,8 @@ void io_player_turn() {
 	newPos = world.pc->pos;
 
 	while (!turn_consumed) {
+		show_panel(panels[win_map]);
+		top_panel(panels[win_map]);
 		io_display_map();
 		flushinp();
 		key = getch();
@@ -1636,13 +1708,15 @@ void io_player_turn() {
 				// Enter a building
 			case '>':    // >
 				if (world.cur_map->terM[world.pc->pos.y][world.pc->pos.x] == ter_mart) {
+					turn_consumed = 0;
 					io_mart();
 				}
 				else if (world.cur_map->terM[world.pc->pos.y][world.pc->pos.x] == ter_center) {
+					turn_consumed = 0;
 					io_center();
 				} else {
-					wclear(windows[win_top]);
-					mvwaddstr(windows[win_top], 0, 0, "You are not on top of a building.");
+					turn_consumed = 0;
+					io_display_message("You are not on top of a building...", true);
 				}
 				break;
 
