@@ -16,6 +16,12 @@ struct pokemon_db {
 	int is_default;
 };
 
+struct type_effectiveness_db {
+	int damage_type_id;
+	int target_type_id;
+	float damage_factor;
+};
+
 struct pokemon_stats_db {
 	int pokemon_id;
 	int stat_id;

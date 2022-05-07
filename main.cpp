@@ -107,9 +107,6 @@ static int argument_handler(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
 	db_parse(false);
-//	Pokemon pk(10);
-//	std::cout << pk << std::endl;
-	//int seed, trainers;
 	int quit;
 	if ((quit = argument_handler(argc, argv))){
 		return quit;

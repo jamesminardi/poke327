@@ -27,6 +27,8 @@ static char *next_token(char *start, char delim)
 	return start;
 }
 
+
+type_effectiveness_db type_effectiveness[325];
 pokemon_move_db pokemon_moves[528239];
 pokemon_stats_db pokemon_stats[6553];
 pokemon_types_db pokemon_types[1676];
@@ -44,26 +46,41 @@ void db_parse(bool print)
 	int i;
 	char *tmp;
 	struct stat buf;
-	char *prefix;
+	char *prefix = NULL;
 	int prefix_len;
 	int j;
 	int count;
 
-	i = (strlen(getenv("HOME")) +
-		 strlen("/.poke327/cs327database/") + 1);
-	prefix = (char *) malloc(i);
-	strcpy(prefix, getenv("HOME"));
-	strcat(prefix, "/.poke327/cs327database/");
 
-	if (stat(prefix, &buf)) {
-		free(prefix);
+
+	if (!stat("/share/cs327", &buf)) {
+		prefix = strdup("/share/cs327/pokedex/pokedex/data/csv/");
+	} else {
 		prefix = NULL;
 	}
 
-	if (!prefix && !stat("/share/cs327", &buf)) {
-		prefix = strdup("/share/cs327/cs327database/");
-	} else if (!prefix) {
-		prefix = strdup("/home/student/cs327/share/cs327database/");
+	if (!prefix) {
+		i = (strlen(getenv("HOME")) +
+			 strlen("/.poke327/pokedex/pokedex/data/csv/") + 1);
+		prefix = (char *) malloc(i);
+		strcpy(prefix, getenv("HOME"));
+		strcat(prefix, "/.poke327/pokedex/pokedex/data/csv/");
+		if (stat(prefix, &buf)) {
+			free(prefix);
+			prefix = NULL;
+		}
+	}
+
+	if (!prefix) {
+		i = (strlen(getenv("HOME")) +
+			 strlen("/cs327/share/cs327database/") + 1);
+		prefix = (char *) malloc(i);
+		strcpy(prefix, getenv("HOME"));
+		strcat(prefix, "/cs327/share/cs327database/");
+		if (stat(prefix, &buf)) {
+			free(prefix);
+			prefix = NULL;
+		}
 	}
 
 	//No error checking on file load from here on out.  Missing
@@ -100,6 +117,35 @@ void db_parse(bool print)
 			printf("%d %s %d %d %d %d %d %d\n", pokemon[i].id, pokemon[i].identifier,
 				   pokemon[i].species_id, pokemon[i].height, pokemon[i].weight,
 				   pokemon[i].base_experience, pokemon[i].order, pokemon[i].is_default);
+		}
+	}
+	/***************** TYPE EFFECTIVENESS *****************/
+	prefix = (char *) realloc(prefix, prefix_len + strlen("type_efficacy.csv") + 1);
+	strcpy(prefix + prefix_len, "type_efficacy.csv");
+
+	f = fopen(prefix, "r");
+
+	//No null byte copied here, so prefix is not technically a string anymore.
+	prefix = (char *) realloc(prefix, prefix_len + 1);
+
+	fgets(line, 800, f);
+
+	for (i = 1; i <= 324; i++) {
+		fgets(line, 800, f);
+		type_effectiveness[i].damage_type_id = atoi((tmp = next_token(line, ',')));
+		tmp = next_token(NULL, ',');
+		type_effectiveness[i].target_type_id = *tmp ? atoi(tmp) : -1;
+		tmp = next_token(NULL, ',');
+		type_effectiveness[i].damage_factor = *tmp ? (atoi(tmp) / 100.0): -1;
+	}
+	fclose(f);
+
+	if (print) {
+		for (i = 0; i < 324; i++) {
+			printf("%d %d %f\n",
+				   type_effectiveness[i].damage_type_id,
+				   type_effectiveness[i].target_type_id,
+				   type_effectiveness[i].damage_factor);
 		}
 	}
 
