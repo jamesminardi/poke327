@@ -1587,14 +1587,22 @@ static void io_mart() {
 	int done;
 	int key;
 	int swapped = 0;
-	show_panel(panels[win_center]);
-	top_panel(panels[win_center]);
+	show_panel(panels[win_mart]);
+	top_panel(panels[win_mart]);
 	done = 0;
 	while(!done) {
-		wclear(windows[win_center]);
-		io_display_message("Your pokemon have been healed. Select a pokemon in box to swap to party", false);
-		io_heal_all();
-		io_display_center();
+		wclear(windows[win_mart]);
+		io_display_message("Select an item to buy it or ESC to leave", false);
+		// Bag Items 30
+		int bag_x = 1;
+		int bag_y = 1;
+		mvwprintw(windows[win_mart], bag_y, bag_x, "Buy:");
+		mvwprintw(windows[win_mart], bag_y+1, bag_x, "x - pokeball ($100)   (x%d)", world.pc->pokeballs);
+		mvwprintw(windows[win_mart], bag_y+2, bag_x, "y - potion   ($100)   (x%d)", world.pc->potions);
+		mvwprintw(windows[win_mart], bag_y+3, bag_x, "z - revive   ($100)   (x%d)", world.pc->revives);
+		mvwprintw(windows[win_mart], bag_y+4, bag_x, "Pokebucks: $%d", world.pc->money);
+		update_panels();
+		doupdate();
 
 		flushinp();
 		key = getch();
@@ -1602,20 +1610,44 @@ static void io_mart() {
 		switch (key) {
 			// NorthWest
 			case 'x':
+				if (world.pc->money < 100) {
+					io_display_message("You do not have enough pokebucks to buy that item...", true);
+					break;
+				}
+				io_display_message("You bought a pokeball...", true);
+				world.pc->money -= 100;
+				world.pc->pokeballs++;
 				break;
 			case 'y':
+				if (world.pc->money < 100) {
+					io_display_message("You do not have enough pokebucks to buy that item...", true);
+					break;
+				}
+				io_display_message("You bought a potion...", true);
+				world.pc->money -= 100;
+				world.pc->potions++;
 				break;
 			case 'z':
+				if (world.pc->money < 100) {
+					io_display_message("You do not have enough pokebucks to buy that item...", true);
+					break;
+				}
+				io_display_message("You bought a revive...", true);
+				world.pc->money -= 100;
+				world.pc->revives++;
+				break;
+			case 27:
+				done = 1;
 				break;
 			default:
 				break;
 		}
-		
+
 
 	}
-	wclear(windows[win_center]);
+	wclear(windows[win_mart]);
 	wclear(windows[win_top]);
-	hide_panel(panels[win_center]);
+	hide_panel(panels[win_mart]);
 }
 
 void io_player_turn() {
