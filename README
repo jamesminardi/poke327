@@ -1,6 +1,7 @@
 # poke327
 Text based Pokémon roguelike in C
 
+
 Usage: ./poke327 -h | --help for switches
 
 NEW 1.08 keybindings:
@@ -19,7 +20,7 @@ Backpack:
     x       Attempt to throw pokeball
     y       Attempt to use potion
     z       Attempt to use revive
-    ESC     Leave potion/revive menu
+    ESC     Leave potion/revive/pokecenter/pokemart menu
 
 In-game keybindings:
     B | i   Open backpack to use items
@@ -42,6 +43,19 @@ In-game keybindings:
 # setup
 ## use make or make all to compile
 ## make clean will clean the directory of compiled files
+
+
+# 1.09 Notes
+## You start with 1 potion, 1 revive, 10 pokeballs, and $500 to get you started
+## All requirements of 1.09 implemented including:
+### Type effectiveness of moves
+### NPCS drop money that you can pick up to buy more items at the pokemart
+### Pokemon are not always caught immedaitely. They use the formula specified by the spec doc.
+### Newly caught pokemon are sent to the pokecenter BOX when your party is full.
+### You are able to swap pokemon from the box into your party, replacing whatever pokemon was in there.
+### NOTE: You can't move a pokemon from your party into the box, only if you have a pokemon already in the box may you do that.
+## No known bugs
+
 
 # 1.08
 ## Notes:
