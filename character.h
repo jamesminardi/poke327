@@ -38,6 +38,7 @@ public:
 
 class Pc : public Character {
 public:
+	std::vector<Pokemon*> box;
 };
 
 class Npc : public Character {

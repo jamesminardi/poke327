@@ -1375,6 +1375,179 @@ void io_trainer_battle(Npc *c) {
 	c->defeated = 1;
 }
 
+static void swap_box_pokemon(int pokemon_slot) {
+	int done;
+	int key;
+	show_panel(panels[win_mart]);
+	top_panel(panels[win_mart]);
+	done = 0;
+	while(!done) {
+		wclear(windows[win_mart]);
+		io_display_message(
+				"Select pokemon in party to swap",
+				false);
+		// redisplay pokemart
+
+		flushinp();
+		key = getch();
+		switch (key) {
+			case '1':
+				if (world.pc->pokemon.size() < 1) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[0];
+					world.pc->pokemon[0] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '2':
+				if (world.pc->pokemon.size() < 2) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[1];
+					world.pc->pokemon[1] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '3':
+				if (world.pc->pokemon.size() < 3) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[2];
+					world.pc->pokemon[2] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '4':
+				if (world.pc->pokemon.size() < 4) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[3];
+					world.pc->pokemon[3] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '5':
+				if (world.pc->pokemon.size() < 5) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[4];
+					world.pc->pokemon[4] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			case '6':
+				if (world.pc->pokemon.size() < 6) {
+					io_display_message("You do not have a pokemon in that slot...", true);
+				} else {
+					// Swap pokemon_slot with curr_pokemon
+					Pokemon* temp = world.pc->pokemon[5];
+					world.pc->pokemon[5] = world.pc->box.at(pokemon_slot);
+					world.pc->box.at(pokemon_slot) = temp;
+				}
+				done = 1;
+				break;
+			default:
+				io_display_message("Not a valid action. Please swap pokemon first...", true);
+				done = 0;
+				break;
+		}
+	}
+}
+
+static void io_heal_all() {
+	int i;
+	for (i = 0; i < world.pc->pokemon.size(); i++) {
+		world.pc->pokemon.at(i)->set_hp(world.pc->pokemon.at(i)->get_max_hp());
+	}
+}
+
+static void io_display_center() {
+	show_panel(panels[win_center]);
+	top_panel(panels[win_center]);
+	wclear(windows[win_center]);
+
+
+	// show party pokemon
+	int i;
+	int party_x = 1;
+	int party_y = TERMINAL_Y-10;
+	mvwprintw(windows[win_center], party_y, party_x, "Party Pokemon:");
+	for (i = 0; i < world.pc->pokemon.size() && i < 6; i++) {
+		mvwprintw(windows[win_center], party_y+1+i, party_x, "%c) %.10s Lv:%d HP:%d/%d",
+				  '0' + i,
+				  world.pc->pokemon.at(i)->get_species(),
+				  world.pc->pokemon.at(i)->get_level(),
+				  world.pc->pokemon.at(i)->get_hp(),
+				  world.pc->pokemon.at(i)->get_max_hp());
+	}
+
+	int box_x = 40;
+	int box_y = 1;
+	mvwprintw(windows[win_center], box_y, box_x, "Box Pokemon:");
+	for (i = 0; i < world.pc->box.size() && i < 24; i++) {
+		mvwprintw(windows[win_center], box_y+1+i, box_x, "%c) %.10s Lv:%d HP:%d/%d",
+				  'a' + i,
+				  world.pc->box.at(i)->get_species(),
+				  world.pc->box.at(i)->get_level(),
+				  world.pc->box.at(i)->get_hp(),
+				  world.pc->box.at(i)->get_max_hp());
+	}
+	update_panels();
+	doupdate();
+}
+
+static void io_center() {
+	int done;
+	int key;
+	int swapped = 0;
+	show_panel(panels[win_center]);
+	top_panel(panels[win_center]);
+	done = 0;
+	while(!done) {
+		wclear(windows[win_center]);
+		io_display_message("Your pokemon have been healed. Select a pokemon in box to swap to party", false);
+		io_heal_all();
+		io_display_center();
+
+		flushinp();
+		key = getch();
+		int i;
+		for (i = 0; i < world.pc->box.size(); i++) {
+			if (key == 97+i) {
+				swap_box_pokemon(i);
+				done = 0;
+				swapped = 1;
+				break;
+			}
+		}
+		if (swapped == 0 && key == 27) {
+			done = 1;
+			break;
+		} else if (swapped == 0) {
+			io_display_message("Invalid action. ESC to leave or letter to swap pokemon...", true);
+		}
+	}
+	wclear(windows[win_center]);
+	wclear(windows[win_center]);
+	wclear(windows[win_top]);
+	hide_panel(panels[win_center]);
+}
+
+static void io_mart() {
+
+}
+
 void io_player_turn() {
 	int key;
 	int turn_consumed;
@@ -1462,8 +1635,15 @@ void io_player_turn() {
 
 				// Enter a building
 			case '>':    // >
-				wclear(windows[win_top]);
-				mvwaddstr(windows[win_top], 0, 0, "Entering a building not yet implemented.");
+				if (world.cur_map->terM[world.pc->pos.y][world.pc->pos.x] == ter_mart) {
+					io_mart();
+				}
+				else if (world.cur_map->terM[world.pc->pos.y][world.pc->pos.x] == ter_center) {
+					io_center();
+				} else {
+					wclear(windows[win_top]);
+					mvwaddstr(windows[win_top], 0, 0, "You are not on top of a building.");
+				}
 				break;
 
 				// List of trainers
