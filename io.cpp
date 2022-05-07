@@ -35,6 +35,8 @@ void io_init() {
 	windows[win_bottom] = newwin(2, TERMINAL_X, TERMINAL_Y - 2, 0);
 	windows[win_battle] = newwin(MAP_Y, TERMINAL_X, 1, 0);
 	windows[win_trainers] = newwin(MAP_Y, TERMINAL_X, 1, 0);
+	windows[win_center] = newwin(MAP_Y, TERMINAL_X, 1, 0);
+	windows[win_mart] = newwin(MAP_Y, TERMINAL_X, 1, 0);
 
 	windows[win_opponent_summary] = newwin(9, (TERMINAL_X - 4) / 2, 1, 0);
 	windows[win_player_summary] = newwin(9, (TERMINAL_X - 4) / 2, 1, (TERMINAL_X) / 2 + 2);
@@ -58,12 +60,16 @@ void io_init() {
 //	panels[win_battle_bag] = new_panel(windows[win_battle_bag]);
 //	panels[win_battle_menu] = new_panel(windows[win_battle_menu]);
 	panels[win_starters] = new_panel(windows[win_starters]);
+	panels[win_center] = new_panel(windows[win_center]);
+	panels[win_mart] = new_panel(windows[win_mart]);
 
 	hide_panel(panels[win_trainers]);
 	hide_panel(panels[win_battle]);
 	hide_panel(panels[win_player_summary]);
 	hide_panel(panels[win_opponent_summary]);
 	hide_panel(panels[win_starters]);
+	hide_panel(panels[win_center]);
+	hide_panel(panels[win_mart]);
 //	hide_panel(panels[win_battle_bag]);
 //	hide_panel(panels[win_battle_menu]);
 
@@ -463,6 +469,28 @@ static int escape(Pokemon* pc_pokemon, Pokemon* wild_pokemon, int attempts) {
 	return (rand() % 256) < odds ? 1 : 0;
 }
 
+static float getTypeEffectiveness(const Pokemon *aggressor, int move_slot) {
+	float type_eff;
+
+	int i;
+	for (i = 0; i < 325; i++) {
+		if (type_effectiveness[i].damage_type_id == moves[aggressor->move_index[move_slot]].type_id &&
+			type_effectiveness[i].target_type_id == aggressor->type_index[0]) {
+			type_eff = type_effectiveness[i].damage_factor;
+		}
+	}
+
+	if (aggressor->type_index.size() > 0) {
+		for (i = 0; i < 325; i++) {
+			if (type_effectiveness[i].damage_type_id == moves[aggressor->move_index[move_slot]].type_id &&
+				type_effectiveness[i].target_type_id == aggressor->type_index[0]) {
+				type_eff *= type_effectiveness[i].damage_factor;
+			}
+		}
+	}
+	return type_eff;
+}
+
 static int calculate_damage(Pokemon* aggressor, Pokemon* defender, int move_slot) {
 	float critical = 1;
 	if (rand() % 256 < aggressor->base_speed/2) {
@@ -477,7 +505,8 @@ static int calculate_damage(Pokemon* aggressor, Pokemon* defender, int move_slot
 		stab = 1.5;
 	}
 
-	float type_effectiveness = 1;
+	float type_eff = getTypeEffectiveness(aggressor, move_slot);
+
 
 	float damage = (((2 * aggressor->get_level()) / 5.0) + 2);
 	damage = damage * moves[aggressor->move_index[move_slot]].power * ((aggressor->get_atk() * 1.0)/defender->get_def());
@@ -485,7 +514,7 @@ static int calculate_damage(Pokemon* aggressor, Pokemon* defender, int move_slot
 	damage = damage * critical;
 	damage = damage * random;
 	damage = damage * stab;
-	damage = damage * type_effectiveness;
+	damage = damage * type_eff;
 	if (damage < 0) {
 		damage = 0;
 	}
@@ -1219,14 +1248,15 @@ void io_trainer_battle(Npc *c) {
 				io_display_message(msg, true);
 			}
 
-			// Wild dead
+			// npc dead
 			if (npc_pokemon->get_hp() == 0) {
 				sprintf(msg, "You defeated the trainer's %s...", npc_pokemon->get_species());
 				io_display_message(msg, true);
 
 				// Check if any more valid pokemon
 				if (c->firstAvailablePokemon() == nullptr) {
-					sprintf(msg, "%s has no more undefeated pokemon... you win!", c->getName());
+					world.pc->money += c->money;
+					sprintf(msg, "%s has no more undefeated pokemon... you win! +%d pokebucks", c->getName(), c->money);
 					io_display_message(msg, true);
 					battle_over = 1;
 				} else {
@@ -1322,7 +1352,8 @@ void io_trainer_battle(Npc *c) {
 
 						// Check if any more valid pokemon
 						if (c->firstAvailablePokemon() == nullptr) {
-							sprintf(msg, "%s has no more undefeated pokemon... you win!", c->getName());
+							world.pc->money += c->money;
+							sprintf(msg, "%s has no more undefeated pokemon... you win! +%d pokebucks", c->getName(), c->money);
 							io_display_message(msg, true);
 							battle_over = 1;
 						} else {

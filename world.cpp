@@ -149,9 +149,10 @@ static void pc_init(pos_t relative_toDir) {
 			world.pc->pos = (pos_t) {pos.x, pos.y};
 			w_charpos(world.pc->pos) = world.pc;
 			world.pc->next_turn = 0;
-			world.pc->pokeballs = 5;
-			world.pc->revives = 5;
-			world.pc->potions = 5;
+			world.pc->pokeballs = 1;
+			world.pc->revives = 1;
+			world.pc->potions = 1;
+			world.pc->money = 500;
 			heap_insert(&world.cur_map->turn, world.pc);
 		} else {
 			world.pc->pos = (pos_t) {pos.x, pos.y};
@@ -250,6 +251,11 @@ static void npc_init(){
 		w_charpos(pos)->potions = 0;
 		w_charpos(pos)->pokeballs = 0;
 		w_charpos(pos)->revives = 0;
+		int i;
+		w_charpos(pos)->money = 0;
+		for (i =0; i < w_charpos(pos)->pokemon.size(); i++) {
+			w_charpos(pos)->money += rand() % 100;
+		}
 
 
 

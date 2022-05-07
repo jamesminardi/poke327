@@ -33,6 +33,7 @@ public:
 	int pokeballs;
 	int revives;
 	int potions;
+	int money;
 };
 
 class Pc : public Character {

@@ -14,6 +14,7 @@
 #define TERMINAL_Y 24
 #define TERMINAL_X 80
 
+extern type_effectiveness_db type_effectiveness[325];
 
 typedef enum window_type {
 	win_top,
@@ -24,6 +25,8 @@ typedef enum window_type {
 	win_opponent_summary,
 	win_player_summary,
 	win_starters,
+	win_center,
+	win_mart,
 	num_windows
 } window_type_t;
 
