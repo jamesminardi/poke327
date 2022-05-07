@@ -1,3 +1,45 @@
+commit e772ec7cc83b005ec4eb162eafb988a56d081609
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri May 6 21:43:00 2022 -0500
+
+    Update readme for 1.09
+
+commit 4962037d91210017ba3c2cd3238886ef8ffea4cf
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri May 6 21:38:32 2022 -0500
+
+    Implement pokemart and buying items
+
+commit a48be3ed9803c4910d79d29df49918445cab0c27
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri May 6 21:28:46 2022 -0500
+
+    Add automatic transfer to box when party is full
+
+commit 4fcb7d0c1aa684c5aa70c4cdd4773d731eaafd0b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri May 6 20:45:30 2022 -0500
+
+    implement pokecenter healing and swapping from box
+
+commit 70db27e224a927f918b0d056a89b4662edb347cb
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri May 6 20:00:48 2022 -0500
+
+    Parse type effectiveness and implement into damage calculation
+
+commit 9b4e77aeff38daee42c4199f401944ee05291ee9
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri May 6 20:00:06 2022 -0500
+
+    Implement money system and drop from npcs
+
+commit e63c9352d275668f0fea9f16bc51f8bbf5eb8dd6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sat Apr 23 04:47:56 2022 -0500
+
+    Update changelog for 1.08
+
 commit 283e8031d1d7866d983cce9c320a06e8800117f5
 Author: jamesminardi <jamesminardip@gmail.com>
 Date:   Sat Apr 23 04:46:04 2022 -0500
@@ -64,9 +106,585 @@ Date:   Sat Apr 23 04:28:00 2022 -0500
 
     Create methods for battling wild pokemon and trainer
 
+commit 0f6ba0ef13bbf4bb9b0b282d6b29efaab3fcbcb0
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 19:54:43 2022 -0500
+
+    Update changelog for 1.07
+
+commit c216905b235258e11a9d39df74785f06a88aab2a
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 19:52:52 2022 -0500
+
+    Update
+
+commit c43400107c03a2bd567f7ea59bd137ae01031de1
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 19:52:26 2022 -0500
+
+    Update readme
 
 commit 31b00d872cb94849d77d1d2d253305a691542997
 Author: jamesminardi <jamesminardip@gmail.com>
 Date:   Wed Apr 6 18:31:12 2022 -0500
 
     Fix bug of npc's not moving
+
+commit 7209348178a715b04d46b39ad4dd5e191c6a16bb
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 18:30:21 2022 -0500
+
+    Readme updated for 1.07
+
+commit 1c4fbc5d92c386c650954c4d25416bafae97d072
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 13:47:41 2022 -0500
+
+    formatting
+
+commit 15c960332ccbf4889bb85aff0a8ee5e0483a3095
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 13:47:11 2022 -0500
+
+    Add random encounter battles
+
+commit b90a282d443435529cb50fff7e132aea1ad42076
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 13:46:26 2022 -0500
+
+    Remove getch wait at beginning
+
+commit 12e6f53914824827981096f13e058ef590848906
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 13:45:43 2022 -0500
+
+    Add random encounter step buffer
+
+commit 6ad22e5cf7c0c9ae650dcf1a66b2a62cbbf2433d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Apr 6 13:45:30 2022 -0500
+
+    Add pokemon stats to parsing
+
+commit c7f29521ff820b236165a774c2e55859263f16e8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Apr 5 00:23:21 2022 -0500
+
+    Refactored for c++. Still using c-syle structs, etc
+
+commit 886894d2039272aee7b2203106dcb16cbf924132
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Apr 5 00:22:45 2022 -0500
+
+    Move pos into own file
+
+commit 98cfafc3dda45138569a0651736563a0eb54ce9c
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Apr 5 00:22:28 2022 -0500
+
+    Create classes for characters
+
+commit 387e7698767339c607d76807bc02e5629f6a23d3
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Apr 4 22:08:53 2022 -0500
+
+    Add db_parse files
+
+commit 657109f80fbfb65f2c52927f9758e09003e6b9ed
+Merge: d5c225b 948f845
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Thu Mar 31 12:45:00 2022 -0500
+
+    Merge pull request #7 from jamesminardi/dev-1.05
+    
+    Dev 1.05 (Final C Version)
+
+commit 948f8452af305c0cadf1b2edcfc8e9b745ec7570
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:20:33 2022 -0500
+
+    Update for 1.05
+
+commit a5eff2e12b3640d20219be0ccbe1e2805576cf25
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:19:43 2022 -0500
+
+    Add Q to options of quicking
+
+commit 977c66129d8194074d1c87f81e9f060e5ea846d3
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:19:22 2022 -0500
+
+    Update readme for 1.05
+
+commit 248b8d257d5728c86548ecb55c9f078fb7eeee22
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:06:01 2022 -0500
+
+    Add trainer, building, and battle screens. Implement PC and trainer initiated battles.
+
+commit 682f646291310bd5fae238595f5392704b5a8dc4
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:04:41 2022 -0500
+
+    Add window and panel initialization
+
+commit f4f5c5e207a697bb3d6caeb8941c5cb2e1950e4c
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:04:21 2022 -0500
+
+    Add ncurses window types
+
+commit 60894f31e445f62b65ac1ffc9ced03e981129c4f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:03:56 2022 -0500
+
+    Add terminal global varaibles
+
+commit 3fdde7456e5853d23062c7049f242f8babb8174f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Fri Mar 25 02:03:44 2022 -0500
+
+    Link ncurses panels
+
+commit 7d8d25a0ebba61e21444b78c86cff9e1844f94b2
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Mar 24 22:05:17 2022 -0500
+
+    Fix path being wrong symbol
+
+commit 236b386b949162b4cd37170f013e4c7ea0121716
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Mar 24 22:04:12 2022 -0500
+
+    Cross map movement complete
+
+commit 92f79287168e3ea5b53352aacf7b8d442851d279
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 23 00:42:12 2022 -0500
+
+    Add pc input function
+
+commit 397c63a34139fdc5606688001e525fa6b098d9cc
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Mar 22 23:05:13 2022 -0500
+
+    Transition to ncurses
+
+commit 9db7ba57242a6236cd08c736ac1d622e911eefc8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Mar 22 05:17:34 2022 -0500
+
+    Refactor 1.04 complete
+
+commit 5453f2bb6e1d67ecab5325ad6102c7ef2c499f5c
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Mar 21 16:39:48 2022 -0500
+
+    Start of refactoring for 1.04
+
+commit d5c225b8ed0465d88f0bfeafe986ee823a2740ef
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Mon Mar 21 12:38:28 2022 -0500
+
+    Update README
+
+commit cadf0d19311a8ebccd610646dc6462e062ae91c9
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Mar 21 12:05:35 2022 -0500
+
+    Remove -werror
+
+commit b69b66dbd68baeef46fae82eb4627932f09a60c9
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 20 22:34:15 2022 -0500
+
+    Update makefile for 1.05
+
+commit af3635733f831fa4ea890673fd172c7030004011
+Merge: 7ab0779 d0fdaa8
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Sun Mar 20 21:51:11 2022 -0500
+
+    Merge pull request #6 from jamesminardi/dev-1.04
+    
+    Dev 1.04
+
+commit d0fdaa80ab49b3bb73a7966021505d53147656b3
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Mar 10 00:28:54 2022 -0600
+
+    1.04 readme
+
+commit ed018b7d7d1cfb4e200ddffe31ccac23fad6e20d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Mar 10 00:16:29 2022 -0600
+
+    Add changelog for 1.04
+
+commit 7f2d980d09dc5d12ac816b6f3b5ee7cde76c334d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Mar 10 00:14:12 2022 -0600
+
+    working hiker and rival pathfinding
+
+commit 3741affa72c05cefb03595ebff4eb4ca7d63bb26
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 21:21:53 2022 -0600
+
+    Implement character 'class'
+
+commit e2392915d7dd3ef1dc787c0a73b05e10a6c269b8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 17:01:14 2022 -0600
+
+    Fix PC spawning on occupied character space
+
+commit c1ba87a9312f6be70d14a5a2e0e84bcaa6895241
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 16:38:02 2022 -0600
+
+    Working world movement with random npc generation
+
+commit 1d4f8a500baf4fc73542e96f41068dfa72ebc60c
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 12:41:27 2022 -0600
+
+    Working random npc generation
+
+commit 6ed69e94d7ccc299cbd1fa8de91e39efa3cd075e
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:18:22 2022 -0600
+
+    Adjust method signatures
+
+commit 16ade0001f1f819e9c377098f422b9a102dc24c7
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:18:06 2022 -0600
+
+    Add components file
+
+commit 37796e22525241ce85978f964f1f7e64cd92f6cf
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:06:39 2022 -0600
+
+    Small changes
+
+commit 3c0502ad0cacea697eec9f9d6f9744d0e55cfbf7
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:06:08 2022 -0600
+
+    Adjust colors
+
+commit 1c4fdad92527b9c8b9175a226e6560f640f6c605
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:05:58 2022 -0600
+
+    abstract structs from world and map files
+
+commit 3b6b1850d3ef0eb608c524cf1c0135b34daec90f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Mar 9 11:04:36 2022 -0600
+
+    Implement random NPS spawns
+
+commit 7ab0779e642c5519cff4ddfa58624f20c746ec4d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Mar 8 13:34:48 2022 -0600
+
+    Differentiate exits from paths internally
+
+commit 6d5ae09c1779e0a071bc4ccb0b20b247277d4395
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Mar 7 23:37:17 2022 -0600
+
+    1.03 finish & add CL argument support
+
+commit 420b1cfc7e31bece35d0d1d04d04b6d00b0e70e8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 22:22:17 2022 -0600
+
+    1.03 additions
+
+commit 8bf09b80c0501773aa209f2291e8898ea07b49f4
+Merge: c9eca0d 01a6c13
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 19:55:16 2022 -0600
+
+    Merge 1.02 to main
+
+commit 01a6c130386388178a3f3ce05fef51fa432f00ab
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 19:52:39 2022 -0600
+
+    Update changelog for 1.03
+
+commit 853088fae10daff394dfd343352d1e954c0ecef6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Mar 6 19:52:02 2022 -0600
+
+    Add members to world struct
+
+commit f8c22ddb20e99012d82897a813db8c7c4461bd0b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 24 00:48:40 2022 -0600
+
+    Can't get dijkstra's algorithm to work. Segfaulting
+
+commit 8a7a833b2569b4347f052602a18e6dc2920549ac
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:04:32 2022 -0600
+
+    Add gitignore for intellij project files
+
+commit aa5459668066bffa0f4870ca1c1375e36487392a
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:03:03 2022 -0600
+
+    Remove test heap target
+
+commit d4726c1f6ae8a3b10055b0861e476f8ae48b4f59
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 23 12:01:40 2022 -0600
+
+    Implemented integer fibonacci heap
+
+commit d0c87821c53f587fde8baf207b4294273150f8f6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 21 19:33:26 2022 -0600
+
+    Create heap files
+
+commit 70cf4305fc27b61917221ef3dfb9152a83f310ed
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 21 19:30:43 2022 -0600
+
+    print hiker and rival weight maps
+
+commit d65034a9bde864c789be4a615cac62b3b1919d7d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 22:18:14 2022 -0600
+
+    Adjust input loop
+
+commit 9b75b5cb0dbd27d61c2f3955b1295fcafe3c1193
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:46 2022 -0600
+
+    Update pos.h
+
+commit 8487ee29c8972f2dba3ac95362e93b14561aaeca
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:23 2022 -0600
+
+    Remove unnecessary ter types
+
+commit 17e4d4ac4d28c9e38ffaf727e545464d4b98502b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 21:42:01 2022 -0600
+
+    Finish refactor of map vs world
+
+commit 19739ae1b79ba2bbd203b529c6a6e6ae49a35ec6
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:16:37 2022 -0600
+
+    Fixed world.o not included in poke327 executable
+
+commit cc7f02e2b258ac03772e99a06d03314150917687
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:14:45 2022 -0600
+
+    Refactor world and map code
+
+commit 0f935228018b9ecb30712a70bf2920edee0708cd
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Mon Feb 14 20:12:19 2022 -0600
+
+    Add world.c world.h files
+
+commit c9eca0d99f0c695d2aa163de3a9e5fc0930d543b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Sun Feb 13 21:09:04 2022 -0600
+
+    Update for 1.02
+
+commit d0f513c3aed56d0bce44ac75f50dc27eb519bd9b
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 04:07:21 2022 -0600
+
+    Update readme
+
+commit 0189d88011e3315e080ba802d8e46678e919ddcc
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 04:07:07 2022 -0600
+
+    Fix out of bounds access in south east region
+
+commit 248c9a37d44288b741c1663e1cc48755f4530dd1
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 03:47:55 2022 -0600
+
+    create world state and world boundaries
+
+commit 293d838c7f8f7126728b17f0bebbb3b43abc470f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 01:00:17 2022 -0600
+
+    Init as world instead of map
+
+commit f41b8d1a85b0848f96cad8ef7bd340cfc93f4a53
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 10 00:38:41 2022 -0600
+
+    Finish refactoring to 1.01 specs
+
+commit 0ec531c5ea25103573f438d11cca4b65c5b0bfd8
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 20:23:03 2022 -0600
+
+    Refactor placing paths code
+
+commit 207359f32e0a747364af7a84a16795aeb968aa92
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 20:12:33 2022 -0600
+
+    Remove double roads bug
+
+commit a207628823e71750525353311b0d967f18626925
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 20:02:09 2022 -0600
+
+    Finish refactor of placing buildings
+
+commit 499c62349749c63bd27f23ee1edacc5864364287
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 19:18:07 2022 -0600
+
+    Refactor name
+
+commit f1a2d80698418630e3c0f999570e4122317a2cc3
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 19:16:56 2022 -0600
+
+    Add find valid builing function
+
+commit 529012d3512618c1d73e36b7a92856d5d62967d4
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 12:34:42 2022 -0600
+
+    Add color support
+
+commit b3ca20ae045f1034a0de6b5c7b27cdb7d6b02e65
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 11:41:06 2022 -0600
+
+    Rename world.o to map.o
+
+commit 2b83b95c782eb48dd73feecfc56e6dacc21e7060
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 9 11:40:45 2022 -0600
+
+    Rename world to map
+
+commit fd61f922fe2185bfcf295043163ab5b84c244e72
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 8 22:29:44 2022 -0600
+
+    Create world struct and map struct
+
+commit bb3695f6d196fad19e30917d1be23120e38be3e7
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 8 22:24:58 2022 -0600
+
+    Adjust tiles enum to support unicode
+
+commit 7a136a958cc6f78ef5de7bc5f5b14319e5042c24
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 8 21:39:04 2022 -0600
+
+    Add tree and grass global defines
+
+commit e81496c29dcbcf84dac50a1282622f8b29cb02e5
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Thu Feb 3 00:19:25 2022 -0600
+
+    Update README
+
+commit 9ec8363477ddc6c12f058692b118474bf1bac047
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 3 00:10:41 2022 -0600
+
+    update for v1.01
+
+commit aae1f593ec3489823d58402b107f52f67ed6c53d
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Thu Feb 3 00:01:46 2022 -0600
+
+    Update changelog for 1.01
+
+commit b8f3f428a292a78217c2d23910e437e22ba881bc
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 23:57:02 2022 -0600
+
+    Add trees, pokecenter, and pokemart
+
+commit e99da08e26067147aa016331a1286428a5ec2400
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 22:27:45 2022 -0600
+
+    Add grass and border to map
+
+commit 08f24719e2c8e0c2067e4144ec367eb4b3bb1ef5
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 22:26:58 2022 -0600
+
+    create enum for tiles
+
+commit 6cdcacbc6845d5c4f20207a947a0ef08275ee44f
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 17:13:05 2022 -0600
+
+    move world functions into separate files
+
+commit 2d584394e5742aa1c5eab350bbbed46214f65816
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 16:58:13 2022 -0600
+
+    create header file for global vars
+
+commit 7560844b0952650701fec9a05a8511c548d43043
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 16:11:29 2022 -0600
+
+    Add initialization and print methods
+
+commit 3da5dc0eaee9553faabca3ef428ecd5d980b0a16
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 13:22:22 2022 -0600
+
+    Hello World!
+
+commit fd72850a819239b8c56af19a44b10e6e5808aaa3
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 13:20:03 2022 -0600
+
+    add Makefile functionality for main.c
+
+commit 8d2fcb99187d382fb563565ebd545a84a74b850c
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Wed Feb 2 12:54:48 2022 -0600
+
+    Add main function
+
+commit 932ab427ea5e1bfa130f1d8dae20ce7366b15b04
+Author: jamesminardi <jamesminardip@gmail.com>
+Date:   Tue Feb 1 13:39:43 2022 -0600
+
+    Created repository and files
+
+commit ec5e008da495e303454bb9d10b6083c239cf1c92
+Author: James Minardi <77563712+jamesminardi@users.noreply.github.com>
+Date:   Tue Feb 1 13:03:47 2022 -0600
+
+    Initial commit
